@@ -1,0 +1,49 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const app = express();
+
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(morgan('combined'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database Connection
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
+
+app.locals.db = pool;
+
+// Health Check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
+});
+
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/usersRoutes'));
+app.use('/api/orders', require('./routes/ordersRoutes'));
+app.use('/api/products', require('./routes/productsRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/integrations', require('./routes/integrationRoutes'));
+app.use('/api/sync', require('./routes/syncRoutes'));
+app.use('/api/accounting-reports', require('./routes/accountingReportsRoutes'));
+
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+module.exports = app;
