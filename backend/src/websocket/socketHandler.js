@@ -70,7 +70,7 @@ function setupSocket(server) {
 
 function emitToUser(userId, event, data) {
   if (!_io) {
-    console.warn('[socketHandler] Socket.io not initialised');
+    console.warn('[socketHandler] Socket.io not initialized');
     return;
   }
   _io.to(`user:${userId}`).emit(event, data);

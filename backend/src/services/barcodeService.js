@@ -47,11 +47,22 @@ const barcodeService = {
   async bulkLookup(barcodes) {
     if (!Array.isArray(barcodes) || !barcodes.length) return [];
     const placeholders = barcodes.map((_, i) => `$${i + 1}`).join(', ');
-    const { rows } = await pool.query(
-      `SELECT * FROM products WHERE barcode IN (${placeholders}) OR sku IN (${placeholders})`,
-      [...barcodes, ...barcodes]
+    // Use UNION to avoid placeholder repetition issues
+    const { rows: byBarcode } = await pool.query(
+      `SELECT * FROM products WHERE barcode IN (${placeholders})`,
+      barcodes
     );
-    return rows;
+    const { rows: bySku } = await pool.query(
+      `SELECT * FROM products WHERE sku IN (${placeholders})`,
+      barcodes
+    );
+    // Deduplicate by id
+    const seen = new Set();
+    return [...byBarcode, ...bySku].filter((p) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
   },
 };
 
