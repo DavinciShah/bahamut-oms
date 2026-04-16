@@ -6,7 +6,8 @@ const socketHandler = require('./src/websocket/socketHandler');
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
-const io = socketHandler(server);
+const { setupSocket, getIO } = socketHandler;
+const io = setupSocket(server);
 if (io) app.set('io', io);
 
 server.listen(PORT, () => console.log(`Server on port ${PORT}`));
