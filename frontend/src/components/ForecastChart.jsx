@@ -4,7 +4,7 @@ export default function ForecastChart({ data }) {
   if (!data) return <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>No forecast data</div>;
 
   const historical = (data.historical || []).map(d => ({
-    period: d.month ? d.month.toString().slice(0, 7) : new Date(d.month || d.day).toISOString().slice(0, 7),
+    period: d.month ? d.month.toString().slice(0, 7) : (d.day ? d.day.toString().slice(0, 7) : 'N/A'),
     actual: parseFloat(d.revenue || 0),
     type: 'historical'
   }));

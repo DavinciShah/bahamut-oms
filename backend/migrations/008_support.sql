@@ -1,7 +1,7 @@
 -- Tickets
 CREATE TABLE IF NOT EXISTS tickets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   customer_id UUID REFERENCES users(id) ON DELETE SET NULL,
   subject VARCHAR(500) NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'open',
@@ -33,7 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON ticket_messages(ticket_
 -- Knowledge Articles
 CREATE TABLE IF NOT EXISTS knowledge_articles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   title VARCHAR(500) NOT NULL,
   content TEXT NOT NULL,
   tags JSONB DEFAULT '[]',

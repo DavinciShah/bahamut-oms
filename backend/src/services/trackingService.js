@@ -19,7 +19,7 @@ const trackingService = {
       try {
         liveEvents = await carrierService.track(trackingNumber);
       } catch (err) {
-        console.warn(`[TrackingService] Live tracking failed for ${trackingNumber}:`, err.message);
+        console.warn('[TrackingService] Live tracking failed:', err.message);
       }
     }
 

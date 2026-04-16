@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 const { authenticate } = require('../middleware/authMiddleware');
+const rateLimit = require('../middleware/rateLimitMiddleware');
 
+router.use(rateLimit());
 router.use(authenticate);
 
 router.get('/tickets', ticketController.getTickets);
