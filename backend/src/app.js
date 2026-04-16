@@ -57,6 +57,16 @@ app.use('/api/admin', apiLimiter, require('./routes/adminRoutes'));
 app.use('/api/integrations', apiLimiter, require('./routes/integrationRoutes'));
 app.use('/api/sync', apiLimiter, require('./routes/syncRoutes'));
 app.use('/api/accounting-reports', apiLimiter, require('./routes/accountingReportsRoutes'));
+app.use('/api/notifications', apiLimiter, require('./routes/notificationRoutes'));
+app.use('/api/inventory', apiLimiter, require('./routes/inventoryRoutes'));
+app.use('/api/warehouses', apiLimiter, require('./routes/warehouseRoutes'));
+app.use('/api/tenants', apiLimiter, require('./routes/tenantRoutes'));
+app.use('/api/payments', apiLimiter, require('./routes/paymentRoutes'));
+app.use('/api/analytics', apiLimiter, require('./routes/analyticsRoutes'));
+app.use('/api/shipping', apiLimiter, require('./routes/shippingRoutes'));
+app.use('/api/support', apiLimiter, require('./routes/ticketRoutes'));
+app.use('/api/bi', apiLimiter, require('./routes/biRoutes'));
+app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
 
 // Error Handler
 app.use(require('./middleware/errorHandler'));
