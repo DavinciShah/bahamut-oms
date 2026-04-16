@@ -39,6 +39,16 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/integrations', require('./routes/integrationRoutes'));
 app.use('/api/sync', require('./routes/syncRoutes'));
 app.use('/api/accounting-reports', require('./routes/accountingReportsRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/inventory', require('./routes/inventoryRoutes'));
+app.use('/api/warehouses', require('./routes/warehouseRoutes'));
+app.use('/api/tenants', require('./routes/tenantRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/shipping', require('./routes/shippingRoutes'));
+app.use('/api/support', require('./routes/ticketRoutes'));
+app.use('/api/bi', require('./routes/biRoutes'));
+app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
 
 // Error Handler
 app.use((err, req, res, next) => {
