@@ -16,18 +16,22 @@ const FROM_ADDRESS = process.env.EMAIL_FROM || 'noreply@bahamut-oms.com';
 const FROM_NAME = process.env.EMAIL_FROM_NAME || 'Bahamut OMS';
 
 const emailService = {
-  async sendEmail(to, subject, html, text) {
+  async sendEmail(to, subject, html, text, attachments) {
     if (!process.env.SENDGRID_API_KEY) {
       console.warn('[emailService] SENDGRID_API_KEY not set – skipping email send');
       return { skipped: true };
     }
-    const info = await transporter.sendMail({
+    const mailOptions = {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to,
       subject,
       html,
       text: text || html.replace(/<[^>]+>/g, ''),
-    });
+    };
+    if (attachments && attachments.length) {
+      mailOptions.attachments = attachments;
+    }
+    const info = await transporter.sendMail(mailOptions);
     return info;
   },
 

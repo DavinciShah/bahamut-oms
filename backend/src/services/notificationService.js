@@ -1,7 +1,14 @@
 'use strict';
 
+const { Pool } = require('pg');
 const Notification = require('../models/Notification');
 const emailService = require('./emailService');
+
+const pool = new Pool({
+  connectionString:
+    process.env.DATABASE_URL ||
+    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
+});
 
 let _io = null;
 
@@ -18,12 +25,6 @@ const notificationService = {
     }
 
     try {
-      const { Pool } = require('pg');
-      const pool = new Pool({
-        connectionString:
-          process.env.DATABASE_URL ||
-          `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-      });
       const { rows } = await pool.query(
         'SELECT email FROM users WHERE id = $1',
         [userId]

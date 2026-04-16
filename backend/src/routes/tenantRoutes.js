@@ -4,8 +4,12 @@ const { Router } = require('express');
 const router = Router();
 const tenantController = require('../controllers/tenantController');
 const { authenticate } = require('../middleware/authMiddleware');
+const rateLimit = require('../middleware/rateLimitMiddleware');
+
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 
 router.use(authenticate);
+router.use(limiter);
 
 router.get('/',                            tenantController.getAll);
 router.post('/',                           tenantController.create);

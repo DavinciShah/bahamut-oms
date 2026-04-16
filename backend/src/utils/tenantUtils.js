@@ -30,7 +30,7 @@ function generateTenantSlug(name) {
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/^-|-$/g, '');
 }
 
 const VALID_PLANS = ['free', 'starter', 'pro', 'enterprise'];

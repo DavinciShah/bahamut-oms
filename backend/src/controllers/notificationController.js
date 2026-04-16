@@ -1,6 +1,7 @@
 'use strict';
 
 const notificationService = require('../services/notificationService');
+const Notification = require('../models/Notification');
 
 const notificationController = {
   async getNotifications(req, res) {
@@ -68,13 +69,6 @@ const notificationController = {
   async deleteAll(req, res) {
     try {
       const userId = req.user.id;
-      const { Pool } = require('pg');
-      const pool = new Pool({
-        connectionString:
-          process.env.DATABASE_URL ||
-          `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-      });
-      const Notification = require('../models/Notification');
       const count = await Notification.deleteAll(userId);
       res.json({ success: true, deleted: count });
     } catch (err) {
