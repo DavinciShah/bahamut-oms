@@ -1,7 +1,9 @@
 'use strict';
 
+const jwt     = require('jsonwebtoken');
+const User    = require('../models/User');
 const authService = require('../services/authService');
-const User        = require('../models/User');
+const { jwtSecret, jwtExpiration } = require('../config/auth');
 
 /**
  * POST /api/auth/register
@@ -62,8 +64,6 @@ async function refresh(req, res, next) {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const jwt     = require('jsonwebtoken');
-    const { jwtSecret, jwtExpiration } = require('../config/auth');
     const token   = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       jwtSecret,

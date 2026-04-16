@@ -7,24 +7,6 @@ const { jwtSecret, jwtExpiration, bcryptSaltRounds } = require('../config/auth')
 const { validateEmail, validatePassword } = require('../utils/validators');
 
 /**
- * Validate email format.
- * @param {string} email
- * @returns {boolean}
- */
-function validateEmailFormat(email) {
-  return validateEmail(email);
-}
-
-/**
- * Validate password strength.
- * @param {string} password
- * @returns {boolean}
- */
-function validatePasswordStrength(password) {
-  return validatePassword(password);
-}
-
-/**
  * Hash a plain-text password.
  * @param {string} password
  * @returns {Promise<string>}
@@ -68,13 +50,13 @@ async function registerUser({ email, username, password, role }) {
     throw err;
   }
 
-  if (!validateEmailFormat(email)) {
+  if (!validateEmail(email)) {
     const err = new Error('Invalid email format');
     err.status = 400;
     throw err;
   }
 
-  if (!validatePasswordStrength(password)) {
+  if (!validatePassword(password)) {
     const err = new Error(
       'Password must be at least 8 characters and contain at least one letter and one digit'
     );
@@ -133,6 +115,4 @@ module.exports = {
   loginUser,
   hashPassword,
   comparePasswords,
-  validateEmailFormat,
-  validatePasswordStrength,
 };

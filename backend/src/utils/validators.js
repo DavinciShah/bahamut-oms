@@ -1,6 +1,7 @@
 'use strict';
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Use a simple, ReDoS-safe email pattern: local@domain.tld
+const EMAIL_RE = /^[^@\s]{1,64}@[^@\s]{1,255}\.[^@\s.]{2,}$/;
 
 /**
  * Returns true when the string looks like a valid e-mail address.
