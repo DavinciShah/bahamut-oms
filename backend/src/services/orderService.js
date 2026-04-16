@@ -23,7 +23,12 @@ async function getOrdersByUserId(userId) {
 }
 
 async function createOrder({ user_id, items = [], status }) {
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Use integer arithmetic (cents) to avoid floating-point precision errors
+  const totalCents = items.reduce(
+    (sum, item) => sum + Math.round(item.price * 100) * item.quantity,
+    0
+  );
+  const total = totalCents / 100;
   const order = await Order.create({ user_id, total, status });
 
   for (const item of items) {

@@ -4,7 +4,7 @@ const express     = require('express');
 const router      = express.Router();
 const userCtrl    = require('../controllers/userController');
 const { authenticateJWT, adminOnly } = require('../middleware/auth');
-const rateLimit   = require('../middleware/rateLimitMiddleware');
+const rateLimit   = require('express-rate-limit');
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 
