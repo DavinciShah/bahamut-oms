@@ -24,7 +24,8 @@ class AuthController {
                 user: { id: user.id, email: user.email, role: user.role },
             });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error', details: error.message });
+            console.error('Login error:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -43,7 +44,9 @@ class AuthController {
             });
         } catch (error) {
             const status = error.status || 500;
-            return res.status(status).json({ error: error.message || 'Internal server error' });
+            const message = error.status ? error.message : 'Internal server error';
+            console.error('Register error:', error);
+            return res.status(status).json({ error: message });
         }
     }
 
@@ -55,7 +58,8 @@ class AuthController {
             }
             return res.status(200).json({ user });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error', details: error.message });
+            console.error('GetProfile error:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 
