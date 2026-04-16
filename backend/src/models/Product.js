@@ -10,7 +10,8 @@ class Product {
     }
     if (filters.search) {
       params.push(`%${filters.search}%`);
-      conditions.push(`(name ILIKE $${params.length} OR sku ILIKE $${params.length})`);
+      const idx = params.length;
+      conditions.push(`(name ILIKE $${idx} OR sku ILIKE $${idx})`);
     }
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');

@@ -29,10 +29,14 @@ const create = async (req, res, next) => {
   const pool = req.app.locals.db;
   const client = await pool.connect();
   try {
-    const { user_id, notes, items } = req.body;
+    const { notes, items, user_id } = req.body;
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Order must have at least one item' });
     }
+
+    // Only admins may create orders on behalf of another user
+    const effectiveUserId =
+      req.user.role === 'admin' && user_id ? user_id : req.user.id;
 
     await client.query('BEGIN');
 
@@ -44,19 +48,24 @@ const create = async (req, res, next) => {
     const orderResult = await client.query(
       `INSERT INTO orders (user_id, status, total_amount, notes)
        VALUES ($1, 'pending', $2, $3) RETURNING *`,
-      [user_id || req.user.id, total_amount, notes]
+      [effectiveUserId, total_amount, notes]
     );
     const order = orderResult.rows[0];
 
-    const orderItems = [];
-    for (const item of items) {
-      const itemResult = await client.query(
-        `INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-         VALUES ($1, $2, $3, $4) RETURNING *`,
-        [order.id, item.product_id, item.quantity, item.unit_price]
-      );
-      orderItems.push(itemResult.rows[0]);
-    }
+    // Batch insert all order items in a single query
+    const valuePlaceholders = items.map(
+      (_, i) => `($1, $${i * 3 + 2}, $${i * 3 + 3}, $${i * 3 + 4})`
+    ).join(', ');
+    const itemParams = [order.id];
+    items.forEach((item) => {
+      itemParams.push(item.product_id, item.quantity, item.unit_price);
+    });
+    const itemsResult = await client.query(
+      `INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+       VALUES ${valuePlaceholders} RETURNING *`,
+      itemParams
+    );
+    const orderItems = itemsResult.rows;
 
     await client.query('COMMIT');
     res.status(201).json({ order: { ...order, items: orderItems } });

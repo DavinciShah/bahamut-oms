@@ -6,10 +6,22 @@ router.use(authMiddleware, adminMiddleware);
 
 const syncHandler = (type) => async (req, res, next) => {
   try {
+    const { integration_id } = req.body;
+    const parsedId = integration_id != null ? parseInt(integration_id, 10) : null;
+    if (integration_id != null && (isNaN(parsedId) || parsedId <= 0)) {
+      return res.status(400).json({ error: 'integration_id must be a positive integer' });
+    }
+    // If integration_id provided, verify it exists
+    if (parsedId) {
+      const { rowCount } = await req.app.locals.db.query(
+        'SELECT 1 FROM integrations WHERE id = $1', [parsedId]
+      );
+      if (!rowCount) return res.status(404).json({ error: 'Integration not found' });
+    }
     await req.app.locals.db.query(
       `INSERT INTO sync_logs (integration_id, type, status, records_synced)
        VALUES ($1, $2, 'pending', 0)`,
-      [req.body.integration_id || null, type]
+      [parsedId, type]
     );
     res.json({ message: `${type} sync initiated`, type, status: 'pending' });
   } catch (err) {

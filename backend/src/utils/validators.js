@@ -1,6 +1,16 @@
+// Linear email validation — avoids catastrophic backtracking (ReDoS)
 const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
+  if (!email || typeof email !== 'string' || email.length > 254) return false;
+  const at = email.indexOf('@');
+  if (at < 1) return false;
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  if (!local || !domain) return false;
+  if (local.length > 64) return false;
+  if (!domain.includes('.')) return false;
+  // Only allow safe characters — no nested quantifiers
+  return /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(local) &&
+         /^[a-zA-Z0-9.-]+$/.test(domain);
 };
 
 // At least 8 chars, one uppercase, one lowercase, one digit, one special char
