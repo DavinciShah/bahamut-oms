@@ -44,8 +44,8 @@ function signToken(user) {
  * @returns {Promise<{ user: Object, token: string }>}
  */
 async function registerUser({ email, username, password, role }) {
-  if (!email || !username || !password) {
-    const err = new Error('Email, username and password are required');
+  if (!email || !password) {
+    const err = new Error('Email and password are required');
     err.status = 400;
     throw err;
   }

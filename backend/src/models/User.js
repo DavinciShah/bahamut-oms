@@ -3,24 +3,14 @@
 const pool = require('../config/database');
 
 const User = {
-  /**
-   * Find a user by email.
-   * @param {string} email
-   * @returns {Promise<Object|null>}
-   */
   async findByEmail(email) {
     const { rows } = await pool.query(
-      'SELECT * FROM users WHERE email = $1 LIMIT 1',
+      'SELECT id, email, username, password, role, created_at, updated_at FROM users WHERE email = $1 LIMIT 1',
       [email]
     );
     return rows[0] || null;
   },
 
-  /**
-   * Find a user by id.
-   * @param {number|string} id
-   * @returns {Promise<Object|null>}
-   */
   async findById(id) {
     const { rows } = await pool.query(
       'SELECT id, email, username, role, created_at, updated_at FROM users WHERE id = $1 LIMIT 1',
@@ -29,25 +19,24 @@ const User = {
     return rows[0] || null;
   },
 
-  /**
-   * Create a new user.
-   * @param {{ email: string, username: string, password: string, role?: string }} data
-   * @returns {Promise<Object>}
-   */
+  async emailExists(email) {
+    const { rows } = await pool.query(
+      'SELECT 1 FROM users WHERE email = $1 LIMIT 1',
+      [email]
+    );
+    return rows.length > 0;
+  },
+
   async create({ email, username, password, role = 'user' }) {
     const { rows } = await pool.query(
       `INSERT INTO users (email, username, password, role)
        VALUES ($1, $2, $3, $4)
        RETURNING id, email, username, role, created_at, updated_at`,
-      [email, username, password, role]
+      [email, username || null, password, role]
     );
     return rows[0];
   },
 
-  /**
-   * Return all users (excluding passwords).
-   * @returns {Promise<Object[]>}
-   */
   async findAll() {
     const { rows } = await pool.query(
       'SELECT id, email, username, role, created_at, updated_at FROM users ORDER BY id'
@@ -55,12 +44,6 @@ const User = {
     return rows;
   },
 
-  /**
-   * Update a user by id.
-   * @param {number|string} id
-   * @param {{ email?: string, username?: string, role?: string }} data
-   * @returns {Promise<Object|null>}
-   */
   async update(id, data) {
     const fields = [];
     const values = [];
@@ -83,11 +66,6 @@ const User = {
     return rows[0] || null;
   },
 
-  /**
-   * Delete a user by id.
-   * @param {number|string} id
-   * @returns {Promise<boolean>}
-   */
   async delete(id) {
     const { rowCount } = await pool.query('DELETE FROM users WHERE id = $1', [id]);
     return rowCount > 0;

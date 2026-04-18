@@ -1,6 +1,8 @@
 'use strict';
 
-require('dotenv').config();
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable must be set in production');
+}
 
 module.exports = {
   jwtSecret:        process.env.JWT_SECRET           || 'changeme-jwt-secret',
