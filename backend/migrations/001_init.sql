@@ -4,11 +4,11 @@
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id               BIGSERIAL     PRIMARY KEY,
-  name             VARCHAR(255)  NOT NULL,
+  name             VARCHAR(255),
   email            VARCHAR(255)  NOT NULL UNIQUE,
-  password_hash    TEXT          NOT NULL,
-  role             VARCHAR(50)   NOT NULL DEFAULT 'customer'
-                                 CHECK (role IN ('admin', 'staff', 'customer')),
+  username         VARCHAR(100),
+  password         VARCHAR(255)  NOT NULL,
+  role             VARCHAR(50)   NOT NULL DEFAULT 'user',
   phone            VARCHAR(50),
   active           BOOLEAN       NOT NULL DEFAULT true,
   email_verified   BOOLEAN       NOT NULL DEFAULT false,
