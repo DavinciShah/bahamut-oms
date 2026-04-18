@@ -1,13 +1,18 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { authenticateToken } = require('../middleware/auth');
-const { validateRegistration, validateLogin, handleValidationErrors } = require('../middleware/validation');
+const { authenticate } = require('../middleware/authMiddleware');
+const rateLimit = require('../middleware/rateLimitMiddleware');
 
-router.post('/register', validateRegistration, handleValidationErrors, authController.register);
-router.post('/login', validateLogin, handleValidationErrors, authController.login);
-router.post('/logout', authenticateToken, authController.logout);
-router.get('/profile', authenticateToken, authController.getProfile);
-router.post('/refresh', authController.refreshToken);
+// Stricter rate limit for auth endpoints (20 req per 15 min per IP)
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+
+router.post('/register', authLimiter, authController.register.bind(authController));
+router.post('/login', authLimiter, authController.login.bind(authController));
+router.get('/profile', authenticate, authController.getProfile.bind(authController));
+router.post('/logout', authController.logout.bind(authController));
+router.post('/refresh', authLimiter, authController.refreshToken.bind(authController));
 
 module.exports = router;

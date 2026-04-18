@@ -1,54 +1,59 @@
 const express = require('express');
-const helmet = require('helmet');
 const cors = require('cors');
+const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-
-const authRoutes = require('./routes/authRoutes');
-const usersRoutes = require('./routes/usersRoutes');
-const ordersRoutes = require('./routes/ordersRoutes');
-const productsRoutes = require('./routes/productsRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const errorHandler = require('./middleware/errorHandler');
-const logger = require('./utils/logger');
+const { Pool } = require('pg');
+require('dotenv').config();
 
 const app = express();
 
+// Middleware
 app.use(helmet());
-
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
-
-app.use(morgan('combined', {
-  stream: { write: (message) => logger.info(message.trim()) }
-}));
-
+app.use(cors());
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { success: false, message: 'Too many requests, please try again later.' }
-});
-app.use('/api/', limiter);
-
-app.get('/health', (req, res) => {
-  res.status(200).json({ success: true, data: { status: 'OK', timestamp: new Date().toISOString() } });
+// Database Connection
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/orders', ordersRoutes);
-app.use('/api/products', productsRoutes);
-app.use('/api/admin', adminRoutes);
+app.locals.db = pool;
 
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
+// Health Check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
 });
 
-app.use(errorHandler);
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/usersRoutes'));
+app.use('/api/orders', require('./routes/ordersRoutes'));
+app.use('/api/products', require('./routes/productsRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/integrations', require('./routes/integrationRoutes'));
+app.use('/api/sync', require('./routes/syncRoutes'));
+app.use('/api/accounting-reports', require('./routes/accountingReportsRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/inventory', require('./routes/inventoryRoutes'));
+app.use('/api/warehouses', require('./routes/warehouseRoutes'));
+app.use('/api/tenants', require('./routes/tenantRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/shipping', require('./routes/shippingRoutes'));
+app.use('/api/support', require('./routes/ticketRoutes'));
+app.use('/api/bi', require('./routes/biRoutes'));
+app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
+
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
 module.exports = app;

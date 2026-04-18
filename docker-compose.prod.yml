@@ -1,53 +1,72 @@
-version: '3.8'
+version: '3.9'
 
 services:
   postgres:
     image: postgres:15-alpine
     container_name: bahamut-postgres-prod
-    env_file:
-      - .env.prod
     environment:
-      POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
+    networks:
+      - bahamut-prod
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: bahamut-backend-prod
-    env_file:
-      - .env.prod
     environment:
       NODE_ENV: production
-      PORT: 5000
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: postgres
-    ports:
-      - "5000:5000"
+      DB_NAME: ${DB_NAME}
+      DB_PORT: 5432
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 5000
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+    networks:
+      - bahamut-prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: bahamut-frontend-prod
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - backend
-    restart: unless-stopped
+    restart: always
+    networks:
+      - bahamut-prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
-  postgres_data:
+  postgres_data_prod:
+
+networks:
+  bahamut-prod:
+    driver: bridge

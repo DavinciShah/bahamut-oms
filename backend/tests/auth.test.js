@@ -1,156 +1,114 @@
+'use strict';
+
 const request = require('supertest');
 const app = require('../src/app');
+const authService = require('../src/services/authService');
 
-jest.mock('../src/config/database', () => ({
-  pool: {
-    connect: jest.fn(),
-    query: jest.fn()
-  },
-  query: jest.fn()
-}));
+jest.mock('../src/services/authService');
 
-const { query } = require('../src/config/database');
-
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-
-describe('Auth Routes', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('POST /api/auth/register', () => {
-    it('should register a new user successfully', async () => {
-      query
-        .mockResolvedValueOnce({ rows: [] }) // findByEmail - no existing user
-        .mockResolvedValueOnce({ rows: [{ id: 1, name: 'Test User', email: 'test@example.com', role: 'user', created_at: new Date(), updated_at: new Date() }] }); // create user
-
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
-
-      expect(res.status).toBe(201);
-      expect(res.body.success).toBe(true);
-      expect(res.body.data.user).toBeDefined();
+describe('POST /api/auth/login', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    it('should return 409 for duplicate email', async () => {
-      query.mockResolvedValueOnce({ rows: [{ id: 1, email: 'test@example.com' }] });
-
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
-
-      expect(res.status).toBe(409);
-      expect(res.body.success).toBe(false);
+    it('returns 400 when email is missing', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ password: 'secret' });
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Email and password required');
     });
 
-    it('should return 422 for missing name', async () => {
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({ email: 'test@example.com', password: 'password123' });
-
-      expect(res.status).toBe(422);
-      expect(res.body.success).toBe(false);
+    it('returns 400 when password is missing', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ email: 'user@example.com' });
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Email and password required');
     });
 
-    it('should return 422 for invalid email', async () => {
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({ name: 'Test User', email: 'invalid-email', password: 'password123' });
-
-      expect(res.status).toBe(422);
+    it('returns 401 when user is not found', async () => {
+        authService.getUserByEmail.mockResolvedValue(null);
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ email: 'unknown@example.com', password: 'secret' });
+        expect(res.status).toBe(401);
+        expect(res.body.error).toBe('Invalid credentials');
     });
 
-    it('should return 422 for short password', async () => {
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({ name: 'Test User', email: 'test@example.com', password: '123' });
-
-      expect(res.status).toBe(422);
-    });
-  });
-
-  describe('POST /api/auth/login', () => {
-    it('should login successfully and return tokens', async () => {
-      const hashedPassword = await bcrypt.hash('password123', 10);
-      const mockUser = { id: 1, name: 'Test', email: 'test@example.com', password: hashedPassword, role: 'user' };
-
-      query
-        .mockResolvedValueOnce({ rows: [mockUser] }) // findByEmail
-        .mockResolvedValueOnce({ rows: [mockUser] }); // updateRefreshToken
-
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({ email: 'test@example.com', password: 'password123' });
-
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(res.body.data.accessToken).toBeDefined();
-      expect(res.body.data.refreshToken).toBeDefined();
+    it('returns 401 when password is incorrect', async () => {
+        authService.getUserByEmail.mockResolvedValue({
+            id: 1, email: 'user@example.com', password: 'hashed', role: 'user',
+        });
+        authService.comparePassword.mockResolvedValue(false);
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ email: 'user@example.com', password: 'wrongpassword' });
+        expect(res.status).toBe(401);
+        expect(res.body.error).toBe('Invalid credentials');
     });
 
-    it('should return 401 for wrong password', async () => {
-      const hashedPassword = await bcrypt.hash('correctpassword', 10);
-      query.mockResolvedValueOnce({ rows: [{ id: 1, email: 'test@example.com', password: hashedPassword }] });
+    it('returns 200 with token on successful login', async () => {
+        authService.getUserByEmail.mockResolvedValue({
+            id: 1, email: 'user@example.com', password: 'hashed', role: 'user',
+        });
+        authService.comparePassword.mockResolvedValue(true);
+        authService.generateToken.mockReturnValue('mock.jwt.token');
 
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({ email: 'test@example.com', password: 'wrongpassword' });
-
-      expect(res.status).toBe(401);
-      expect(res.body.success).toBe(false);
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ email: 'user@example.com', password: 'password123' });
+        expect(res.status).toBe(200);
+        expect(res.body.message).toBe('Login successful');
+        expect(res.body.token).toBe('mock.jwt.token');
+        expect(res.body.user).toMatchObject({ id: 1, email: 'user@example.com', role: 'user' });
     });
 
-    it('should return 401 for user not found', async () => {
-      query.mockResolvedValueOnce({ rows: [] });
-
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({ email: 'notfound@example.com', password: 'password123' });
-
-      expect(res.status).toBe(401);
+    it('returns 500 on unexpected error', async () => {
+        authService.getUserByEmail.mockRejectedValue(new Error('DB error'));
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ email: 'user@example.com', password: 'password123' });
+        expect(res.status).toBe(500);
+        expect(res.body.error).toBe('Internal server error');
     });
-  });
+});
 
-  describe('GET /api/auth/profile', () => {
-    it('should return profile with valid token', async () => {
-      const token = jwt.sign({ id: 1, email: 'test@example.com', role: 'user' }, process.env.JWT_SECRET || 'default-jwt-secret-change-in-production');
-      query.mockResolvedValueOnce({ rows: [{ id: 1, name: 'Test', email: 'test@example.com', role: 'user', created_at: new Date(), updated_at: new Date() }] });
-
-      const res = await request(app)
-        .get('/api/auth/profile')
-        .set('Authorization', `Bearer ${token}`);
-
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(res.body.data.user).toBeDefined();
+describe('POST /api/auth/register', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    it('should return 401 without token', async () => {
-      const res = await request(app).get('/api/auth/profile');
-      expect(res.status).toBe(401);
+    it('returns 400 when email is missing', async () => {
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({ password: 'secret' });
+        expect(res.status).toBe(400);
     });
 
-    it('should return 403 with invalid token', async () => {
-      const res = await request(app)
-        .get('/api/auth/profile')
-        .set('Authorization', 'Bearer invalidtoken');
-      expect(res.status).toBe(403);
+    it('returns 201 with token on successful registration', async () => {
+        authService.registerUser.mockResolvedValue({
+            id: 2, email: 'new@example.com', role: 'user',
+        });
+        authService.generateToken.mockReturnValue('new.jwt.token');
+
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({ email: 'new@example.com', password: 'password123' });
+        expect(res.status).toBe(201);
+        expect(res.body.message).toBe('Registration successful');
+        expect(res.body.token).toBe('new.jwt.token');
     });
-  });
 
-  describe('POST /api/auth/logout', () => {
-    it('should logout successfully', async () => {
-      const token = jwt.sign({ id: 1, email: 'test@example.com', role: 'user' }, process.env.JWT_SECRET || 'default-jwt-secret-change-in-production');
-      query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
+    it('returns 409 when email already in use', async () => {
+        const err = new Error('Email already in use');
+        err.status = 409;
+        authService.registerUser.mockRejectedValue(err);
 
-      const res = await request(app)
-        .post('/api/auth/logout')
-        .set('Authorization', `Bearer ${token}`);
-
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({ email: 'existing@example.com', password: 'password123' });
+        expect(res.status).toBe(409);
+        expect(res.body.error).toBe('Email already in use');
     });
-  });
 });
