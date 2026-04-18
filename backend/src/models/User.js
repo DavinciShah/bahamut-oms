@@ -1,54 +1,41 @@
-class User {
-  static async findAll(pool) {
-    const { rows } = await pool.query(
-      'SELECT id, name, email, role, created_at, updated_at FROM users ORDER BY created_at DESC'
-    );
-    return rows;
-  }
+'use strict';
 
-  static async findById(pool, id) {
-    const { rows } = await pool.query(
-      'SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = $1',
-      [id]
-    );
-    return rows[0] || null;
-  }
+const pool = require('../config/database');
 
-  static async findByEmail(pool, email) {
+const User = {
+  async findByEmail(email) {
     const { rows } = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT id, email, username, password, role, created_at, updated_at FROM users WHERE email = $1 LIMIT 1',
       [email]
     );
     return rows[0] || null;
-  }
+  },
 
-  static async create(pool, userData) {
-    const { name, email, password, role = 'user' } = userData;
+  async findById(id) {
     const { rows } = await pool.query(
-      `INSERT INTO users (name, email, password, role)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, name, email, role, created_at, updated_at`,
-      [name, email, password, role]
-    );
-    return rows[0];
-  }
-
-  static async update(pool, id, userData) {
-    const { name, email, role } = userData;
-    const { rows } = await pool.query(
-      `UPDATE users SET name = COALESCE($1, name), email = COALESCE($2, email),
-       role = COALESCE($3, role), updated_at = NOW()
-       WHERE id = $4
-       RETURNING id, name, email, role, created_at, updated_at`,
-      [name, email, role, id]
+      'SELECT id, email, username, role, created_at, updated_at FROM users WHERE id = $1 LIMIT 1',
+      [id]
     );
     return rows[0] || null;
-  }
+  },
 
-  static async delete(pool, id) {
-    const { rowCount } = await pool.query('DELETE FROM users WHERE id = $1', [id]);
-    return rowCount > 0;
-  }
-}
+  async create({ email, username, password, role = 'user' }) {
+    const { rows } = await pool.query(
+      `INSERT INTO users (email, username, password, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, email, username, role, created_at, updated_at`,
+      [email, username || null, password, role]
+    );
+    return rows[0];
+  },
+
+  async emailExists(email) {
+    const { rows } = await pool.query(
+      'SELECT 1 FROM users WHERE email = $1 LIMIT 1',
+      [email]
+    );
+    return rows.length > 0;
+  },
+};
 
 module.exports = User;

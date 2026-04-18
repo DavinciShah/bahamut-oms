@@ -1,10 +1,11 @@
 -- 001_init.sql
 -- Initial schema for Bahamut OMS
+-- Run with: psql $DATABASE_URL -f migrations/001_init.sql
 
 CREATE TABLE IF NOT EXISTS users (
-  id           SERIAL PRIMARY KEY,
-  name         VARCHAR(255) NOT NULL,
-  email        VARCHAR(255) NOT NULL UNIQUE,
+  id           BIGSERIAL    PRIMARY KEY,
+  email        VARCHAR(255) UNIQUE NOT NULL,
+  username     VARCHAR(100),
   password     VARCHAR(255) NOT NULL,
   role         VARCHAR(50)  NOT NULL DEFAULT 'user',
   created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -12,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS products (
-  id              SERIAL PRIMARY KEY,
+  id              BIGSERIAL      PRIMARY KEY,
   name            VARCHAR(255)   NOT NULL,
   description     TEXT,
   sku             VARCHAR(100)   NOT NULL UNIQUE,
@@ -24,8 +25,8 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-  id            SERIAL PRIMARY KEY,
-  user_id       INTEGER        REFERENCES users(id) ON DELETE SET NULL,
+  id            BIGSERIAL      PRIMARY KEY,
+  user_id       BIGINT         REFERENCES users(id) ON DELETE SET NULL,
   status        VARCHAR(50)    NOT NULL DEFAULT 'pending',
   total_amount  NUMERIC(12, 2) NOT NULL DEFAULT 0,
   notes         TEXT,
@@ -34,17 +35,17 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
-  id          SERIAL PRIMARY KEY,
-  order_id    INTEGER        NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  product_id  INTEGER        REFERENCES products(id) ON DELETE SET NULL,
+  id          BIGSERIAL      PRIMARY KEY,
+  order_id    BIGINT         NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id  BIGINT         REFERENCES products(id) ON DELETE SET NULL,
   quantity    INTEGER        NOT NULL,
   unit_price  NUMERIC(12, 2) NOT NULL,
   created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS integrations (
-  id           SERIAL PRIMARY KEY,
-  user_id      INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+  id           BIGSERIAL    PRIMARY KEY,
+  user_id      BIGINT       REFERENCES users(id) ON DELETE SET NULL,
   type         VARCHAR(100) NOT NULL,
   name         VARCHAR(255) NOT NULL,
   config       JSONB        NOT NULL DEFAULT '{}',
@@ -55,8 +56,8 @@ CREATE TABLE IF NOT EXISTS integrations (
 );
 
 CREATE TABLE IF NOT EXISTS sync_logs (
-  id              SERIAL PRIMARY KEY,
-  integration_id  INTEGER      REFERENCES integrations(id) ON DELETE SET NULL,
+  id              BIGSERIAL    PRIMARY KEY,
+  integration_id  BIGINT       REFERENCES integrations(id) ON DELETE SET NULL,
   type            VARCHAR(100) NOT NULL,
   status          VARCHAR(50)  NOT NULL DEFAULT 'pending',
   records_synced  INTEGER      NOT NULL DEFAULT 0,
