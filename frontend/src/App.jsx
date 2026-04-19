@@ -1,4 +1,18 @@
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import OrdersPage from './pages/OrdersPage';
+import CreateOrderPage from './pages/CreateOrderPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
+import InventoryPage from './pages/InventoryPage';
+import CreateProductPage from './pages/CreateProductPage';
+import UsersPage from './pages/UsersPage';
+import UserProfilePage from './pages/UserProfilePage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import NotFoundPage from './pages/NotFoundPage';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 import InventoryDashboard from './pages/InventoryDashboard';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import ReportBuilder from './pages/ReportBuilder';
@@ -16,11 +30,9 @@ function NavBar() {
     <nav style={{ background: '#1e293b', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
       <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: 20, marginRight: 16 }}>Bahamut OMS</span>
       {[
-        ['/', 'Dashboard'],
+        ['/dashboard', 'Dashboard'],
         ['/orders', 'Orders'],
-        ['/products', 'Products'],
         ['/inventory', 'Inventory'],
-        ['/warehouses', 'Warehouses'],
         ['/analytics', 'Analytics'],
         ['/reports', 'Reports'],
         ['/billing', 'Billing'],
@@ -38,43 +50,171 @@ function NavBar() {
   );
 }
 
-function Dashboard() {
-  return (
-    <div style={{ padding: 24 }}>
-      <h1>Dashboard</h1>
-      <p>Welcome to Bahamut OMS. Use the navigation to explore modules.</p>
-    </div>
-  );
-}
-
-function PlaceholderPage({ title }) {
-  return <div style={{ padding: 24 }}><h2>{title}</h2></div>;
-}
-
 export default function App() {
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: 'system-ui, sans-serif' }}>
       <NavBar />
-      <div style={{ padding: 0 }}>
+      <div>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<PlaceholderPage title="Login" />} />
-          <Route path="/register" element={<PlaceholderPage title="Register" />} />
-          <Route path="/orders" element={<PlaceholderPage title="Orders" />} />
-          <Route path="/products" element={<PlaceholderPage title="Products" />} />
-          <Route path="/inventory" element={<InventoryDashboard />} />
-          <Route path="/warehouses" element={<PlaceholderPage title="Warehouses" />} />
-          <Route path="/analytics" element={<AnalyticsDashboard />} />
-          <Route path="/reports" element={<ReportBuilder />} />
-          <Route path="/billing" element={<BillingPage />} />
-          <Route path="/shipping" element={<ShippingPage />} />
-          <Route path="/support" element={<SupportDashboard />} />
-          <Route path="/support/tickets/:id" element={<TicketDetail />} />
-          <Route path="/bi" element={<BIPortal />} />
-          <Route path="/settings/tenant" element={<TenantSettings />} />
-          <Route path="/settings/team" element={<TeamManagement />} />
-          <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/create"
+            element={
+              <ProtectedRoute>
+                <CreateOrderPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute>
+                <InventoryDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory/products"
+            element={
+              <ProtectedRoute>
+                <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory/create"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <CreateProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <ReportBuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <BillingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/shipping"
+            element={
+              <ProtectedRoute>
+                <ShippingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <ProtectedRoute>
+                <SupportDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/support/tickets/:id"
+            element={
+              <ProtectedRoute>
+                <TicketDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bi"
+            element={
+              <ProtectedRoute>
+                <BIPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/tenant"
+            element={
+              <ProtectedRoute>
+                <TenantSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/team"
+            element={
+              <ProtectedRoute>
+                <TeamManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </div>

@@ -1,9 +1,5 @@
 node_modules
 dist
-build
-.git
-.gitignore
-.env.local
-npm-debug.log
+.env
 coverage
-.DS_Store
+tests

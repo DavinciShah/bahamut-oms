@@ -1,39 +1,48 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../config/auth');
+const { JWT_SECRET } = require('../config/auth');
 
 /**
  * Middleware: verify JWT from Authorization header and attach req.user.
  */
-function authenticateJWT(req, res, next) {
+const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Authentication required' });
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Access token required' });
   }
 
-  const token = authHeader.slice(7);
   try {
-    const decoded = jwt.verify(token, jwtSecret);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = {
       id:    decoded.id    || decoded.userId || decoded.sub,
       email: decoded.email,
       role:  decoded.role,
     };
     next();
-  } catch {
-    return res.status(401).json({ error: 'Invalid or expired token' });
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ success: false, message: 'Token expired' });
+    }
+    return res.status(403).json({ success: false, message: 'Invalid token' });
   }
-}
+};
 
 /**
- * Middleware: allow only users with the 'admin' role (use after authenticateJWT).
+ * Alias for routes that use authenticateJWT naming convention.
  */
-function adminOnly(req, res, next) {
+const authenticateJWT = authenticateToken;
+
+/**
+ * Middleware: allow only users with the 'admin' role (use after authenticateToken).
+ */
+const adminOnly = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Insufficient permissions' });
   }
   next();
-}
+};
 
-module.exports = { authenticateJWT, adminOnly };
+module.exports = { authenticateToken, authenticateJWT, adminOnly };
