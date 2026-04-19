@@ -3,14 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const { Pool } = require('pg');
 require('dotenv').config();
-
-const express = require('express');
-const helmet = require('helmet');
-const cors = require('cors');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
 
 const logger = require('./config/logger');
 const errorHandler = require('./middleware/errorHandler');
@@ -73,58 +66,30 @@ const apiLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
 });
 
-// Database Connection
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-app.use('/api/', limiter);
-
-app.locals.db = pool;
-
 // Health Check (no rate limit)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 // Routes
-app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
-app.use('/api/users', apiLimiter, require('./routes/usersRoutes'));
-app.use('/api/orders', apiLimiter, require('./routes/ordersRoutes'));
-app.use('/api/products', apiLimiter, require('./routes/productsRoutes'));
-app.use('/api/admin', apiLimiter, require('./routes/adminRoutes'));
-app.use('/api/integrations', apiLimiter, require('./routes/integrationRoutes'));
-app.use('/api/sync', apiLimiter, require('./routes/syncRoutes'));
-app.use('/api/accounting-reports', apiLimiter, require('./routes/accountingReportsRoutes'));
-app.use('/api/notifications', apiLimiter, require('./routes/notificationRoutes'));
-app.use('/api/inventory', apiLimiter, require('./routes/inventoryRoutes'));
-app.use('/api/warehouses', apiLimiter, require('./routes/warehouseRoutes'));
-app.use('/api/tenants', apiLimiter, require('./routes/tenantRoutes'));
-app.use('/api/payments', apiLimiter, require('./routes/paymentRoutes'));
-app.use('/api/analytics', apiLimiter, require('./routes/analyticsRoutes'));
-app.use('/api/shipping', apiLimiter, require('./routes/shippingRoutes'));
-app.use('/api/support', apiLimiter, require('./routes/ticketRoutes'));
-app.use('/api/bi', apiLimiter, require('./routes/biRoutes'));
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/users', apiLimiter, usersRoutes);
+app.use('/api/orders', apiLimiter, ordersRoutes);
+app.use('/api/products', apiLimiter, productsRoutes);
+app.use('/api/admin', apiLimiter, adminRoutes);
+app.use('/api/integrations', apiLimiter, integrationRoutes);
+app.use('/api/sync', apiLimiter, syncRoutes);
+app.use('/api/accounting-reports', apiLimiter, accountingReportsRoutes);
+app.use('/api/notifications', apiLimiter, notificationRoutes);
+app.use('/api/inventory', apiLimiter, inventoryRoutes);
+app.use('/api/warehouses', apiLimiter, warehouseRoutes);
+app.use('/api/tenants', apiLimiter, tenantRoutes);
+app.use('/api/payments', apiLimiter, paymentRoutes);
+app.use('/api/analytics', apiLimiter, analyticsRoutes);
+app.use('/api/shipping', apiLimiter, shippingRoutes);
+app.use('/api/support', apiLimiter, ticketRoutes);
+app.use('/api/bi', apiLimiter, biRoutes);
 app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
-
-// Core OMS routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/orders', ordersRoutes);
-app.use('/api/products', productsRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/warehouses', warehouseRoutes);
-app.use('/api/tenants', tenantRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/shipping', shippingRoutes);
-app.use('/api/support', ticketRoutes);
-app.use('/api/bi', biRoutes);
 
 // 404 handler
 app.use((req, res) => {

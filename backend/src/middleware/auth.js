@@ -30,9 +30,6 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// Legacy alias
-const authenticate = authenticateJWT;
-
 /**
  * Alias for routes that use authenticateJWT naming convention.
  */
