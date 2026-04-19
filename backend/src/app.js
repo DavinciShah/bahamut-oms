@@ -51,9 +51,7 @@ app.use('/api/bi', require('./routes/biRoutes'));
 app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
 
 // Error Handler
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 module.exports = app;
