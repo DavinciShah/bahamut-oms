@@ -69,6 +69,7 @@ app.use('/api/bi', apiLimiter, require('./routes/biRoutes'));
 app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
 
 // Error Handler
-app.use(require('./middleware/errorHandler'));
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 module.exports = app;

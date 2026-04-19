@@ -1,13 +1,19 @@
+'use strict';
+
 const logger = require('../utils/logger');
 
+/**
+ * Global error-handling middleware.
+ * Must be registered AFTER all routes.
+ */
 // eslint-disable-next-line no-unused-vars
-const errorHandler = (err, req, res, next) => {
-  logger.error(`${req.method} ${req.path} - ${err.message}`, err.stack);
+function errorHandler(err, req, res, next) {
+  const status  = err.status || err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
 
-  const status = err.status || err.statusCode || 500;
-  const message = status < 500 ? err.message : 'Internal Server Error';
+  logger.error(message, { status, stack: err.stack });
 
   res.status(status).json({ error: message });
-};
+}
 
 module.exports = errorHandler;

@@ -1,37 +1,52 @@
-// Linear email validation — avoids catastrophic backtracking (ReDoS)
-const validateEmail = (email) => {
-  if (!email || typeof email !== 'string' || email.length > 254) return false;
-  const at = email.indexOf('@');
-  if (at < 1) return false;
-  const local = email.slice(0, at);
-  const domain = email.slice(at + 1);
-  if (!local || !domain) return false;
-  if (local.length > 64) return false;
-  if (!domain.includes('.')) return false;
-  // Only allow safe characters — no nested quantifiers
-  return /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(local) &&
-         /^[a-zA-Z0-9.-]+$/.test(domain);
-};
+'use strict';
 
-// At least 8 chars, one uppercase, one lowercase, one digit, one special char
-const validatePassword = (password) => {
-  if (!password || password.length < 8) return false;
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasDigit = /\d/.test(password);
-  const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
-  return hasUpper && hasLower && hasDigit && hasSpecial;
-};
+// Use a simple, ReDoS-safe email pattern: local@domain.tld
+const EMAIL_RE = /^[^@\s]{1,64}@[^@\s]{1,255}\.[a-zA-Z]{2,}$/;
 
-// Accepts E.164 format (+1234567890) or 10-15 digit strings
-const validatePhone = (phone) => {
-  const re = /^\+?[1-9]\d{9,14}$/;
-  return re.test(String(phone).replace(/[\s\-().]/g, ''));
-};
+/**
+ * Returns true when the string looks like a valid e-mail address.
+ * @param {string} email
+ * @returns {boolean}
+ */
+function validateEmail(email) {
+  return typeof email === 'string' && EMAIL_RE.test(email.trim());
+}
 
-const validateAmount = (amount) => {
-  const num = parseFloat(amount);
-  return !isNaN(num) && num > 0;
-};
+/**
+ * Returns true when the password meets minimum requirements:
+ *   - at least 8 characters
+ *   - at least one letter
+ *   - at least one digit
+ * @param {string} password
+ * @returns {boolean}
+ */
+function validatePassword(password) {
+  if (typeof password !== 'string' || password.length < 8) return false;
+  if (!/[a-zA-Z]/.test(password)) return false;
+  if (!/\d/.test(password)) return false;
+  return true;
+}
+
+/**
+ * Returns true when the string is a plausible phone number
+ * (digits, spaces, dashes, parentheses, optional leading +, 7–15 digits total).
+ * @param {string} phone
+ * @returns {boolean}
+ */
+function validatePhone(phone) {
+  if (typeof phone !== 'string') return false;
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
+}
+
+/**
+ * Returns true when the value is a finite number greater than zero.
+ * @param {*} amount
+ * @returns {boolean}
+ */
+function validateAmount(amount) {
+  const n = Number(amount);
+  return Number.isFinite(n) && n > 0;
+}
 
 module.exports = { validateEmail, validatePassword, validatePhone, validateAmount };

@@ -1,13 +1,28 @@
-const timestamp = () => new Date().toISOString();
+'use strict';
+
+const LOG_LEVEL = (process.env.LOG_LEVEL || 'info').toLowerCase();
+const LEVELS    = { error: 0, warn: 1, info: 2, debug: 3 };
+const currentLevel = LEVELS[LOG_LEVEL] ?? LEVELS.info;
+
+function format(level, message, meta) {
+  const ts  = new Date().toISOString();
+  const obj = { ts, level, message };
+  if (meta !== undefined) obj.meta = meta;
+  return JSON.stringify(obj);
+}
 
 const logger = {
-  info: (message, ...args) => console.log(`[${timestamp()}] INFO: ${message}`, ...args),
-  error: (message, ...args) => console.error(`[${timestamp()}] ERROR: ${message}`, ...args),
-  warn: (message, ...args) => console.warn(`[${timestamp()}] WARN: ${message}`, ...args),
-  debug: (message, ...args) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug(`[${timestamp()}] DEBUG: ${message}`, ...args);
-    }
+  error(message, meta) {
+    if (currentLevel >= LEVELS.error) console.error(format('error', message, meta));
+  },
+  warn(message, meta) {
+    if (currentLevel >= LEVELS.warn) console.warn(format('warn', message, meta));
+  },
+  info(message, meta) {
+    if (currentLevel >= LEVELS.info) console.info(format('info', message, meta));
+  },
+  debug(message, meta) {
+    if (currentLevel >= LEVELS.debug) console.debug(format('debug', message, meta));
   },
 };
 

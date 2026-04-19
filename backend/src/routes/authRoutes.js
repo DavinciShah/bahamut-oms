@@ -1,18 +1,20 @@
 'use strict';
 
-const express = require('express');
-const router = express.Router();
-const authController = require('../controllers/authController');
-const { authenticate } = require('../middleware/authMiddleware');
-const rateLimit = require('../middleware/rateLimitMiddleware');
+const express    = require('express');
+const router     = express.Router();
+const authCtrl   = require('../controllers/authController');
+const { authenticateJWT } = require('../middleware/auth');
+const rateLimit  = require('express-rate-limit');
 
-// Stricter rate limit for auth endpoints (20 req per 15 min per IP)
+// Strict rate limit for auth endpoints (20 requests per 15 min per IP)
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 
-router.post('/register', authLimiter, authController.register.bind(authController));
-router.post('/login', authLimiter, authController.login.bind(authController));
-router.get('/profile', authenticate, authController.getProfile.bind(authController));
-router.post('/logout', authController.logout.bind(authController));
-router.post('/refresh', authLimiter, authController.refreshToken.bind(authController));
+router.use(authLimiter);
+
+router.post('/register', authCtrl.register);
+router.post('/login',    authCtrl.login);
+router.post('/logout',   authenticateJWT, authCtrl.logout);
+router.get( '/profile',  authenticateJWT, authCtrl.profile);
+router.post('/refresh',  authenticateJWT, authCtrl.refresh);
 
 module.exports = router;
