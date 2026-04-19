@@ -1,35 +1,23 @@
 'use strict';
 
-const bcrypt  = require('bcrypt');
-const jwt     = require('jsonwebtoken');
-const User    = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt    = require('jsonwebtoken');
+const crypto = require('crypto');
+const User   = require('../models/User');
 const { jwtSecret, jwtExpiration, bcryptSaltRounds } = require('../config/auth');
 const { validateEmail, validatePassword } = require('../utils/validators');
 
-/**
- * Hash a plain-text password.
- * @param {string} password
- * @returns {Promise<string>}
- */
 async function hashPassword(password) {
   return bcrypt.hash(password, bcryptSaltRounds);
 }
 
-/**
- * Compare a plain-text password against a hash.
- * @param {string} password
- * @param {string} hash
- * @returns {Promise<boolean>}
- */
 async function comparePasswords(password, hash) {
   return bcrypt.compare(password, hash);
 }
 
-/**
- * Sign a JWT for the given user.
- * @param {{ id: number, email: string, role: string }} user
- * @returns {string}
- */
+// Legacy alias used by older code
+const comparePassword = comparePasswords;
+
 function signToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -38,12 +26,26 @@ function signToken(user) {
   );
 }
 
-/**
- * Register a new user.
- * @param {{ email: string, username: string, password: string, role?: string }} data
- * @returns {Promise<{ user: Object, token: string }>}
- */
-async function registerUser({ email, username, password, role }) {
+function verifyToken(token) {
+  return jwt.verify(token, jwtSecret);
+}
+
+function generateSecureToken(bytes = 32) {
+  return crypto.randomBytes(bytes).toString('hex');
+}
+
+// Legacy aliases
+const generateToken = signToken;
+
+async function getUserByEmail(email) {
+  return User.findByEmail(email);
+}
+
+async function getUserById(id) {
+  return User.findById(id);
+}
+
+async function registerUser({ email, username, name, password, role }) {
   if (!email || !password) {
     const err = new Error('Email and password are required');
     err.status = 400;
@@ -72,17 +74,12 @@ async function registerUser({ email, username, password, role }) {
   }
 
   const hashed = await hashPassword(password);
-  const user   = await User.create({ email, username, password: hashed, role });
+  const user   = await User.create({ email, username, name, password: hashed, role });
   const token  = signToken(user);
 
   return { user, token };
 }
 
-/**
- * Authenticate an existing user.
- * @param {{ email: string, password: string }} credentials
- * @returns {Promise<{ user: Object, token: string }>}
- */
 async function loginUser({ email, password }) {
   if (!email || !password) {
     const err = new Error('Email and password are required');
@@ -97,14 +94,15 @@ async function loginUser({ email, password }) {
     throw err;
   }
 
-  const match = await comparePasswords(password, user.password);
+  const pwField = user.password || user.password_hash;
+  const match = await comparePasswords(password, pwField);
   if (!match) {
     const err = new Error('Invalid email or password');
     err.status = 401;
     throw err;
   }
 
-  const { password: _pw, ...safeUser } = user;
+  const { password: _pw, password_hash: _ph, ...safeUser } = user;
   const token = signToken(safeUser);
 
   return { user: safeUser, token };
@@ -113,6 +111,13 @@ async function loginUser({ email, password }) {
 module.exports = {
   registerUser,
   loginUser,
+  getUserByEmail,
+  getUserById,
   hashPassword,
   comparePasswords,
+  comparePassword,
+  signToken,
+  generateToken,
+  verifyToken,
+  generateSecureToken,
 };

@@ -40,9 +40,16 @@ const authenticateJWT = authenticateToken;
  */
 const adminOnly = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Insufficient permissions' });
+    return res.status(403).json({ success: false, message: 'Insufficient permissions' });
   }
   next();
 };
 
-module.exports = { authenticateToken, authenticateJWT, adminOnly };
+module.exports = {
+  authenticateToken,
+  authenticateJWT,
+  adminOnly,
+  // Backward-compatible aliases
+  authMiddleware: authenticateJWT,
+  adminMiddleware: adminOnly,
+};
