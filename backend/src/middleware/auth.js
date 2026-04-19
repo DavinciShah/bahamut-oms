@@ -45,4 +45,11 @@ const adminOnly = (req, res, next) => {
   next();
 };
 
-module.exports = { authenticateToken, authenticateJWT, adminOnly };
+module.exports = {
+  authenticateToken,
+  authenticateJWT,
+  adminOnly,
+  // Backward-compatible aliases
+  authMiddleware: authenticateJWT,
+  adminMiddleware: adminOnly,
+};
