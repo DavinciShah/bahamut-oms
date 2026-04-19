@@ -1,3 +1,10 @@
+'use strict';
+
+/**
+ * Products endpoint tests
+ * Run with: npm test -- --testPathPattern=products
+ */
+
 const request = require('supertest');
 const app = require('../src/app');
 const jwt = require('jsonwebtoken');

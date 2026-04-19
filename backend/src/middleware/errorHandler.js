@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 
 /**
  * Global error-handling middleware.
- * Must be registered AFTER all routes.
+ * Must be registered AFTER all routes (4-arg Express signature).
  */
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
