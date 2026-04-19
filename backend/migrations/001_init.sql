@@ -41,7 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_products_active    ON products (active);
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
   id               BIGSERIAL       PRIMARY KEY,
-  order_number     VARCHAR(100)    NOT NULL UNIQUE,
+  order_number     VARCHAR(100)    UNIQUE,
   customer_id      BIGINT          NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
   total_amount     NUMERIC(12, 2)  NOT NULL DEFAULT 0,
   status           VARCHAR(50)     NOT NULL DEFAULT 'pending'

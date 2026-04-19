@@ -1,83 +1,123 @@
 'use strict';
 
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../models/User');
-const authConfig = require('../config/auth');
+const User   = require('../models/User');
+const { jwtSecret, jwtExpiration, bcryptSaltRounds } = require('../config/auth');
+const { validateEmail, validatePassword } = require('../utils/validators');
 
-const authService = {
-  async getUserByEmail(email) {
-    return User.findByEmail(email);
-  },
+async function hashPassword(password) {
+  return bcrypt.hash(password, bcryptSaltRounds);
+}
 
-  async getUserById(id) {
-    return User.findById(id);
-  },
+async function comparePasswords(password, hash) {
+  return bcrypt.compare(password, hash);
+}
 
-  async hashPassword(plaintext) {
-    return bcrypt.hash(plaintext, authConfig.BCRYPT_ROUNDS);
-  },
+// Legacy alias used by older code
+const comparePassword = comparePasswords;
 
-  async comparePassword(plaintext, hash) {
-    return bcrypt.compare(plaintext, hash);
-  },
+function signToken(user) {
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    jwtSecret,
+    { expiresIn: jwtExpiration }
+  );
+}
 
-  generateToken(payload) {
-    return jwt.sign(payload, authConfig.JWT_SECRET, { expiresIn: authConfig.JWT_EXPIRY });
-  },
+function verifyToken(token) {
+  return jwt.verify(token, jwtSecret);
+}
 
-  generateRefreshToken(payload) {
-    return jwt.sign(payload, authConfig.REFRESH_TOKEN_SECRET, { expiresIn: authConfig.REFRESH_TOKEN_EXPIRY });
-  },
+function generateSecureToken(bytes = 32) {
+  return crypto.randomBytes(bytes).toString('hex');
+}
 
-  verifyToken(token) {
-    return jwt.verify(token, authConfig.JWT_SECRET);
-  },
+// Legacy aliases
+const generateToken = signToken;
 
-  verifyRefreshToken(token) {
-    return jwt.verify(token, authConfig.REFRESH_TOKEN_SECRET);
-  },
+async function getUserByEmail(email) {
+  return User.findByEmail(email);
+}
 
-  generateSecureToken(bytes = 32) {
-    return crypto.randomBytes(bytes).toString('hex');
-  },
+async function getUserById(id) {
+  return User.findById(id);
+}
 
-  passwordResetExpiry() {
-    return new Date(Date.now() + authConfig.passwordResetExpiry);
-  },
+async function registerUser({ email, username, name, password, role }) {
+  if (!email || !password) {
+    const err = new Error('Email and password are required');
+    err.status = 400;
+    throw err;
+  }
 
-  async registerUser({ email, username, name, password, role }) {
-    const exists = await User.emailExists(email);
-    if (exists) {
-      const err = new Error('Email already in use');
-      err.status = 409;
-      throw err;
-    }
-    const hashed = await this.hashPassword(password);
-    return User.create({ email, username, name, password: hashed, role });
-  },
+  if (!validateEmail(email)) {
+    const err = new Error('Invalid email format');
+    err.status = 400;
+    throw err;
+  }
 
-  async setup2FA(userId) {
-    const otpService = require('./otpService');
-    return otpService.generateTOTPSecret(userId);
-  },
+  if (!validatePassword(password)) {
+    const err = new Error(
+      'Password must be at least 8 characters and contain at least one letter and one digit'
+    );
+    err.status = 400;
+    throw err;
+  }
 
-  async verify2FA(secret, token) {
-    const otpService = require('./otpService');
-    return otpService.verifyTOTP(secret, token);
-  },
+  const existing = await User.findByEmail(email);
+  if (existing) {
+    const err = new Error('Email already in use');
+    err.status = 409;
+    throw err;
+  }
 
-  async sendPasswordResetEmail(user, resetToken) {
-    const emailService = require('./emailService');
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3001'}/reset-password?token=${resetToken}`;
-    return emailService.sendEmail({
-      to: user.email,
-      subject: 'Reset your password',
-      text: `Click the link to reset your password: ${resetUrl}`,
-      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. The link expires in 1 hour.</p>`,
-    });
-  },
+  const hashed = await hashPassword(password);
+  const user   = await User.create({ email, username, name, password: hashed, role });
+  const token  = signToken(user);
+
+  return { user, token };
+}
+
+async function loginUser({ email, password }) {
+  if (!email || !password) {
+    const err = new Error('Email and password are required');
+    err.status = 400;
+    throw err;
+  }
+
+  const user = await User.findByEmail(email);
+  if (!user) {
+    const err = new Error('Invalid email or password');
+    err.status = 401;
+    throw err;
+  }
+
+  const pwField = user.password || user.password_hash;
+  const match = await comparePasswords(password, pwField);
+  if (!match) {
+    const err = new Error('Invalid email or password');
+    err.status = 401;
+    throw err;
+  }
+
+  const { password: _pw, password_hash: _ph, ...safeUser } = user;
+  const token = signToken(safeUser);
+
+  return { user: safeUser, token };
+}
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getUserByEmail,
+  getUserById,
+  hashPassword,
+  comparePasswords,
+  comparePassword,
+  signToken,
+  generateToken,
+  verifyToken,
+  generateSecureToken,
 };
-
-module.exports = authService;

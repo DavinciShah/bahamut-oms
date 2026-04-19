@@ -1,35 +1,72 @@
 'use strict';
 
+// ReDoS-safe email pattern: local@domain.tld
+const EMAIL_RE = /^[^@\s]{1,64}@[^@\s]{1,255}\.[a-zA-Z]{2,}$/;
+
+/**
+ * Returns true when the string looks like a valid e-mail address.
+ */
 function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
+  return typeof email === 'string' && EMAIL_RE.test(email.trim());
 }
 
-function validatePassword(password) {
-  const errors = [];
-  if (!password || typeof password !== 'string') {
-    errors.push('Password is required');
-    return { valid: false, errors };
+/**
+ * Returns true when the password meets minimum requirements:
+ *   - at least 8 characters
+ *   - at least one letter
+ *   - at least one digit
+ * Also supports returning a detailed { valid, errors } object when called with (password, { detailed: true }).
+ */
+function validatePassword(password, opts = {}) {
+  if (opts.detailed) {
+    const errors = [];
+    if (!password || typeof password !== 'string') {
+      errors.push('Password is required');
+      return { valid: false, errors };
+    }
+    if (password.length < 8)     errors.push('Password must be at least 8 characters');
+    if (!/[A-Z]/.test(password)) errors.push('Password must contain at least one uppercase letter');
+    if (!/[a-z]/.test(password)) errors.push('Password must contain at least one lowercase letter');
+    if (!/\d/.test(password))    errors.push('Password must contain at least one number');
+    return { valid: errors.length === 0, errors };
   }
-  if (password.length < 8)          errors.push('Password must be at least 8 characters');
-  if (!/[A-Z]/.test(password))      errors.push('Password must contain at least one uppercase letter');
-  if (!/[a-z]/.test(password))      errors.push('Password must contain at least one lowercase letter');
-  if (!/\d/.test(password))         errors.push('Password must contain at least one number');
-  if (!/[!@#$%^&*()_+\-=[\]{}|;:'",.<>?/\\`~]/.test(password))
-    errors.push('Password must contain at least one special character');
-  return { valid: errors.length === 0, errors };
+
+  if (typeof password !== 'string' || password.length < 8) return false;
+  if (!/[a-zA-Z]/.test(password)) return false;
+  if (!/\d/.test(password))       return false;
+  return true;
 }
 
-function validatePhone(phone) {
-  if (!phone) return { valid: true, errors: [] }; // optional field
-  const cleaned = String(phone).replace(/\s/g, '');
-  const re = /^\+?[1-9]\d{6,14}$/;
-  if (!re.test(cleaned)) {
-    return { valid: false, errors: ['Invalid phone number format'] };
+/**
+ * Returns true when the string is a plausible phone number
+ * (7–15 digits total).
+ * Also supports returning a detailed { valid, errors } object when called with (phone, { detailed: true }).
+ */
+function validatePhone(phone, opts = {}) {
+  if (opts.detailed) {
+    if (!phone) return { valid: true, errors: [] }; // optional field
+    const cleaned = String(phone).replace(/\s/g, '');
+    if (!/^\+?[1-9]\d{6,14}$/.test(cleaned)) {
+      return { valid: false, errors: ['Invalid phone number format'] };
+    }
+    return { valid: true, errors: [] };
   }
-  return { valid: true, errors: [] };
+  if (typeof phone !== 'string') return false;
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
 }
 
+/**
+ * Returns true when the value is a finite number greater than zero.
+ */
+function validateAmount(amount) {
+  const n = Number(amount);
+  return Number.isFinite(n) && n > 0;
+}
+
+/**
+ * Validate user registration/update data.
+ */
 function validateUserData(data) {
   const errors = [];
   if (!data.name || String(data.name).trim().length < 2)
@@ -37,16 +74,19 @@ function validateUserData(data) {
   if (!validateEmail(data.email))
     errors.push('Invalid email address');
   if (data.password !== undefined) {
-    const pwResult = validatePassword(data.password);
+    const pwResult = validatePassword(data.password, { detailed: true });
     errors.push(...pwResult.errors);
   }
   if (data.phone !== undefined) {
-    const phoneResult = validatePhone(data.phone);
+    const phoneResult = validatePhone(data.phone, { detailed: true });
     errors.push(...phoneResult.errors);
   }
   return { valid: errors.length === 0, errors };
 }
 
+/**
+ * Validate product data.
+ */
 function validateProductData(data) {
   const errors = [];
   if (!data.name || String(data.name).trim().length < 2)
@@ -62,9 +102,13 @@ function validateProductData(data) {
   return { valid: errors.length === 0, errors };
 }
 
+/**
+ * Validate order data.
+ */
 function validateOrderData(data) {
   const errors = [];
-  if (!data.customer_id) errors.push('customer_id is required');
+  const custId = data.customer_id || data.user_id;
+  if (!custId) errors.push('customer_id is required');
   if (!data.items || !Array.isArray(data.items) || data.items.length === 0)
     errors.push('At least one order item is required');
   else {
@@ -86,6 +130,7 @@ module.exports = {
   validateEmail,
   validatePassword,
   validatePhone,
+  validateAmount,
   validateUserData,
   validateProductData,
   validateOrderData,

@@ -1,12 +1,6 @@
 'use strict';
 
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-});
+const pool = require('../config/database');
 
 const VALID_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -23,21 +17,14 @@ const Order = {
   VALID_STATUSES,
   STATUS_TRANSITIONS,
 
-  async findById(id) {
-    const { rows } = await pool.query(
-      'SELECT * FROM orders WHERE id = $1',
-      [id]
-    );
-    return rows[0] || null;
-  },
-
-  async findAll({ customer_id, status, limit = 50, offset = 0 } = {}) {
+  async findAll({ customer_id, user_id, status, limit = 50, offset = 0 } = {}) {
     const conditions = [];
     const values = [];
     let i = 1;
 
-    if (customer_id !== undefined) { conditions.push(`customer_id = $${i++}`); values.push(customer_id); }
-    if (status !== undefined)      { conditions.push(`status = $${i++}`);      values.push(status); }
+    const custId = customer_id || user_id;
+    if (custId !== undefined) { conditions.push(`customer_id = $${i++}`); values.push(custId); }
+    if (status  !== undefined) { conditions.push(`status = $${i++}`);     values.push(status); }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
     values.push(limit, offset);
@@ -50,31 +37,48 @@ const Order = {
     return rows;
   },
 
-  async create({ order_number, customer_id, total_amount, status = 'pending', shipping_address = null, notes = null }) {
+  async findById(id) {
+    const { rows } = await pool.query(
+      'SELECT * FROM orders WHERE id = $1 LIMIT 1',
+      [id]
+    );
+    return rows[0] || null;
+  },
+
+  async findByUserId(userId) {
+    return Order.findAll({ user_id: userId });
+  },
+
+  async create({ order_number, customer_id, user_id, total_amount, total, status = 'pending', shipping_address = null, notes = null }) {
+    const custId  = customer_id || user_id;
+    const amount  = total_amount != null ? total_amount : (total != null ? total : 0);
+    const orderNo = order_number || null;
+
     const { rows } = await pool.query(
       `INSERT INTO orders (order_number, customer_id, total_amount, status, shipping_address, notes, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
        RETURNING *`,
-      [order_number, customer_id, total_amount, status,
+      [orderNo, custId, amount, status,
        shipping_address ? JSON.stringify(shipping_address) : null, notes]
     );
     return rows[0];
   },
 
   async update(id, fields) {
-    const allowed = ['total_amount', 'shipping_address', 'notes'];
+    const allowed = ['total_amount', 'total', 'status', 'shipping_address', 'notes'];
     const sets = [];
     const values = [];
     let i = 1;
 
     for (const [key, val] of Object.entries(fields)) {
       if (allowed.includes(key)) {
-        sets.push(`${key} = $${i++}`);
+        const col = key === 'total' ? 'total_amount' : key;
+        sets.push(`${col} = $${i++}`);
         values.push(key === 'shipping_address' && val ? JSON.stringify(val) : val);
       }
     }
 
-    if (!sets.length) throw new Error('No valid fields to update');
+    if (!sets.length) return Order.findById(id);
 
     sets.push(`updated_at = NOW()`);
     values.push(id);
@@ -109,12 +113,18 @@ const Order = {
     return rows[0] || null;
   },
 
-  async count({ customer_id, status } = {}) {
+  async delete(id) {
+    const { rowCount } = await pool.query('DELETE FROM orders WHERE id = $1', [id]);
+    return rowCount > 0;
+  },
+
+  async count({ customer_id, user_id, status } = {}) {
     const conditions = [];
     const values = [];
     let i = 1;
-    if (customer_id !== undefined) { conditions.push(`customer_id = $${i++}`); values.push(customer_id); }
-    if (status !== undefined)      { conditions.push(`status = $${i++}`);      values.push(status); }
+    const custId = customer_id || user_id;
+    if (custId !== undefined) { conditions.push(`customer_id = $${i++}`); values.push(custId); }
+    if (status  !== undefined) { conditions.push(`status = $${i++}`);     values.push(status); }
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
     const { rows } = await pool.query(`SELECT COUNT(*) AS count FROM orders ${where}`, values);
     return parseInt(rows[0].count, 10);
