@@ -26,7 +26,7 @@ export default function NotificationCenter({ onClose }) {
             background: n.read ? '#fff' : '#eff6ff',
             display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'
           }}>
-            <div style={{ flex: 1 }} onClick={() => !n.read && markRead(n.id)} role="button" style={{ cursor: 'pointer', flex: 1 }}>
+            <div style={{ cursor: 'pointer', flex: 1 }} onClick={() => !n.read && markRead(n.id)} role="button">
               <div style={{ fontSize: 14, fontWeight: n.read ? 400 : 600 }}>{n.title || n.message}</div>
               {n.body && <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{n.body}</div>}
               <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>
