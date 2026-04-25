@@ -63,7 +63,7 @@ export default function TenantSettings() {
       {tab === 'general' && (
         <div style={{ background: '#fff', borderRadius: 8, padding: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.08)', maxWidth: 560 }}>
           <Field label="Organization Name">
-            <input style={inputStyle} value={tenant?.name || ''} readOnly style={{ ...inputStyle, background: '#f8fafc' }} />
+            <input style={{ ...inputStyle, background: '#f8fafc' }} value={tenant?.name || ''} readOnly />
           </Field>
           <Field label="Timezone">
             <select style={inputStyle} value={settings.timezone || 'UTC'}

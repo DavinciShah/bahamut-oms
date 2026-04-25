@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -51,9 +52,12 @@ function NavBar() {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/unauthorized';
+
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: 'system-ui, sans-serif' }}>
-      <NavBar />
+      {!isAuthPage && <NavBar />}
       <div>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

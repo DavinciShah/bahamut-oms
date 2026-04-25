@@ -1,8 +1,9 @@
 FROM node:18-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
+COPY backend/package*.json ./
+RUN npm ci --omit=dev
+COPY backend/ ./
+RUN mkdir -p logs && chown node:node logs
 EXPOSE 5000
 USER node
 CMD ["node", "server.js"]

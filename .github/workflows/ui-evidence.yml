@@ -1,0 +1,73 @@
+name: UI Evidence Capture
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ui-evidence.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ui-evidence.yml'
+  workflow_dispatch:
+
+jobs:
+  ui-evidence:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Run UI evidence capture
+        shell: bash
+        env:
+          QA_BASE_URL: http://127.0.0.1:4173
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 >/tmp/vite-preview.log 2>&1 &
+          PREVIEW_PID=$!
+
+          cleanup() {
+            kill "$PREVIEW_PID" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          for i in {1..40}; do
+            if curl -fsS "$QA_BASE_URL" >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS "$QA_BASE_URL" >/dev/null
+          npm run qa:evidence
+
+      - name: Upload UI evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-evidence
+          path: docs/qa-evidence/
+          if-no-files-found: warn

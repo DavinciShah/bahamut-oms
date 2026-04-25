@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   id           BIGSERIAL    PRIMARY KEY,
   email        VARCHAR(255) UNIQUE NOT NULL,
   username     VARCHAR(100),
+  name         VARCHAR(255),
   password     VARCHAR(255) NOT NULL,
   role         VARCHAR(50)  NOT NULL DEFAULT 'user',
   created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -15,7 +16,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX IF NOT EXISTS idx_users_email   ON users (email);
 CREATE INDEX IF NOT EXISTS idx_users_role    ON users (role);
-CREATE INDEX IF NOT EXISTS idx_users_active  ON users (active);
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE INDEX IF NOT EXISTS idx_products_sku       ON products (sku);
 CREATE INDEX IF NOT EXISTS idx_products_category  ON products (category);
-CREATE INDEX IF NOT EXISTS idx_products_active    ON products (active);
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
@@ -45,10 +44,9 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at    TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_customer_id   ON orders (customer_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status        ON orders (status);
-CREATE INDEX IF NOT EXISTS idx_orders_order_number  ON orders (order_number);
-CREATE INDEX IF NOT EXISTS idx_orders_created_at    ON orders (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id     ON orders (user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status      ON orders (status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at  ON orders (created_at DESC);
 
 -- Order items table
 CREATE TABLE IF NOT EXISTS order_items (
@@ -59,6 +57,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   unit_price  NUMERIC(12, 2) NOT NULL,
   created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
 
 CREATE TABLE IF NOT EXISTS integrations (
   id           BIGSERIAL    PRIMARY KEY,
@@ -72,6 +72,8 @@ CREATE TABLE IF NOT EXISTS integrations (
   updated_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+CREATE INDEX IF NOT EXISTS idx_integrations_user ON integrations(user_id);
+
 CREATE TABLE IF NOT EXISTS sync_logs (
   id              BIGSERIAL    PRIMARY KEY,
   integration_id  BIGINT       REFERENCES integrations(id) ON DELETE SET NULL,
@@ -82,13 +84,5 @@ CREATE TABLE IF NOT EXISTS sync_logs (
   created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- Indexes
-CREATE INDEX IF NOT EXISTS idx_users_email       ON users(email);
-CREATE INDEX IF NOT EXISTS idx_orders_user_id    ON orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status     ON orders(status);
-CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
-CREATE INDEX IF NOT EXISTS idx_products_sku      ON products(sku);
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
-CREATE INDEX IF NOT EXISTS idx_integrations_user ON integrations(user_id);
 CREATE INDEX IF NOT EXISTS idx_sync_logs_integ   ON sync_logs(integration_id);
 CREATE INDEX IF NOT EXISTS idx_sync_logs_status  ON sync_logs(status);

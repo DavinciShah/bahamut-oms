@@ -68,9 +68,9 @@ export default function SubscriptionManager({ subscription, onUpdate }) {
             {plans.map(plan => (
               <div key={plan.id} style={{ background: '#fff', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.08)', border: subscription?.plan_id === plan.id ? '2px solid #3b82f6' : '1px solid #e2e8f0' }}>
                 <div style={{ fontWeight: 700, fontSize: 18 }}>{plan.name}</div>
-                <div style={{ fontSize: 24, fontWeight: 700, margin: '12px 0' }}>${plan.price}<span style={{ fontSize: 13, fontWeight: 400 }}/mo</span></div>
+                <div style={{ fontSize: 24, fontWeight: 700, margin: '12px 0' }}>${plan.price}<span style={{ fontSize: 13, fontWeight: 400 }}>/mo</span></div>
                 <ul style={{ fontSize: 13, color: '#475569', paddingLeft: 16, marginBottom: 16 }}>
-                  {(plan.features || []).map(f => <li key={f}>{f}</li>)}
+                  {(plan.features || []).map((f, i) => <li key={i}>{typeof f === 'string' ? f : f.name || JSON.stringify(f)}</li>)}
                 </ul>
                 <button onClick={() => handleUpgrade(plan.id)} disabled={loading || subscription?.plan_id === plan.id}
                   style={{ width: '100%', padding: '8px', background: subscription?.plan_id === plan.id ? '#e2e8f0' : '#3b82f6', color: subscription?.plan_id === plan.id ? '#64748b' : '#fff', border: 'none', borderRadius: 6, cursor: subscription?.plan_id === plan.id ? 'default' : 'pointer' }}>

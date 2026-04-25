@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const logger = require('./config/logger');
+const db = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
 // Accounting integration routes
@@ -35,6 +36,7 @@ const autoSyncJob = require('./jobs/autoSyncJob');
 const reconciliationJob = require('./jobs/reconciliationJob');
 
 const app = express();
+app.locals.db = db;
 
 // Security & logging middleware
 app.use(helmet());
@@ -67,6 +69,10 @@ const apiLimiter = rateLimit({
 });
 
 // Health Check (no rate limit)
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
