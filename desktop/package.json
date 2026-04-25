@@ -1,0 +1,55 @@
+{
+  "name": "bahamut-oms-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Windows desktop shell for Bahamut OMS",
+  "main": "main.js",
+  "scripts": {
+    "prepare:backend": "node scripts/prepare-backend.js",
+    "dev": "node scripts/dev.js",
+    "build:renderer": "node scripts/build-renderer.js",
+    "start": "electron .",
+    "dist:win": "node scripts/dist-win.js"
+  },
+  "devDependencies": {
+    "electron": "^31.0.2",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.bahamut.oms",
+    "productName": "Bahamut OMS",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "scripts/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend-bundle",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../frontend/dist",
+        "to": "frontend-dist",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "Bahamut-OMS-Setup-${version}.${ext}",
+      "signAndEditExecutable": false,
+      "forceCodeSigning": false
+    }
+  }
+}
