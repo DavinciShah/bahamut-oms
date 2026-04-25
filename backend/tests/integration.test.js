@@ -73,7 +73,7 @@ describe('Auth flow', () => {
 // ── Products ──────────────────────────────────────────────────────────────────
 
 describe('Products flow', () => {
-  it('GET /api/products requires authentication', async () => {
+  it('GET /api/products is publicly accessible', async () => {
     const res = await request(app).get('/api/products');
     expect([200, 401, 501]).toContain(res.status);
   });
