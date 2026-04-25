@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const authConfig = {
-  JWT_SECRET:            process.env.JWT_SECRET               || 'changeme-jwt-secret',
+  JWT_SECRET:            process.env.JWT_SECRET               || 'default-jwt-secret-change-in-production',
   JWT_EXPIRES_IN:        process.env.JWT_EXPIRES_IN
                       || process.env.JWT_EXPIRATION
                       || process.env.JWT_EXPIRY               || '1h',

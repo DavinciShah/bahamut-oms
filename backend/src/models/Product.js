@@ -28,7 +28,7 @@ class Product {
 
     return {
       products: result.rows,
-      total: parseInt(countResult.rows[0].count),
+      total: parseInt(countResult.rows[0]?.count || '0'),
       page,
       limit
     };

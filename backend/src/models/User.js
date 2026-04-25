@@ -51,7 +51,7 @@ class User {
     const countResult = await query('SELECT COUNT(*) FROM users');
     return {
       users: result.rows,
-      total: parseInt(countResult.rows[0].count),
+      total: parseInt(countResult.rows[0]?.count || '0'),
       page,
       limit
     };

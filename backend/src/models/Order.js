@@ -15,7 +15,7 @@ class Order {
     const countResult = await query('SELECT COUNT(*) FROM orders WHERE user_id = $1', [userId]);
     return {
       orders: result.rows,
-      total: parseInt(countResult.rows[0].count),
+      total: parseInt(countResult.rows[0]?.count || '0'),
       page,
       limit
     };
@@ -43,7 +43,7 @@ class Order {
 
     return {
       orders: result.rows,
-      total: parseInt(countResult.rows[0].count),
+      total: parseInt(countResult.rows[0]?.count || '0'),
       page,
       limit
     };

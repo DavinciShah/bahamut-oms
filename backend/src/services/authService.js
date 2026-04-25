@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
 const User   = require('../models/User');
-const { jwtSecret, jwtExpiration, bcryptSaltRounds } = require('../config/auth');
+const { jwtSecret, jwtExpiration, bcryptSaltRounds, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRES_IN } = require('../config/auth');
 const { validateEmail, validatePassword } = require('../utils/validators');
 
 async function hashPassword(password) {
@@ -28,6 +28,18 @@ function signToken(user) {
 
 function verifyToken(token) {
   return jwt.verify(token, jwtSecret);
+}
+
+function generateRefreshToken(user) {
+  return jwt.sign(
+    { id: user.id, email: user.email },
+    JWT_REFRESH_SECRET,
+    { expiresIn: JWT_REFRESH_EXPIRES_IN }
+  );
+}
+
+function verifyRefreshToken(token) {
+  return jwt.verify(token, JWT_REFRESH_SECRET);
 }
 
 function generateSecureToken(bytes = 32) {
@@ -58,7 +70,8 @@ async function registerUser({ email, username, name, password, role }) {
     throw err;
   }
 
-  if (!validatePassword(password)) {
+  const { valid: passwordValid } = validatePassword(password);
+  if (!passwordValid) {
     const err = new Error(
       'Password must be at least 8 characters and contain at least one letter and one digit'
     );
@@ -119,5 +132,7 @@ module.exports = {
   signToken,
   generateToken,
   verifyToken,
+  generateRefreshToken,
+  verifyRefreshToken,
   generateSecureToken,
 };
