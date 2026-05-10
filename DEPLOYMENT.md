@@ -87,6 +87,26 @@ nano backend/.env.prod
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
+## GitHub Pages + Free-tier backend (testing)
+
+GitHub free hosting can host the frontend only.
+
+- Frontend: GitHub Pages via `.github/workflows/deploy-frontend-pages.yml`
+- Backend API + Socket.IO: free tier host (Render/Railway/Fly/Cloud Run)
+- Database: free-tier managed Postgres (Neon/Supabase/Render)
+
+### Required frontend variables (GitHub Actions Variables)
+
+- `VITE_API_URL=https://<backend-domain>/api`
+- `VITE_SOCKET_URL=https://<backend-domain>`
+- `VITE_GOOGLE_CLIENT_ID=<google-client-id>`
+
+### Required backend environment values
+
+- `CORS_ORIGIN=https://davincishah.github.io` (or your custom Pages domain)
+- `FRONTEND_URL=https://davincishah.github.io/bahamut-oms/` (or your custom domain)
+- Production DB/JWT values from `.env.example`
+
 ### Environment Variables for Production
 
 | Variable | Description | Example |

@@ -1,12 +1,17 @@
 import { io } from 'socket.io-client';
 
 let socket = null;
+const API_URL = import.meta.env.VITE_API_URL || '';
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL ||
+  (API_URL ? new URL(API_URL, window.location.origin).origin : window.location.origin);
 
 const socketService = {
   connect(token) {
     if (socket?.connected) return socket;
-    socket = io('/', {
+    socket = io(SOCKET_URL, {
       auth: { token },
+      path: '/socket.io',
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,

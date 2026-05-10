@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { LOGIN_URL } from '../utils/constants';
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class ErrorBoundary extends Component {
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
               <button
-                onClick={() => { localStorage.clear(); window.location.href = '/login'; }}
+                onClick={() => { localStorage.clear(); window.location.href = LOGIN_URL; }}
                 style={{ padding: '8px 20px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 500 }}
               >
                 Logout & Reset

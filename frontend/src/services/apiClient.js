@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL, LOGIN_URL } from '../utils/constants';
 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' }
 });
@@ -19,7 +20,7 @@ apiClient.interceptors.response.use(
   error => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      window.location.href = LOGIN_URL;
     }
     return Promise.reject(error);
   }

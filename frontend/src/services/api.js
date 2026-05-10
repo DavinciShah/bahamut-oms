@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_URL } from '../utils/constants';
+import { API_URL, LOGIN_URL } from '../utils/constants';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -20,7 +20,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      window.location.href = LOGIN_URL;
     }
     return Promise.reject(error);
   }
