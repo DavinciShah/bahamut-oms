@@ -2,9 +2,19 @@ import { io } from 'socket.io-client';
 
 let socket = null;
 const API_URL = import.meta.env.VITE_API_URL || '';
-const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL ||
-  (API_URL ? new URL(API_URL, window.location.origin).origin : window.location.origin);
+
+function resolveSocketUrl() {
+  if (import.meta.env.VITE_SOCKET_URL) return import.meta.env.VITE_SOCKET_URL;
+  if (!API_URL) return window.location.origin;
+  try {
+    return new URL(API_URL, window.location.origin).origin;
+  } catch (error) {
+    console.warn('[Socket] Invalid VITE_API_URL; falling back to current origin.', error);
+    return window.location.origin;
+  }
+}
+
+const SOCKET_URL = resolveSocketUrl();
 
 const socketService = {
   connect(token) {

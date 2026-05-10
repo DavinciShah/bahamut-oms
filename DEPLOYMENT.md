@@ -100,6 +100,7 @@ GitHub free hosting can host the frontend only.
 - `VITE_API_URL=https://<backend-domain>/api`
 - `VITE_SOCKET_URL=https://<backend-domain>`
 - `VITE_GOOGLE_CLIENT_ID=<google-client-id>`
+- Optional: `VITE_BASE_PATH=/your-repo-name/` (defaults to repository path in workflow)
 
 ### Required backend environment values
 

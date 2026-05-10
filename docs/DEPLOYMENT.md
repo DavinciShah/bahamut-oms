@@ -46,8 +46,9 @@ Use this mode to test with free hosting:
 - `VITE_API_URL=https://<your-backend-domain>/api`
 - `VITE_SOCKET_URL=https://<your-backend-domain>`
 - `VITE_GOOGLE_CLIENT_ID=<your-client-id>`
+- Optional: `VITE_BASE_PATH=/your-repo-name/` (defaults to `/<repo-name>/`)
 
-The workflow uses `VITE_BASE_PATH=/bahamut-oms/` for this repository path.
+For project Pages sites, keep `VITE_BASE_PATH` as the repository path.
 
 ### 3) Configure backend environment
 
