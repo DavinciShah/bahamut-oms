@@ -61,7 +61,7 @@ jobs:
             sleep 1
           done
 
-          curl -fsS "$QA_BASE_URL" >/dev/null
+          curl -fsS "$QA_BASE_URL" >/dev/null || (cat /tmp/vite-preview.log && exit 1)
           npm run qa:evidence
 
       - name: Upload UI evidence artifact

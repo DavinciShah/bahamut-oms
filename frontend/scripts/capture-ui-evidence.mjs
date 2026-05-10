@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(scriptDir, '..', '..');
 const frontendDir = path.resolve(rootDir, 'frontend');
-const docsDir = path.resolve(rootDir, 'docs', 'qa-evidence');
+const docsDir = path.resolve(frontendDir, 'docs', 'qa-evidence');
 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 const runDir = path.join(docsDir, `windows-launch-${timestamp}`);
 const shotsDir = path.join(runDir, 'screenshots');
@@ -30,7 +30,7 @@ function sanitizeName(value) {
 }
 
 function relDocPath(absPath) {
-  return path.relative(rootDir, absPath).replace(/\\/g, '/');
+  return path.relative(frontendDir, absPath).replace(/\\/g, '/');
 }
 
 function addRecord(action, status, shotPath, note = '') {
