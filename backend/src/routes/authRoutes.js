@@ -18,3 +18,4 @@ router.get( '/profile',  authenticateJWT, authCtrl.profile);
 router.post('/refresh',  authenticateJWT, authCtrl.refresh);
 
 module.exports = router;
+
