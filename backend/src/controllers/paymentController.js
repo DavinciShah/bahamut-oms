@@ -97,11 +97,11 @@ const paymentController = {
   async getHistory(req, res) {
     try {
       const tenantId = req.tenant?.id;
-      const { limit, offset } = req.query;
-      const history = await paymentService.getHistory(tenantId, {
-        limit: limit ? parseInt(limit, 10) : 50,
-        offset: offset ? parseInt(offset, 10) : 0,
-      });
+      const rawLimit = parseInt(req.query.limit, 10);
+      const rawOffset = parseInt(req.query.offset, 10);
+      const limit = Number.isInteger(rawLimit) && rawLimit > 0 ? rawLimit : 50;
+      const offset = Number.isInteger(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
+      const history = await paymentService.getHistory(tenantId, { limit, offset });
       res.json(history);
     } catch (err) {
       console.error('[paymentController.getHistory]', err);
