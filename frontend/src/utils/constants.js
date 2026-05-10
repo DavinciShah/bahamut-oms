@@ -1,6 +1,7 @@
 export const APP_NAME = 'Bahamut OMS';
 export const API_URL = import.meta.env.VITE_API_URL || '/api';
-export const LOGIN_URL = `${import.meta.env.BASE_URL}login`;
+const normalizedBaseUrl = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+export const LOGIN_URL = `${normalizedBaseUrl}login`;
 
 export const ORDER_STATUSES = {
   PENDING: 'pending',

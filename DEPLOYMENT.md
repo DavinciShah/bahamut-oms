@@ -104,8 +104,8 @@ GitHub free hosting can host the frontend only.
 
 ### Required backend environment values
 
-- `CORS_ORIGIN=https://davincishah.github.io` (or your custom Pages domain)
-- `FRONTEND_URL=https://davincishah.github.io/bahamut-oms/` (or your custom domain)
+- `CORS_ORIGIN=https://<username>.github.io` (or your custom Pages domain)
+- `FRONTEND_URL=https://<username>.github.io/<repository-name>/` (or your custom domain)
 - Production DB/JWT values from `.env.example`
 
 ### Environment Variables for Production

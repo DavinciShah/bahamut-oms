@@ -56,8 +56,8 @@ Set at least:
 - `NODE_ENV=production`
 - `DATABASE_URL` (or DB host/user/password vars)
 - `JWT_SECRET` and `JWT_REFRESH_SECRET` (strong random values)
-- `CORS_ORIGIN=https://davincishah.github.io`
-- `FRONTEND_URL=https://davincishah.github.io/bahamut-oms/`
+- `CORS_ORIGIN=https://<username>.github.io` (or your custom Pages domain)
+- `FRONTEND_URL=https://<username>.github.io/<repository-name>/` (or your custom domain)
 
 If you attach a custom domain to Pages, update `CORS_ORIGIN` and `FRONTEND_URL` to that domain.
 
