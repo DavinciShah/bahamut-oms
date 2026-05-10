@@ -39,6 +39,10 @@ const paymentController = {
 
   async getPaymentById(req, res) {
     try {
+      const id = Number(req.params.id);
+      if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ success: false, error: 'Invalid payment id' });
+      }
       const payment = await paymentService.getPaymentById(req.params.id);
       res.json({ success: true, data: payment });
     } catch (err) {
@@ -54,6 +58,53 @@ const paymentController = {
       res.json({ success: true, data: updated });
     } catch (err) {
       console.error('[paymentController.refundPayment]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getSubscription(req, res) {
+    try {
+      const tenantId = req.tenant?.id;
+      const subscription = await paymentService.getSubscription(tenantId);
+      res.json(subscription);
+    } catch (err) {
+      console.error('[paymentController.getSubscription]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getPlans(req, res) {
+    try {
+      const plans = paymentService.getPlans();
+      res.json(plans);
+    } catch (err) {
+      console.error('[paymentController.getPlans]', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getInvoices(req, res) {
+    try {
+      const tenantId = req.tenant?.id;
+      const invoices = await paymentService.getInvoices(tenantId);
+      res.json(invoices);
+    } catch (err) {
+      console.error('[paymentController.getInvoices]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getHistory(req, res) {
+    try {
+      const tenantId = req.tenant?.id;
+      const { limit, offset } = req.query;
+      const history = await paymentService.getHistory(tenantId, {
+        limit: limit ? parseInt(limit, 10) : 50,
+        offset: offset ? parseInt(offset, 10) : 0,
+      });
+      res.json(history);
+    } catch (err) {
+      console.error('[paymentController.getHistory]', err);
       res.status(err.status || 500).json({ success: false, error: err.message });
     }
   },

@@ -16,6 +16,10 @@ router.use(limiter);
 
 router.post('/create',       paymentController.createPayment);
 router.get('/',              paymentController.getPayments);
+router.get('/subscription',  paymentController.getSubscription);
+router.get('/plans',         paymentController.getPlans);
+router.get('/invoices',      paymentController.getInvoices);
+router.get('/history',       paymentController.getHistory);
 router.get('/:id',           paymentController.getPaymentById);
 router.post('/:id/refund',   paymentController.refundPayment);
 
