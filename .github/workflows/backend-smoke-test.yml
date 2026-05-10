@@ -14,6 +14,9 @@ on:
       - '.github/workflows/backend-smoke-test.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   smoke-tests:
     runs-on: ubuntu-latest
