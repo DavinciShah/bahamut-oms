@@ -1,6 +1,8 @@
 'use strict';
 
 const Payment = require('../models/Payment');
+const Subscription = require('../models/Subscription');
+const Invoice = require('../models/Invoice');
 const stripeService = require('./stripeService');
 
 const paymentService = {
@@ -50,6 +52,38 @@ const paymentService = {
     const payment = await Payment.findById(id);
     if (!payment) throw Object.assign(new Error('Payment not found'), { status: 404 });
     return payment;
+  },
+
+  async getSubscription(tenantId) {
+    const rows = await Subscription.findByTenant(tenantId);
+    if (!rows || rows.length === 0) {
+      return { status: 'active', plan_name: 'free' };
+    }
+    const sub = rows[0];
+    return {
+      status: sub.status,
+      plan_name: sub.plan,
+      current_period_start: sub.current_period_start,
+      current_period_end: sub.current_period_end,
+    };
+  },
+
+  getPlans() {
+    return [
+      { id: 'free',       name: 'Free',       price: 0,    currency: 'usd', features: ['Up to 5 orders/month'] },
+      { id: 'starter',    name: 'Starter',    price: 29,   currency: 'usd', features: ['Up to 100 orders/month'] },
+      { id: 'growth',     name: 'Growth',     price: 99,   currency: 'usd', features: ['Unlimited orders'] },
+      { id: 'enterprise', name: 'Enterprise', price: null, currency: 'usd', features: ['Custom pricing'] },
+    ];
+  },
+
+  async getInvoices(tenantId) {
+    return Invoice.findAll({ tenantId });
+  },
+
+  async getHistory(tenantId, options = {}) {
+    const { limit = 50, offset = 0 } = options;
+    return Payment.findAll({ tenantId, limit, offset });
   },
 
   async refundPayment(paymentId, amount) {
