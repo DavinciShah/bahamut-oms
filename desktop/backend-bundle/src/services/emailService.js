@@ -1,6 +1,7 @@
 'use strict';
 
 const nodemailer = require('nodemailer');
+const sanitizeHtml = require('sanitize-html');
 
 const transporter = nodemailer.createTransport({
   host: process.env.SENDGRID_SMTP_HOST || 'smtp.sendgrid.net',
@@ -26,7 +27,7 @@ const emailService = {
       to,
       subject,
       html,
-      text: text || html.replace(/<[^>]+>/g, ''),
+      text: text || sanitizeHtml(html, { allowedTags: [], allowedAttributes: {} }),
     };
     if (attachments && attachments.length) {
       mailOptions.attachments = attachments;
