@@ -18,6 +18,9 @@
     "electron": "^39.8.5",
     "electron-builder": "^26.8.1"
   },
+  "overrides": {
+    "tar": "7.5.11"
+  },
   "build": {
     "appId": "com.bahamut.oms",
     "productName": "Bahamut OMS",
