@@ -128,12 +128,20 @@ function tallyDateToIso(tallyDate) {
   if (s.length === 8) {
     return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
   }
-  return tallyDate;
+  return null;
+}
+
+function nodeNameText(node) {
+  if (!node) return '';
+  if (node.NAME) return safeText(node.NAME);
+  if (node.$ && node.$.NAME) return safeText(node.$.NAME);
+  return '';
 }
 
 function tallyVoucherToOmsInvoice(voucher) {
   if (!voucher) return null;
-  const entries = [].concat(voucher.ALLLEDGERENTRIES || voucher['ALLLEDGERENTRIES.LIST'] || []);
+  // Tally XML may use 'ALLLEDGERENTRIES.LIST' or 'ALLLEDGERENTRIES' for the ledger entry collection
+  const entries = [].concat(voucher['ALLLEDGERENTRIES.LIST'] || voucher.ALLLEDGERENTRIES || []);
   const items = entries
     .filter(e => safeText(e.ISDEEMEDPOSITIVE) !== 'Yes')
     .map(e => ({
@@ -157,7 +165,7 @@ function tallyVoucherToOmsInvoice(voucher) {
 function tallyLedgerToOmsCustomer(ledger) {
   if (!ledger) return null;
   return {
-    name: safeText(ledger.NAME || ledger.$.NAME),
+    name: nodeNameText(ledger),
     email: safeText(ledger.EMAIL),
     phone: safeText(ledger.LEDPHONE),
     address: safeText(ledger.MAILINGNAME),
@@ -168,7 +176,7 @@ function tallyLedgerToOmsCustomer(ledger) {
 function tallyStockItemToOmsProduct(stockItem) {
   if (!stockItem) return null;
   return {
-    name: safeText(stockItem.NAME || stockItem.$.NAME),
+    name: nodeNameText(stockItem),
     unit: safeText(stockItem.BASEUNITS),
     price: parseFloat(safeText(stockItem.OPENINGRATE) || 0),
     source: 'tally'

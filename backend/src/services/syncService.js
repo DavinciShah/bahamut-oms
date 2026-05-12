@@ -225,6 +225,7 @@ async function importFromTally(integrationId, userId, options = {}) {
     await SyncLog.updateStatus(log.id, status, {
       recordsSynced: total,
       recordsFailed: data.errors.length,
+      recordsTotal: total,
       details: data.errors.length > 0 ? { errors: data.errors } : null
     });
     await Integration.updateLastSync(integrationId);
