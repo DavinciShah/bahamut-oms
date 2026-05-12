@@ -122,4 +122,4 @@ CI workflows:
    - `VITE_SOCKET_URL` (public socket URL, e.g. `https://api.example.com`)
 3. Push to `main`/`master` (or run **Deploy Frontend to GitHub Pages** manually from the Actions tab).
 4. The trial site will be published at:
-   - `https://<owner>.github.io/bahamut-oms/`
+   - `https://<owner>.github.io/<repository-name>/`
