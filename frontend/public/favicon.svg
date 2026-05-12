@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Bahamut OMS">
-  <rect width="128" height="128" rx="28" fill="#1e293b" />
-  <circle cx="64" cy="64" r="42" fill="#0f172a" />
-  <path d="M44 34h24c14 0 24 8 24 19 0 8-5 14-13 16 10 2 16 8 16 18 0 14-11 23-28 23H44V34zm22 29c8 0 12-3 12-9 0-5-4-8-11-8H58v17h8zm2 33c10 0 15-4 15-10 0-7-5-10-15-10H58v20h10z" fill="#f8fafc"/>
-</svg>
