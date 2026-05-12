@@ -1,11 +1,17 @@
 import { io } from 'socket.io-client';
 
 let socket = null;
-const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+const configuredSocketUrl = import.meta.env.VITE_SOCKET_URL;
+const socketUrl = configuredSocketUrl || window.location.origin;
+let missingSocketUrlWarningShown = false;
 
 const socketService = {
   connect(token) {
     if (socket?.connected) return socket;
+    if (!configuredSocketUrl && !missingSocketUrlWarningShown) {
+      console.warn('[Socket] VITE_SOCKET_URL is not set; using current origin fallback.');
+      missingSocketUrlWarningShown = true;
+    }
     socket = io(socketUrl, {
       auth: { token },
       transports: ['websocket', 'polling'],
