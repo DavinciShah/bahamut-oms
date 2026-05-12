@@ -121,5 +121,6 @@ CI workflows:
    - `VITE_API_URL` (public API base URL, e.g. `https://api.example.com/api`)
    - `VITE_SOCKET_URL` (public socket URL, e.g. `https://api.example.com`)
 3. Push to `main`/`master` (or run **Deploy Frontend to GitHub Pages** manually from the Actions tab).
+	- Any commit that touches `frontend/**` or this workflow file will also retrigger the Pages deploy.
 4. The trial site will be published at:
    - `https://<owner>.github.io/<repository-name>/`
