@@ -9,7 +9,10 @@
     "dev": "node scripts/dev.js",
     "build:renderer": "node scripts/build-renderer.js",
     "start": "electron .",
-    "dist:win": "node scripts/dist-win.js"
+    "dist:win": "node scripts/dist-win.js",
+    "dist:winstore": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "dist:msix": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "dist:all": "node scripts/dist-win.js && powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1"
   },
   "devDependencies": {
     "electron": "^39.8.5",
@@ -50,6 +53,16 @@
       "artifactName": "Bahamut-OMS-Setup-${version}.${ext}",
       "signAndEditExecutable": false,
       "forceCodeSigning": false
+    },
+    "appx": {
+      "applicationId": "BahamutOMS",
+      "backgroundColor": "#1e293b",
+      "displayName": "Bahamut OMS",
+      "identityName": "BahamutOMS.OMS",
+      "publisherDisplayName": "Bahamut OMS",
+      "publisher": "CN=BahamutOMS",
+      "languages": ["en-US"],
+      "artifactName": "Bahamut-OMS-${version}.${ext}"
     }
   }
 }

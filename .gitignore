@@ -28,3 +28,9 @@ coverage/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Desktop build artifacts & certificates
+desktop/dist/
+desktop/backend-bundle/
+*.pfx
+*.p12
