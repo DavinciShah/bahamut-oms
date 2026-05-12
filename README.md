@@ -112,3 +112,14 @@ CI workflows:
 - `.github/workflows/backend-smoke-test.yml` runs backend smoke tests.
 - `.github/workflows/release-readiness.yml` runs backend smoke tests and frontend build checks.
 - `.github/workflows/ui-evidence.yml` builds the frontend and captures UI evidence.
+- `.github/workflows/deploy-frontend-pages.yml` deploys the frontend to GitHub Pages for trial testing.
+
+## GitHub Pages Trial Deployment
+
+1. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. (Recommended) Add repository variables:
+   - `VITE_API_URL` (public API base URL, e.g. `https://api.example.com/api`)
+   - `VITE_SOCKET_URL` (public socket URL, e.g. `https://api.example.com`)
+3. Push to `main`/`master` (or run **Deploy Frontend to GitHub Pages** manually from the Actions tab).
+4. The trial site will be published at:
+   - `https://<owner>.github.io/<repository-name>/`
