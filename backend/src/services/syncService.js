@@ -199,6 +199,42 @@ async function createSyncLog(data) {
   return SyncLog.create(data);
 }
 
+async function importFromTally(integrationId, userId, options = {}) {
+  const { integration, instance } = await getIntegrationInstance(integrationId, userId);
+  if (integration.type !== 'tally') {
+    throw Object.assign(new Error('Integration must be of type tally'), { status: 400 });
+  }
+  if (typeof instance.fetchFromTally !== 'function') {
+    throw Object.assign(new Error('fetchFromTally not supported by this integration'), { status: 501 });
+  }
+
+  const { fromDate, toDate } = options;
+
+  const log = await SyncLog.create({
+    integrationId,
+    type: 'tally_import',
+    status: 'in_progress',
+    recordsTotal: 0
+  });
+
+  try {
+    const data = await instance.fetchFromTally({ fromDate, toDate });
+    const total = data.invoices.length + data.customers.length + data.products.length;
+    const status = data.errors.length === 0 ? 'completed' : 'partial';
+
+    await SyncLog.updateStatus(log.id, status, {
+      recordsSynced: total,
+      recordsFailed: data.errors.length,
+      details: data.errors.length > 0 ? { errors: data.errors } : null
+    });
+    await Integration.updateLastSync(integrationId);
+    return { logId: log.id, ...data, total };
+  } catch (err) {
+    await SyncLog.updateStatus(log.id, 'failed', { error: err.message });
+    throw err;
+  }
+}
+
 module.exports = {
   syncInvoices,
   syncPayments,
@@ -208,5 +244,6 @@ module.exports = {
   getSyncStatus,
   getSyncLogs,
   retrySyncById,
-  createSyncLog
+  createSyncLog,
+  importFromTally
 };

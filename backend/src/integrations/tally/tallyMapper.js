@@ -115,4 +115,71 @@ async function tallyResponseToInvoice(xmlResponse) {
   });
 }
 
-module.exports = { invoiceToTallyXml, paymentToTallyXml, tallyResponseToInvoice };
+function safeText(node) {
+  if (!node) return '';
+  if (typeof node === 'string') return node;
+  if (typeof node === 'object' && node._) return node._;
+  return String(node);
+}
+
+function tallyDateToIso(tallyDate) {
+  if (!tallyDate) return null;
+  const s = String(tallyDate).replace(/-/g, '');
+  if (s.length === 8) {
+    return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+  }
+  return tallyDate;
+}
+
+function tallyVoucherToOmsInvoice(voucher) {
+  if (!voucher) return null;
+  const entries = [].concat(voucher.ALLLEDGERENTRIES || voucher['ALLLEDGERENTRIES.LIST'] || []);
+  const items = entries
+    .filter(e => safeText(e.ISDEEMEDPOSITIVE) !== 'Yes')
+    .map(e => ({
+      name: safeText(e.LEDGERNAME),
+      amount: Math.abs(parseFloat(safeText(e.AMOUNT) || 0))
+    }));
+
+  const totalEntry = entries.find(e => safeText(e.ISDEEMEDPOSITIVE) === 'Yes');
+  const total = totalEntry ? Math.abs(parseFloat(safeText(totalEntry.AMOUNT) || 0)) : 0;
+
+  return {
+    invoiceNumber: safeText(voucher.VOUCHERNUMBER),
+    date: tallyDateToIso(safeText(voucher.DATE)),
+    customerName: safeText(voucher.PARTYLEDGERNAME),
+    total,
+    items,
+    source: 'tally'
+  };
+}
+
+function tallyLedgerToOmsCustomer(ledger) {
+  if (!ledger) return null;
+  return {
+    name: safeText(ledger.NAME || ledger.$.NAME),
+    email: safeText(ledger.EMAIL),
+    phone: safeText(ledger.LEDPHONE),
+    address: safeText(ledger.MAILINGNAME),
+    source: 'tally'
+  };
+}
+
+function tallyStockItemToOmsProduct(stockItem) {
+  if (!stockItem) return null;
+  return {
+    name: safeText(stockItem.NAME || stockItem.$.NAME),
+    unit: safeText(stockItem.BASEUNITS),
+    price: parseFloat(safeText(stockItem.OPENINGRATE) || 0),
+    source: 'tally'
+  };
+}
+
+module.exports = {
+  invoiceToTallyXml,
+  paymentToTallyXml,
+  tallyResponseToInvoice,
+  tallyVoucherToOmsInvoice,
+  tallyLedgerToOmsCustomer,
+  tallyStockItemToOmsProduct
+};

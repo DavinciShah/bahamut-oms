@@ -8,3 +8,9 @@ export const syncProducts = (data) => api.post('/api/sync/products', data);
 export const getSyncStatus = () => api.get('/api/sync/status');
 export const getSyncLogs = (params) => api.get('/api/sync/logs', { params });
 export const retrySyncById = (id) => api.post(`/api/sync/retry/${id}`);
+export const importFromTally = ({ integrationId, fromDate, toDate } = {}) =>
+  api.post('/api/sync/tally/import', {
+    integration_id: integrationId,
+    from_date: fromDate,
+    to_date: toDate
+  });
