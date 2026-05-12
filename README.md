@@ -6,9 +6,10 @@ This project is a full-stack Order Management System built with Node.js, Express
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- PostgreSQL (v12 or higher)
+- Node.js (v18 or higher recommended)
+- PostgreSQL (v15 or higher recommended)
 - npm (Node Package Manager)
+- Docker Desktop with Docker Compose v2 support (optional)
 
 ### Installation
 
@@ -22,7 +23,7 @@ This project is a full-stack Order Management System built with Node.js, Express
 	cd backend
 	npm install
 	```
-3. Set up your PostgreSQL database and update configuration values in `.env`.
+3. Create `backend/.env` from `backend/.env.example` and update configuration values.
 4. Run database migrations:
 	```bash
 	npm run migrate
@@ -66,19 +67,43 @@ This project is a full-stack Order Management System built with Node.js, Express
 Before publishing:
 
 1. Configure production environment values from `backend/.env.example` with strong secrets.
-2. Run backend migrations:
+2. Regenerate lockfiles after dependency changes:
+	```bash
+	cd backend && rm -f package-lock.json && npm install
+	cd ../desktop/backend-bundle && rm -f package-lock.json && npm install
+	```
+3. Run backend migrations:
 	```bash
 	cd backend && npm run migrate
 	```
-3. Run backend smoke tests:
+4. Run backend tests:
 	```bash
-	cd backend && npm run test:smoke
+	cd backend && npm test && npm run test:smoke
 	```
-4. Build frontend for production:
+5. Run dependency audits:
 	```bash
-	cd frontend && npm run build
+	cd backend && npm audit
+	cd ../frontend && npm audit
+	cd ../desktop && npm audit
+	cd ../desktop/backend-bundle && npm audit
 	```
-5. Verify health endpoints after deployment:
+6. Build and test the frontend for production:
+	```bash
+	cd frontend && npm run build && npm test
+	```
+7. Build desktop renderer/package checks:
+	```bash
+	cd desktop && npm install && npm run build:renderer
+	```
+8. Validate Docker deployment:
+	```bash
+	docker compose up --build
+	docker compose ps
+	docker compose logs backend
+	docker compose logs frontend
+	docker compose logs postgres
+	```
+9. Verify health endpoints after deployment:
 	- `GET /health`
 	- `GET /api/health`
 
@@ -86,3 +111,4 @@ CI workflows:
 
 - `.github/workflows/backend-smoke-test.yml` runs backend smoke tests.
 - `.github/workflows/release-readiness.yml` runs backend smoke tests and frontend build checks.
+- `.github/workflows/ui-evidence.yml` builds the frontend and captures UI evidence.
