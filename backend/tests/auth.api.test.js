@@ -16,7 +16,7 @@ jest.mock('../src/config/database', () => {
 const request = require('supertest');
 const app     = require('../src/app');
 const pool    = require('../src/config/database');
-const bcrypt  = require('bcrypt');
+const bcrypt  = require('bcryptjs');
 
 // ---------------------------------------------------------------------------
 // Helpers

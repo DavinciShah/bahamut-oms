@@ -106,7 +106,9 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Start cron jobs
-autoSyncJob.start();
-reconciliationJob.start();
+if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_JOBS !== 'true') {
+  autoSyncJob.start();
+  reconciliationJob.start();
+}
 
 module.exports = app;
