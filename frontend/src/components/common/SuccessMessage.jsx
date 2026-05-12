@@ -1,13 +1,50 @@
-import { useState, useEffect } from 'react';
-export default function SuccessMessage({ message, autoDismiss = 3000 }) {
-  const [visible, setVisible] = useState(!!message);
-  useEffect(() => {
-    if (message) { setVisible(true); if (autoDismiss) { const t = setTimeout(() => setVisible(false), autoDismiss); return () => clearTimeout(t); } }
-  }, [message, autoDismiss]);
-  if (!visible || !message) return null;
+import { useState } from 'react';
+
+function SuccessMessage({ message, onDismiss }) {
+  const [dismissed, setDismissed] = useState(false);
+
+  if (dismissed || !message) return null;
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    onDismiss?.();
+  };
+
   return (
-    <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: 6, padding: '12px 16px', color: '#16a34a', fontSize: 14, marginBottom: 16 }}>
-      {message}
+    <div
+      role="status"
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '0.75rem',
+        padding: '0.875rem 1rem',
+        backgroundColor: '#f0fdf4',
+        border: '1px solid #bbf7d0',
+        borderRadius: 'var(--border-radius-md)',
+        color: '#166534',
+        marginBottom: '1rem',
+      }}
+    >
+      <span style={{ flexShrink: 0, fontSize: '1rem' }}>✅</span>
+      <span style={{ flex: 1, fontSize: 'var(--font-size-sm)' }}>{message}</span>
+      <button
+        onClick={handleDismiss}
+        aria-label="Dismiss"
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: '#166534',
+          fontSize: '1rem',
+          lineHeight: 1,
+          padding: 0,
+          flexShrink: 0,
+        }}
+      >
+        ✕
+      </button>
     </div>
   );
 }
+
+export default SuccessMessage;

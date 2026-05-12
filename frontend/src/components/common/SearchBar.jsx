@@ -1,12 +1,38 @@
-import { useState, useEffect } from 'react';
-export default function SearchBar({ onSearch, placeholder = 'Search...' }) {
-  const [value, setValue] = useState('');
+import { useState, useEffect, useRef } from 'react';
+import { debounce } from '../../utils/helpers';
+
+function SearchBar({ onSearch, placeholder = 'Search…', initialValue = '' }) {
+  const [query, setQuery] = useState(initialValue);
+
+  const debouncedSearch = useRef(debounce((val) => onSearch(val), 350)).current;
+
   useEffect(() => {
-    const t = setTimeout(() => onSearch(value), 300);
-    return () => clearTimeout(t);
-  }, [value]);
+    debouncedSearch(query);
+  }, [query, debouncedSearch]);
+
   return (
-    <input value={value} onChange={e => setValue(e.target.value)} placeholder={placeholder}
-      style={{ padding: '8px 14px', border: '1px solid #e2e8f0', borderRadius: 6, fontSize: 14, width: 260, outline: 'none' }} />
+    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+      <span
+        style={{
+          position: 'absolute',
+          left: '0.625rem',
+          color: 'var(--gray-400)',
+          pointerEvents: 'none',
+          fontSize: '0.875rem',
+        }}
+      >
+        🔍
+      </span>
+      <input
+        type="search"
+        className="form-control"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={placeholder}
+        style={{ paddingLeft: '2rem', minWidth: '240px' }}
+      />
+    </div>
   );
 }
+
+export default SearchBar;
