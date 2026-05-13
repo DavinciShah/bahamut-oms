@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Bahamut OMS dragon logo</title>
+  <desc id="desc">Stylized crimson dragon emblem on a dark shield.</desc>
+  <defs>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <path d="M64 8 108 28v31c0 29-18 49-44 61C38 108 20 88 20 59V28L64 8Z" fill="url(#shield)" stroke="#475569" stroke-width="4"/>
+  <path d="M77 28c-8 0-16 5-21 13 5-2 10-2 14 0-12 4-22 18-22 32 0 10 6 18 16 23-5-7-5-13-2-18 3 7 9 11 18 12-5-5-7-10-7-15 0-10 8-14 15-19 8-6 12-13 11-28-2 4-5 6-8 7 0-4-6-7-14-7Z" fill="url(#flame)"/>
+  <path d="M72 34c2 6 0 11-8 15 4-8 3-13-3-17 5-1 8-1 11 2Z" fill="#fecaca" opacity="0.85"/>
+  <circle cx="76" cy="43" r="3" fill="#fff1f2"/>
+</svg>
