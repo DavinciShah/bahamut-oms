@@ -726,7 +726,7 @@ function bindEvents() {
     const order = state.orders.find((item) => item.id === button.dataset.id);
     openModal(order.id, `<div class="dual-grid"><div class="callout"><strong>${escapeHtml(order.customer)}</strong><p class="subtle">${escapeHtml(order.channel)} order routed to ${escapeHtml(order.warehouse)}.</p><div class="tiny">Created ${formatDate(order.createdAt, true)}</div></div><div class="callout"><strong>${formatCurrency(order.value)}</strong><p class="subtle">${order.items} line items · Priority ${escapeHtml(order.priority)}</p><span class="status-pill ${statusTone(order.status)}">${escapeHtml(order.status)}</span></div></div>`);
     bindEvents();
-  });
+  }));
 
   document.getElementById('orders-search')?.addEventListener('input', (event) => {
     viewState.orderSearch = event.target.value;
