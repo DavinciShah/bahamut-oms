@@ -1,3 +1,12 @@
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export default function LabelPrinter({ shipment }) {
   if (!shipment) return null;
 
@@ -5,6 +14,10 @@ export default function LabelPrinter({ shipment }) {
     if (shipment.label_url) {
       window.open(shipment.label_url, '_blank');
     } else {
+      const carrier = escapeHtml(shipment.carrier?.toUpperCase());
+      const trackingNumber = escapeHtml(shipment.tracking_number || 'N/A');
+      const toAddress = escapeHtml(JSON.stringify(shipment.to_address || {}));
+      const fromAddress = escapeHtml(JSON.stringify(shipment.from_address || {}));
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
         <html><head><title>Shipping Label</title>
@@ -15,12 +28,12 @@ export default function LabelPrinter({ shipment }) {
         </style></head>
         <body>
           <div class="label">
-            <h2>${shipment.carrier?.toUpperCase()} Shipping Label</h2>
-            <div><strong>Tracking:</strong> ${shipment.tracking_number || 'N/A'}</div>
-            <div><strong>To:</strong> ${JSON.stringify(shipment.to_address || {})}</div>
-            <div><strong>From:</strong> ${JSON.stringify(shipment.from_address || {})}</div>
+            <h2>${carrier} Shipping Label</h2>
+            <div><strong>Tracking:</strong> ${trackingNumber}</div>
+            <div><strong>To:</strong> ${toAddress}</div>
+            <div><strong>From:</strong> ${fromAddress}</div>
             <div class="barcode">|||||||||||||||</div>
-            <div>${shipment.tracking_number}</div>
+            <div>${trackingNumber}</div>
           </div>
           <script>window.print();</script>
         </body></html>
