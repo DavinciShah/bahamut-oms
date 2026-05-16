@@ -10,8 +10,14 @@ const { jwtSecret, jwtExpiration } = require('../config/auth');
  */
 async function register(req, res, next) {
   try {
-    const { email, username, password, role } = req.body;
-    const { user, token } = await authService.registerUser({ email, username, password, role });
+    const { email, username, name, password, role } = req.body;
+    const { user, token } = await authService.registerUser({
+      email,
+      username,
+      name: name || username,
+      password,
+      role
+    });
     return res.status(201).json({ user, token });
   } catch (err) {
     next(err);

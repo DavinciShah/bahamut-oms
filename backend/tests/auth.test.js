@@ -99,10 +99,17 @@ describe('POST /api/auth/register', () => {
 
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'new@example.com', password: 'Password1' });
+      .send({ name: 'New User', email: 'new@example.com', password: 'Password1' });
     expect(res.status).toBe(201);
     expect(res.body.token).toBe('new.jwt.token');
     expect(res.body.user).toMatchObject({ id: 2, email: 'new@example.com' });
+    expect(authService.registerUser).toHaveBeenCalledWith({
+      email: 'new@example.com',
+      username: undefined,
+      name: 'New User',
+      password: 'Password1',
+      role: undefined
+    });
   });
 
   it('returns 409 when email already in use', async () => {

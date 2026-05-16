@@ -51,7 +51,7 @@ describe('POST /api/auth/register', () => {
 
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'test@example.com', username: 'testuser', password: 'Password1' });
+      .send({ name: 'Test User', email: 'test@example.com', password: 'Password1' });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('token');
@@ -63,7 +63,7 @@ describe('POST /api/auth/register', () => {
 
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'test@example.com', username: 'testuser', password: 'Password1' });
+      .send({ name: 'Test User', email: 'test@example.com', password: 'Password1' });
 
     expect(res.status).toBe(409);
   });
@@ -71,7 +71,7 @@ describe('POST /api/auth/register', () => {
   it('returns 400 for invalid email', async () => {
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'not-an-email', username: 'testuser', password: 'Password1' });
+      .send({ name: 'Test User', email: 'not-an-email', password: 'Password1' });
 
     expect(res.status).toBe(400);
   });
@@ -79,7 +79,7 @@ describe('POST /api/auth/register', () => {
   it('returns 400 for weak password', async () => {
     const res = await request(app)
       .post('/api/auth/register')
-      .send({ email: 'test@example.com', username: 'testuser', password: 'short' });
+      .send({ name: 'Test User', email: 'test@example.com', password: 'short' });
 
     expect(res.status).toBe(400);
   });
