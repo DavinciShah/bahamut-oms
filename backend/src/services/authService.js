@@ -86,8 +86,9 @@ async function registerUser({ email, username, name, password, role }) {
     throw err;
   }
 
+  const displayName = name || username || email.split('@')[0];
   const hashed = await hashPassword(password);
-  const user   = await User.create({ email, username, name, password: hashed, role });
+  const user   = await User.create({ email, name: displayName, password: hashed, role });
   const token  = signToken(user);
 
   return { user, token };
