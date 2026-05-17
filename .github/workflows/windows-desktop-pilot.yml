@@ -3,6 +3,10 @@ name: Windows Desktop Pilot Build
 on:
   workflow_dispatch:
 
+env:
+  # Opt JavaScript-based actions into Node.js 24 ahead of the runner default change.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
 
