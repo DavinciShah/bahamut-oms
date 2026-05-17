@@ -2,6 +2,17 @@
 
 This runbook implements the pilot release path for both launch tracks.
 
+## Prerequisites (must pass before gates)
+
+- Node.js **20.x** and npm **9+** (CI uses Node 20).
+- PostgreSQL **15+** running and reachable for backend migration/smoke checks.
+- Android local toolchain:
+  - Android Studio (latest stable)
+  - Android SDK Platform **35**
+  - Android SDK Build-Tools **35.x**
+  - Android SDK Platform-Tools
+  - JDK **17**
+
 ## 0) Backend DB baseline (required before app sync/build)
 
 ```bash
@@ -43,6 +54,7 @@ cd /home/runner/work/bahamut-oms/bahamut-oms/android
 npm install
 npm run sync:staging
 # or npm run sync:production
+npm run doctor
 npm run open
 ```
 

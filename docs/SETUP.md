@@ -2,11 +2,12 @@
 
 ## Prerequisites
 
-- **Node.js** v18 or higher
+- **Node.js** v20.x
 - **npm** v9 or higher
 - **PostgreSQL** v15 or higher (for local dev without Docker)
 - **Docker** v24+ and **Docker Compose** v2+ (for containerised dev)
 - **Git**
+- For Android track: Android Studio, Android SDK Platform 35, Build-Tools 35.x, Platform-Tools, JDK 17
 
 ---
 
