@@ -35,6 +35,8 @@ Each profile defines:
 When you run `npm run sync` from this folder, the selected runtime config is written into the generated frontend build as `runtime-config.js` before Capacitor syncs assets into the native shell.
 
 ## Local Setup
+0. Ensure backend database is on latest migration format:
+   - `cd /home/runner/work/bahamut-oms/bahamut-oms/backend && npm ci && npm run migrate`
 1. Install Android shell dependencies:
    - `cd android && npm install`
 2. Activate staging or production profile and sync web assets:

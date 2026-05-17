@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS shipments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+  order_id BIGINT REFERENCES orders(id) ON DELETE SET NULL,
   carrier VARCHAR(50) NOT NULL,
   tracking_number VARCHAR(100),
   status VARCHAR(50) NOT NULL DEFAULT 'created',

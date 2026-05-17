@@ -2,12 +2,12 @@
 CREATE TABLE IF NOT EXISTS tickets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  customer_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  customer_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   subject VARCHAR(500) NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'open',
   priority VARCHAR(20) NOT NULL DEFAULT 'medium',
   category VARCHAR(100),
-  assigned_to UUID REFERENCES users(id) ON DELETE SET NULL,
+  assigned_to BIGINT REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   closed_at TIMESTAMPTZ
@@ -22,7 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_tickets_assigned ON tickets(assigned_to);
 CREATE TABLE IF NOT EXISTS ticket_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ticket_id UUID NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,
-  sender_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  sender_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   message TEXT NOT NULL,
   attachments JSONB DEFAULT '[]',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS knowledge_articles (
   tags JSONB DEFAULT '[]',
   views INTEGER NOT NULL DEFAULT 0,
   helpful_count INTEGER NOT NULL DEFAULT 0,
-  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_by BIGINT REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

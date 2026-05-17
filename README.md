@@ -37,6 +37,8 @@ See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
 	```bash
 	npm run migrate
 	```
+   - This now runs the unified versioned migration runner (`backend/src/migrations/run-latest.js`).
+   - It applies all `backend/migrations/<number>_*.sql` files in order and records applied versions in `schema_migrations`.
 5. Start the backend server:
 	```bash
 	npm start
@@ -92,6 +94,10 @@ Before publishing:
 3. Run backend migrations:
 	```bash
 	cd backend && npm run migrate
+	```
+   - Verify latest migration state:
+	```bash
+	cd backend && node -e "const {query,pool}=require('./src/config/database');query('select filename,applied_at from schema_migrations order by filename').then(r=>{console.table(r.rows);pool.end();}).catch(e=>{console.error(e);pool.end();process.exit(1);});"
 	```
 4. Run backend tests:
 	```bash

@@ -2,9 +2,9 @@
 CREATE TABLE IF NOT EXISTS fact_sales (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
-  product_id UUID REFERENCES products(id) ON DELETE SET NULL,
-  customer_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  order_id BIGINT REFERENCES orders(id) ON DELETE SET NULL,
+  product_id BIGINT REFERENCES products(id) ON DELETE SET NULL,
+  customer_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   date_key DATE NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 0,
   revenue NUMERIC(15, 2) NOT NULL DEFAULT 0,
@@ -22,7 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_fact_sales_customer ON fact_sales(customer_id);
 CREATE TABLE IF NOT EXISTS dim_customers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  customer_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  customer_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   customer_name VARCHAR(255),
   email VARCHAR(255),
   city VARCHAR(100),
@@ -37,7 +37,7 @@ CREATE INDEX IF NOT EXISTS idx_dim_customers_tenant ON dim_customers(tenant_id);
 CREATE TABLE IF NOT EXISTS dim_products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  product_id BIGINT REFERENCES products(id) ON DELETE CASCADE,
   product_name VARCHAR(255),
   sku VARCHAR(100),
   category VARCHAR(100),

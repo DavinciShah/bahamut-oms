@@ -1,29 +1,18 @@
 require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
 const { pool, query } = require('./config/database');
 const logger = require('./utils/logger');
-
-const runMigrations = async () => {
-  try {
-    const sqlPath = path.join(__dirname, '../migrations/init.sql');
-    const sql = fs.readFileSync(sqlPath, 'utf8');
-    await query(sql);
-    logger.info('Migrations completed successfully');
-  } catch (err) {
-    logger.error('Migration failed:', err);
-    throw err;
-  }
-};
+const { runMigrations } = require('./migrations/run-latest');
 
 if (require.main === module) {
   runMigrations()
-    .then(() => {
+    .then(async () => {
       logger.info('Database setup complete');
+      await pool.end();
       process.exit(0);
     })
-    .catch((err) => {
+    .catch(async (err) => {
       logger.error('Database setup failed:', err);
+      await pool.end();
       process.exit(1);
     });
 }

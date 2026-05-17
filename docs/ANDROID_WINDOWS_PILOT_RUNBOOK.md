@@ -2,6 +2,23 @@
 
 This runbook implements the pilot release path for both launch tracks.
 
+## 0) Backend DB baseline (required before app sync/build)
+
+```bash
+cd /home/runner/work/bahamut-oms/bahamut-oms/backend
+npm ci
+npm run migrate
+```
+
+`npm run migrate` executes the ordered, version-tracked migration runner and records applied files in `schema_migrations`.
+
+Optional validation:
+
+```bash
+cd /home/runner/work/bahamut-oms/bahamut-oms/backend
+node -e "const {query,pool}=require('./src/config/database');query('select filename,applied_at from schema_migrations order by filename').then(r=>{console.table(r.rows);pool.end();}).catch(e=>{console.error(e);pool.end();process.exit(1);});"
+```
+
 ## 1) Android pilot path
 
 ### Runtime config profiles
