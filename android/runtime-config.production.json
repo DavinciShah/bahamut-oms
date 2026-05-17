@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "https://api.bahamut-oms.space/api",
+  "socketBaseUrl": "https://api.bahamut-oms.space",
+  "authStorageKey": "bahamut_oms_auth",
+  "requestTimeoutMs": 20000
+}

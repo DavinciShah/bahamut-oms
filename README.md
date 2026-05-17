@@ -131,6 +131,7 @@ CI workflows:
 - `.github/workflows/ui-evidence.yml` builds the frontend and captures UI evidence.
 - `.github/workflows/deploy-frontend-pages.yml` deploys the frontend to GitHub Pages for trial testing.
 - `.github/workflows/windows-desktop-pilot.yml` builds Windows installer artifacts on demand for pilot distribution.
+- `docs/ANDROID_WINDOWS_PILOT_RUNBOOK.md` defines the Android/Windows pilot release path and go/no-go checks.
 
 ## GitHub Pages Trial Deployment
 

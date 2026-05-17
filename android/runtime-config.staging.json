@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "https://staging-api.bahamut-oms.space/api",
+  "socketBaseUrl": "https://staging-api.bahamut-oms.space",
+  "authStorageKey": "bahamut_oms_auth_staging",
+  "requestTimeoutMs": 20000
+}

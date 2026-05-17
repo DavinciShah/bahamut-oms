@@ -18,7 +18,15 @@ The shell is implemented with Capacitor and packages the existing `frontend/` bu
 - Support ticket visibility
 
 ## Environment Contract
-Copy `runtime-config.example.json` to `runtime-config.json` and set:
+Use tracked runtime profiles and activate one into `runtime-config.json`:
+- `runtime-config.staging.json`
+- `runtime-config.production.json`
+
+Activation commands:
+- `npm run use:config:staging`
+- `npm run use:config:production`
+
+Each profile defines:
 - `apiBaseUrl`
 - `socketBaseUrl`
 - `authStorageKey`
@@ -29,12 +37,13 @@ When you run `npm run sync` from this folder, the selected runtime config is wri
 ## Local Setup
 1. Install Android shell dependencies:
    - `cd android && npm install`
-2. Build and sync the web assets into the native project:
-   - `npm run sync`
+2. Activate staging or production profile and sync web assets:
+   - `npm run sync:staging`
+   - `npm run sync:production`
 3. Open the native Android project in Android Studio:
    - `npm run open`
 
-If `runtime-config.json` does not exist yet, the sync step falls back to `runtime-config.example.json`.
+If `runtime-config.json` does not exist, the sync step falls back to `runtime-config.example.json` (local emulator defaults).
 
 ## Milestones
 1. **MVP Alpha**: auth + dashboard + orders + inventory read paths
