@@ -54,9 +54,25 @@ When you run `npm run sync` from this folder, the selected runtime config is wri
 3. Verify local Capacitor/Android setup:
    - `npm run doctor`
 4. Open the native Android project in Android Studio:
-    - `npm run open`
+     - `npm run open`
 
 If `runtime-config.json` does not exist, the sync step falls back to `runtime-config.example.json` (local emulator defaults).
+
+## Production signing (APK/AAB)
+Release signing credentials are loaded from one of:
+- `android/native/keystore.properties` (preferred for Android Studio)
+- Environment variables: `BAHAMUT_UPLOAD_STORE_FILE`, `BAHAMUT_UPLOAD_STORE_PASSWORD`, `BAHAMUT_UPLOAD_KEY_ALIAS`, `BAHAMUT_UPLOAD_KEY_PASSWORD`
+
+Setup:
+1. Copy `android/native/keystore.properties.example` to `android/native/keystore.properties`.
+2. Fill local keystore values (file is gitignored).
+3. Open Android Studio (`npm run open`) and generate signed release artifacts:
+   - **Build > Generate Signed Bundle / APK**
+   - Build `release` AAB and APK
+4. Verify output and signature:
+   - `android/native/app/release/app-release.aab`
+   - `android/native/app/release/app-release.apk`
+   - `apksigner verify --print-certs android/native/app/release/app-release.apk`
 
 ## AdMob SDK
 - Capacitor AdMob plugin is installed: `@capacitor-community/admob`.
