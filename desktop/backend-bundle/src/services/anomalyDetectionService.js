@@ -1,5 +1,22 @@
 const { Pool } = require('pg');
 const pool = new Pool({ connectionString: process.env.DATABASE_URL || `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}` });
+const columnCache = new Map();
+
+async function hasColumn(tableName, columnName) {
+  const key = `${tableName}.${columnName}`;
+  if (columnCache.has(key)) return columnCache.get(key);
+
+  const result = await pool.query(
+    `SELECT 1
+     FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = $1 AND column_name = $2
+     LIMIT 1`,
+    [tableName, columnName]
+  );
+  const exists = result.rowCount > 0;
+  columnCache.set(key, exists);
+  return exists;
+}
 
 function mean(values) {
   return values.reduce((a, b) => a + b, 0) / (values.length || 1);
@@ -13,14 +30,18 @@ function stdDev(values) {
 
 const anomalyDetectionService = {
   async detectRevenueAnomalies(tenantId) {
+    const hasOrdersTenant = await hasColumn('orders', 'tenant_id');
+    const tenantFilter = hasOrdersTenant && tenantId ? 'WHERE tenant_id = $1 AND status = \'completed\'' : 'WHERE status = \'completed\'';
+    const params = hasOrdersTenant && tenantId ? [tenantId] : [];
+
     const result = await pool.query(
       `SELECT DATE_TRUNC('day', created_at) AS day,
               COALESCE(SUM(total_amount), 0) AS revenue
        FROM orders
-       WHERE tenant_id = $1 AND status = 'completed'
+       ${tenantFilter}
          AND created_at >= NOW() - INTERVAL '90 days'
        GROUP BY day ORDER BY day`,
-      [tenantId]
+      params
     );
 
     const rows = result.rows;
@@ -49,14 +70,18 @@ const anomalyDetectionService = {
   },
 
   async detectInventoryAnomalies(tenantId) {
+    const hasProductsTenant = await hasColumn('products', 'tenant_id');
+    const tenantFilter = hasProductsTenant && tenantId ? 'WHERE p.tenant_id = $1' : '';
+    const params = hasProductsTenant && tenantId ? [tenantId] : [];
+
     const result = await pool.query(
       `SELECT il.product_id, p.name, p.sku,
-              il.quantity, p.reorder_point,
-              il.quantity - p.reorder_point AS buffer
+              il.quantity, il.reorder_point,
+              il.quantity - il.reorder_point AS buffer
        FROM inventory_levels il
        JOIN products p ON p.id = il.product_id
-       WHERE p.tenant_id = $1`,
-      [tenantId]
+       ${tenantFilter}`,
+      params
     );
 
     return result.rows

@@ -3,10 +3,7 @@ const logger = require('../utils/logger');
 
 const pool = new Pool(
   process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        allowExitOnIdle: process.env.NODE_ENV === 'test',
-      }
+    ? { connectionString: process.env.DATABASE_URL }
     : {
         host:     process.env.DB_HOST     || 'localhost',
         port:     parseInt(process.env.DB_PORT || '5432', 10),
@@ -16,15 +13,12 @@ const pool = new Pool(
         max: 20,
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 2000,
-        allowExitOnIdle: process.env.NODE_ENV === 'test',
       }
 );
 
 pool.on('error', (err) => {
   logger.error('Unexpected error on idle client', err);
-  if (process.env.NODE_ENV !== 'test') {
-    process.exit(-1);
-  }
+  process.exit(-1);
 });
 
 const query = (text, params) => pool.query(text, params);

@@ -3,7 +3,6 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
-const syncService = require('../services/syncService');
 
 router.use(authMiddleware, adminMiddleware);
 
@@ -74,24 +73,6 @@ router.post('/retry', async (req, res, next) => {
     );
     if (!rows[0]) return res.status(404).json({ error: 'Sync log not found' });
     res.json({ message: 'Sync retry initiated', log: rows[0] });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/tally/import', async (req, res, next) => {
-  try {
-    const { integration_id, from_date, to_date } = req.body;
-    if (!integration_id) return res.status(400).json({ error: 'integration_id is required' });
-    const parsedId = parseInt(integration_id, 10);
-    if (isNaN(parsedId) || parsedId <= 0) {
-      return res.status(400).json({ error: 'integration_id must be a positive integer' });
-    }
-    const result = await syncService.importFromTally(parsedId, req.user.id, {
-      fromDate: from_date,
-      toDate: to_date
-    });
-    res.json({ success: true, data: result });
   } catch (err) {
     next(err);
   }

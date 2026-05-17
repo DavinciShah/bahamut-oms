@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
 const User   = require('../models/User');
-const { jwtSecret, jwtExpiration, bcryptSaltRounds, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRES_IN } = require('../config/auth');
+const { jwtSecret, jwtExpiration, bcryptSaltRounds } = require('../config/auth');
 const { validateEmail, validatePassword } = require('../utils/validators');
 
 async function hashPassword(password) {
@@ -18,6 +18,15 @@ async function comparePasswords(password, hash) {
 // Legacy alias used by older code
 const comparePassword = comparePasswords;
 
+function sanitizeUser(user) {
+  if (!user) {
+    return user;
+  }
+
+  const { password: _pw, password_hash: _ph, ...safeUser } = user;
+  return safeUser;
+}
+
 function signToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -28,18 +37,6 @@ function signToken(user) {
 
 function verifyToken(token) {
   return jwt.verify(token, jwtSecret);
-}
-
-function generateRefreshToken(user) {
-  return jwt.sign(
-    { id: user.id, email: user.email },
-    JWT_REFRESH_SECRET,
-    { expiresIn: JWT_REFRESH_EXPIRES_IN }
-  );
-}
-
-function verifyRefreshToken(token) {
-  return jwt.verify(token, JWT_REFRESH_SECRET);
 }
 
 function generateSecureToken(bytes = 32) {
@@ -64,14 +61,20 @@ async function registerUser({ email, username, name, password, role }) {
     throw err;
   }
 
+  const displayName = (name || username || '').trim();
+  if (!displayName) {
+    const err = new Error('Name is required');
+    err.status = 400;
+    throw err;
+  }
+
   if (!validateEmail(email)) {
     const err = new Error('Invalid email format');
     err.status = 400;
     throw err;
   }
 
-  const { valid: passwordValid } = validatePassword(password);
-  if (!passwordValid) {
+  if (!validatePassword(password)) {
     const err = new Error(
       'Password must be at least 8 characters and contain at least one letter and one digit'
     );
@@ -86,12 +89,12 @@ async function registerUser({ email, username, name, password, role }) {
     throw err;
   }
 
-  const displayName = name || username || email.split('@')[0];
   const hashed = await hashPassword(password);
   const user   = await User.create({ email, name: displayName, password: hashed, role });
-  const token  = signToken(user);
+  const safeUser = sanitizeUser(user);
+  const token  = signToken(safeUser);
 
-  return { user, token };
+  return { user: safeUser, token };
 }
 
 async function loginUser({ email, password }) {
@@ -116,7 +119,7 @@ async function loginUser({ email, password }) {
     throw err;
   }
 
-  const { password: _pw, password_hash: _ph, ...safeUser } = user;
+  const safeUser = sanitizeUser(user);
   const token = signToken(safeUser);
 
   return { user: safeUser, token };
@@ -133,7 +136,6 @@ module.exports = {
   signToken,
   generateToken,
   verifyToken,
-  generateRefreshToken,
-  verifyRefreshToken,
   generateSecureToken,
+  sanitizeUser,
 };
