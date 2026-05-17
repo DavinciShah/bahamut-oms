@@ -45,6 +45,18 @@ When you run `npm run sync` from this folder, the selected runtime config is wri
 
 If `runtime-config.json` does not exist, the sync step falls back to `runtime-config.example.json` (local emulator defaults).
 
+## AdMob SDK
+- Capacitor AdMob plugin is installed: `@capacitor-community/admob`.
+- Android app ID is configured in `android/native/app/src/main/AndroidManifest.xml` using:
+  - `ca-app-pub-3329711838881296~2281114793`
+
+### Quick validation
+1. Sync native project updates:
+   - `cd android && npm run sync:production`
+2. Open Android project:
+   - `npm run open`
+3. Build and run from Android Studio, then confirm startup is successful without AdMob manifest/app-id errors in Logcat.
+
 ## Milestones
 1. **MVP Alpha**: auth + dashboard + orders + inventory read paths
 2. **Internal Pilot**: billing + BI + support visibility, error/offline baseline
