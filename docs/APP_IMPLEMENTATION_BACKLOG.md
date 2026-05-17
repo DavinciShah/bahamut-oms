@@ -12,7 +12,7 @@
 
 ## Milestone B — Android MVP Alpha
 - [x] Initialize Android track folder and runtime config contract.
-- [ ] Create Android shell app project and wire runtime-config values.
+- [x] Create Android shell app project and wire runtime-config values.
 - [ ] Implement auth/session flow and secure token storage.
 - [ ] Implement core read workflows (dashboard, orders, inventory, products).
 - [ ] Add baseline offline/error handling for network failures.

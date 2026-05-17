@@ -8,6 +8,8 @@ The website remains maintenance-only while Android and Windows app delivery are 
 ## Direction
 Current Android direction is a WebView-based app shell with native packaging and release controls.
 
+The shell is implemented with Capacitor and packages the existing `frontend/` build into a native Android project under `android/native/`.
+
 ## MVP Feature Parity Targets
 - Authentication (login/register/profile)
 - Orders list and order detail
@@ -21,6 +23,18 @@ Copy `runtime-config.example.json` to `runtime-config.json` and set:
 - `socketBaseUrl`
 - `authStorageKey`
 - `requestTimeoutMs`
+
+When you run `npm run sync` from this folder, the selected runtime config is written into the generated frontend build as `runtime-config.js` before Capacitor syncs assets into the native shell.
+
+## Local Setup
+1. Install Android shell dependencies:
+   - `cd android && npm install`
+2. Build and sync the web assets into the native project:
+   - `npm run sync`
+3. Open the native Android project in Android Studio:
+   - `npm run open`
+
+If `runtime-config.json` does not exist yet, the sync step falls back to `runtime-config.example.json`.
 
 ## Milestones
 1. **MVP Alpha**: auth + dashboard + orders + inventory read paths

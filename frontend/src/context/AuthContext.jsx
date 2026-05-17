@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import { USER_ROLES } from '../utils/constants';
+import { clearAuthSession, getAuthToken, getStoredUser, setAuthSession } from '../utils/authStorage';
 
 export const AuthContext = createContext(null);
 
@@ -9,15 +10,14 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = getAuthToken();
+    const storedUser = getStoredUser();
     if (storedToken && storedUser) {
       try {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        clearAuthSession();
       }
     }
     setLoading(false);
@@ -27,15 +27,13 @@ export function AuthProvider({ children }) {
     const tokenValue = tokens?.access_token || tokens?.token || tokens;
     setUser(userData);
     setToken(tokenValue);
-    localStorage.setItem('token', tokenValue);
-    localStorage.setItem('user', JSON.stringify(userData));
+    setAuthSession(tokenValue, userData);
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    clearAuthSession();
   }, []);
 
   const isAuthenticated = Boolean(token && user);

@@ -1,0 +1,9 @@
+{
+  "appId": "com.bahamut.oms.android",
+  "appName": "Bahamut OMS",
+  "webDir": "../frontend/dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "path": "native"
+  }
+}
