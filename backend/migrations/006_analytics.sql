@@ -1,12 +1,17 @@
 -- Analytics Events
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE IF NOT EXISTS analytics_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   event_type VARCHAR(100) NOT NULL,
   data JSONB DEFAULT '{}',
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS tenant_id BIGINT;
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS data JSONB DEFAULT '{}';
 
 CREATE INDEX IF NOT EXISTS idx_analytics_events_tenant ON analytics_events(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_events_type ON analytics_events(event_type);
@@ -20,7 +25,7 @@ CREATE TABLE IF NOT EXISTS reports (
   name VARCHAR(255) NOT NULL,
   type VARCHAR(100) NOT NULL,
   config JSONB DEFAULT '{}',
-  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_by BIGINT REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

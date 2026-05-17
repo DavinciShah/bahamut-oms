@@ -18,19 +18,8 @@ CREATE INDEX IF NOT EXISTS idx_payments_tenant_id           ON payments (tenant_
 CREATE INDEX IF NOT EXISTS idx_payments_order_id            ON payments (order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_provider_payment_id ON payments (provider_payment_id);
 
-CREATE TABLE IF NOT EXISTS invoices (
-  id           BIGSERIAL       PRIMARY KEY,
-  tenant_id    BIGINT,
-  customer_id  BIGINT,
-  items        JSONB           NOT NULL DEFAULT '[]',
-  subtotal     NUMERIC(12, 2)  NOT NULL DEFAULT 0,
-  tax          NUMERIC(12, 2)  NOT NULL DEFAULT 0,
-  total        NUMERIC(12, 2)  NOT NULL DEFAULT 0,
-  status       VARCHAR(50)     NOT NULL DEFAULT 'draft',
-  due_date     DATE,
-  paid_at      TIMESTAMPTZ,
-  created_at   TIMESTAMPTZ     NOT NULL DEFAULT NOW()
-);
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tenant_id BIGINT;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS items JSONB NOT NULL DEFAULT '[]';
 
 CREATE INDEX IF NOT EXISTS idx_invoices_tenant_id   ON invoices (tenant_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_customer_id ON invoices (customer_id);
