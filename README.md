@@ -15,7 +15,7 @@ See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher recommended)
+- Node.js (v20.x recommended)
 - PostgreSQL (v15 or higher recommended)
 - npm (Node Package Manager)
 - Docker Desktop with Docker Compose v2 support (optional)

@@ -10,6 +10,15 @@ Current Android direction is a WebView-based app shell with native packaging and
 
 The shell is implemented with Capacitor and packages the existing `frontend/` build into a native Android project under `android/native/`.
 
+## Required Android Toolchain
+- Node.js **20.x**
+- npm **9+**
+- Android Studio (latest stable)
+- Android SDK Platform **35**
+- Android SDK Build-Tools **35.x**
+- Android SDK Platform-Tools
+- JDK **17**
+
 ## MVP Feature Parity Targets
 - Authentication (login/register/profile)
 - Orders list and order detail
@@ -40,10 +49,12 @@ When you run `npm run sync` from this folder, the selected runtime config is wri
 1. Install Android shell dependencies:
    - `cd android && npm install`
 2. Activate staging or production profile and sync web assets:
-   - `npm run sync:staging`
-   - `npm run sync:production`
-3. Open the native Android project in Android Studio:
-   - `npm run open`
+    - `npm run sync:staging`
+    - `npm run sync:production`
+3. Verify local Capacitor/Android setup:
+   - `npm run doctor`
+4. Open the native Android project in Android Studio:
+    - `npm run open`
 
 If `runtime-config.json` does not exist, the sync step falls back to `runtime-config.example.json` (local emulator defaults).
 
