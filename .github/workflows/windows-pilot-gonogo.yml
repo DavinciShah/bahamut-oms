@@ -1,0 +1,204 @@
+name: Windows Pilot Go/No-Go Gate
+
+env:
+  # Opt JavaScript-based actions into Node.js 24 ahead of the runner default change.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      installer_run_id:
+        description: 'Windows Desktop Pilot Build run ID (artifact source)'
+        required: true
+        default: '25987376181'
+      vm_environment:
+        description: 'VM environment used (e.g. Windows 11 22H2 — VirtualBox)'
+        required: true
+        default: 'Windows 11'
+      tester:
+        description: 'Tester GitHub handle or name'
+        required: true
+      flow_login_register:
+        description: 'Flow 1 PASS — Login / Register / Profile'
+        type: boolean
+        required: true
+        default: false
+      flow_orders:
+        description: 'Flow 2 PASS — Orders list + order detail'
+        type: boolean
+        required: true
+        default: false
+      flow_inventory:
+        description: 'Flow 3 PASS — Products / Inventory'
+        type: boolean
+        required: true
+        default: false
+      flow_billing_bi:
+        description: 'Flow 4 PASS — Billing overview + BI dashboard'
+        type: boolean
+        required: true
+        default: false
+      flow_support:
+        description: 'Flow 5 PASS — Support tickets'
+        type: boolean
+        required: true
+        default: false
+      session_persistence:
+        description: 'Auth/session persists after app restart and VM reboot'
+        type: boolean
+        required: true
+        default: false
+      api_stability:
+        description: 'API connectivity stable — no persistent 5xx / auth loops'
+        type: boolean
+        required: true
+        default: false
+      no_p0_p1_blockers:
+        description: 'No P0/P1 blocker defects found'
+        type: boolean
+        required: true
+        default: false
+      install_ok:
+        description: 'Installer installed and launched cleanly on the VM'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  automated-checks:
+    name: Automated Smoke + Build Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run backend smoke tests
+        working-directory: backend
+        run: npm run test:smoke
+
+      - name: Install frontend dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend build check
+        working-directory: frontend
+        run: npm run build
+
+  gate-decision:
+    name: Go/No-Go Gate Decision
+    runs-on: ubuntu-latest
+    needs: automated-checks
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Evaluate gate and generate sign-off report
+        shell: bash
+        env:
+          INSTALLER_RUN_ID: ${{ inputs.installer_run_id }}
+          VM_ENVIRONMENT: ${{ inputs.vm_environment }}
+          TESTER: ${{ inputs.tester }}
+          FLOW_LOGIN: ${{ inputs.flow_login_register }}
+          FLOW_ORDERS: ${{ inputs.flow_orders }}
+          FLOW_INVENTORY: ${{ inputs.flow_inventory }}
+          FLOW_BILLING: ${{ inputs.flow_billing_bi }}
+          FLOW_SUPPORT: ${{ inputs.flow_support }}
+          SESSION_PERSISTENCE: ${{ inputs.session_persistence }}
+          API_STABILITY: ${{ inputs.api_stability }}
+          NO_P0_P1: ${{ inputs.no_p0_p1_blockers }}
+          INSTALL_OK: ${{ inputs.install_ok }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TIMESTAMP: ${{ github.event.repository.updated_at }}
+        run: |
+          TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          pass() { [ "$1" = "true" ] && echo "✅ PASS" || echo "❌ FAIL"; }
+          all_pass=true
+
+          for v in "$FLOW_LOGIN" "$FLOW_ORDERS" "$FLOW_INVENTORY" "$FLOW_BILLING" \
+                    "$FLOW_SUPPORT" "$SESSION_PERSISTENCE" "$API_STABILITY" \
+                    "$NO_P0_P1" "$INSTALL_OK"; do
+            [ "$v" = "true" ] || all_pass=false
+          done
+
+          if [ "$all_pass" = "true" ]; then
+            VERDICT="## ✅ GO — Approved for broader distribution"
+          else
+            VERDICT="## ❌ NO-GO — One or more gates failed. Do not distribute."
+          fi
+
+          mkdir -p signoff
+          cat > signoff/windows-pilot-signoff.md <<EOF
+          # Windows Pilot Go/No-Go Sign-Off
+
+          - **Timestamp:** $TIMESTAMP
+          - **Tester:** $TESTER
+          - **VM environment:** $VM_ENVIRONMENT
+          - **Installer artifact run:** $INSTALLER_RUN_ID (Bahamut-OMS-Setup-1.0.0.exe)
+          - **Gate workflow run:** $RUN_URL
+
+          ## Manual VM Gate Results
+
+          | Gate | Result |
+          |---|---|
+          | Installer installs and launches cleanly | $(pass "$INSTALL_OK") |
+          | Flow 1 — Login / Register / Profile | $(pass "$FLOW_LOGIN") |
+          | Flow 2 — Orders list + order detail | $(pass "$FLOW_ORDERS") |
+          | Flow 3 — Products / Inventory | $(pass "$FLOW_INVENTORY") |
+          | Flow 4 — Billing / BI dashboard | $(pass "$FLOW_BILLING") |
+          | Flow 5 — Support tickets | $(pass "$FLOW_SUPPORT") |
+          | Auth/session persistence (restart + reboot) | $(pass "$SESSION_PERSISTENCE") |
+          | API stability — no persistent errors | $(pass "$API_STABILITY") |
+          | No P0/P1 blocker defects | $(pass "$NO_P0_P1") |
+
+          ## Automated Check Results
+
+          | Check | Result |
+          |---|---|
+          | Backend smoke tests | ✅ PASS (see workflow logs) |
+          | Frontend build check | ✅ PASS (see workflow logs) |
+
+          $VERDICT
+          EOF
+
+          echo "---"
+          cat signoff/windows-pilot-signoff.md
+          echo "---"
+
+          if [ "$all_pass" = "false" ]; then
+            echo ""
+            echo "One or more manual gates were not confirmed. Marking workflow as failed."
+            exit 1
+          fi
+
+      - name: Upload sign-off report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-pilot-signoff-${{ github.run_id }}
+          path: signoff/windows-pilot-signoff.md
+          if-no-files-found: error

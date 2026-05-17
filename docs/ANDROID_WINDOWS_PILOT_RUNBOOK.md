@@ -124,3 +124,15 @@ Go only when:
 Then proceed:
 - Android: Play Internal Testing track
 - Windows: broader installer distribution
+
+### Windows VM QA process
+
+1. Follow `docs/WINDOWS_PILOT_VM_CHECKLIST.md` to execute all manual tests in a clean
+   Windows VM and record pass/fail results for each gate.
+2. When VM testing is complete, trigger the automated gate workflow:
+   - Go to **Actions → Windows Pilot Go/No-Go Gate**
+   - Click **Run workflow**
+   - Enter your VM test results in each input field
+   - The workflow runs backend smoke tests + frontend build, then generates and uploads
+     a `windows-pilot-signoff-{run_id}` artifact as the official launch decision record
+3. Download the sign-off artifact and attach it to the pilot release issue.
