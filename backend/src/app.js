@@ -38,10 +38,43 @@ const reconciliationJob = require('./jobs/reconciliationJob');
 const app = express();
 app.locals.db = db;
 
+const defaultCorsOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'app://local',
+  'capacitor://localhost',
+];
+
+function getAllowedCorsOrigins() {
+  const raw = process.env.CORS_ORIGIN;
+  if (!raw || !raw.trim()) {
+    return defaultCorsOrigins;
+  }
+
+  return raw
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+const allowedCorsOrigins = getAllowedCorsOrigins();
+
 // Security & logging middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (allowedCorsOrigins.includes('*') || allowedCorsOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

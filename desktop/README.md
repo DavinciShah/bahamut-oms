@@ -23,6 +23,7 @@ Default runtime config values:
 - DB name: `bahamut_oms`
 - DB user: `postgres`
 - DB password: `password`
+- CORS origins: `http://localhost:3000,http://127.0.0.1:3000,app://local,capacitor://localhost`
 
 ## Windows Build
 1. Build the renderer for desktop API endpoints:
@@ -33,6 +34,12 @@ Default runtime config values:
    - `npm run dist:win`
 
 `npm run dist:win` already executes both preparation steps automatically.
+
+## Pilot Distribution
+
+- Manual CI packaging is available via **Windows Desktop Pilot Build** workflow:
+  - `.github/workflows/windows-desktop-pilot.yml`
+- Run it from the GitHub Actions tab and download the `windows-desktop-installer` artifact for pilot users.
 
 ## Required Environment
 Most runtime values are read from `%APPDATA%/Bahamut OMS/runtime-config.json`.

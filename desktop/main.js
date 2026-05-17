@@ -60,7 +60,7 @@ function ensureRuntimeConfig() {
       user: existing.db?.user || 'postgres',
       password: existing.db?.password || 'password',
     },
-    corsOrigin: existing.corsOrigin || 'http://localhost:3000,null',
+    corsOrigin: existing.corsOrigin || 'http://localhost:3000,http://127.0.0.1:3000,app://local,capacitor://localhost',
     frontendUrl: existing.frontendUrl || 'app://local',
     apiUrl: existing.apiUrl || 'http://127.0.0.1:5000',
     jwtSecret: existing.jwtSecret || crypto.randomBytes(48).toString('hex'),
