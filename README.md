@@ -129,7 +129,7 @@ CI workflows:
 
 Current configured custom domain in this repo:
 
-- `bahamut-oms.spaces` (from `frontend/public/CNAME`)
+- `bahamut-oms.space` (from `frontend/public/CNAME`)
 
 To point the custom domain to GitHub Pages:
 
@@ -140,7 +140,7 @@ To point the custom domain to GitHub Pages:
    - `185.199.111.153`
 2. Create `www` `CNAME` record pointing to:
    - `davincishah.github.io`
-3. In **GitHub → Settings → Pages**, set **Custom domain** to `bahamut-oms.spaces`.
+3. In **GitHub → Settings → Pages**, set **Custom domain** to `bahamut-oms.space`.
 4. Enable **Enforce HTTPS** after DNS propagation completes.
 
 Notes:
