@@ -124,3 +124,26 @@ CI workflows:
 	- Any commit that touches `frontend/**` or this workflow file will also retrigger the Pages deploy.
 4. The trial site will be published at:
    - `https://<owner>.github.io/<repository-name>/`
+
+### Custom Domain DNS Setup (GitHub Pages)
+
+Current configured custom domain in this repo:
+
+- `bahamut-oms.spaces` (from `frontend/public/CNAME`)
+
+To point the custom domain to GitHub Pages:
+
+1. In your DNS provider, create apex (`@`) `A` records:
+   - `185.199.108.153`
+   - `185.199.109.153`
+   - `185.199.110.153`
+   - `185.199.111.153`
+2. Create `www` `CNAME` record pointing to:
+   - `davincishah.github.io`
+3. In **GitHub → Settings → Pages**, set **Custom domain** to `bahamut-oms.spaces`.
+4. Enable **Enforce HTTPS** after DNS propagation completes.
+
+Notes:
+
+- The deployed Pages artifact is built from `frontend/dist`, and `frontend/public/CNAME` is included automatically.
+- Keep `frontend/public/CNAME` exactly equal to the custom domain configured in GitHub Pages.
