@@ -3,6 +3,15 @@
 ## Overview
 This project is a full-stack Order Management System built with Node.js, Express, React, and PostgreSQL.
 
+## Current Delivery Priority
+
+- Website/static pages and the web frontend are maintenance-only.
+- Active feature delivery is focused on:
+  - Windows desktop app (`desktop/`)
+  - Android app track (`android/`)
+
+See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
+
 ## Getting Started
 
 ### Prerequisites
@@ -62,6 +71,14 @@ This project is a full-stack Order Management System built with Node.js, Express
 	 - main.jsx
   - package.json
 
+- desktop/
+  - Electron Windows app shell
+  - Packaging and installer scripts
+
+- android/
+  - Android app track kickoff docs
+  - Runtime config contract
+
 ## Publish Readiness Checklist
 
 Before publishing:
@@ -113,6 +130,7 @@ CI workflows:
 - `.github/workflows/release-readiness.yml` runs backend smoke tests and frontend build checks.
 - `.github/workflows/ui-evidence.yml` builds the frontend and captures UI evidence.
 - `.github/workflows/deploy-frontend-pages.yml` deploys the frontend to GitHub Pages for trial testing.
+- `.github/workflows/windows-desktop-pilot.yml` builds Windows installer artifacts on demand for pilot distribution.
 
 ## GitHub Pages Trial Deployment
 
