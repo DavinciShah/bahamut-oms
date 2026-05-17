@@ -34,3 +34,6 @@ desktop/dist/
 desktop/backend-bundle/
 *.pfx
 *.p12
+
+# Android local runtime config
+android/runtime-config.json

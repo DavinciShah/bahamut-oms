@@ -5,7 +5,12 @@
   "description": "Android shell for Bahamut OMS",
   "scripts": {
     "build:web": "npm --prefix ../frontend run build && node ./scripts/write-runtime-config.mjs",
+    "use:config": "node ./scripts/use-runtime-config.mjs",
+    "use:config:staging": "npm run use:config -- staging",
+    "use:config:production": "npm run use:config -- production",
     "sync": "npm run build:web && npx cap sync android",
+    "sync:staging": "npm run use:config:staging && npm run sync",
+    "sync:production": "npm run use:config:production && npm run sync",
     "doctor": "npx cap doctor",
     "open": "npx cap open android"
   },
