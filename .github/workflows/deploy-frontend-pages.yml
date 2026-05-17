@@ -49,7 +49,7 @@ jobs:
 
       - name: Build frontend
         env:
-          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_BASE_PATH: /
           # Optional: set repository variables for deployed API/socket endpoints.
           # If unset, frontend runtime falls back to existing local defaults.
           VITE_API_URL: ${{ vars.VITE_API_URL }}
