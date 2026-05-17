@@ -1,0 +1,1 @@
+window.__BAHAMUT_RUNTIME_CONFIG__ = window.__BAHAMUT_RUNTIME_CONFIG__ || {};

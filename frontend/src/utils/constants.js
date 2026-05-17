@@ -1,5 +1,7 @@
 export const APP_NAME = 'Bahamut OMS';
 
+import { RUNTIME_CONFIG } from './runtimeConfig';
+
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 
 const normalizeApiUrlForHttps = (url) => {
@@ -20,7 +22,8 @@ const normalizeApiUrlForHttps = (url) => {
   return url;
 };
 
-export const API_URL = normalizeApiUrlForHttps(import.meta.env.VITE_API_URL || '/api');
+export const API_URL = normalizeApiUrlForHttps(RUNTIME_CONFIG.apiBaseUrl);
+export const REQUEST_TIMEOUT_MS = RUNTIME_CONFIG.requestTimeoutMs;
 
 export const ORDER_STATUSES = {
   PENDING: 'pending',

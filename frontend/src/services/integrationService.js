@@ -1,11 +1,13 @@
 import axios from 'axios';
+import { getAuthToken } from '../utils/authStorage';
+import { API_URL, REQUEST_TIMEOUT_MS } from '../utils/constants';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || API_URL;
 
-const api = axios.create({ baseURL: API_BASE });
+const api = axios.create({ baseURL: API_BASE, timeout: REQUEST_TIMEOUT_MS });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

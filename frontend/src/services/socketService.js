@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import { HAS_EXPLICIT_SOCKET_URL, SOCKET_URL } from '../utils/runtimeConfig';
 
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 
@@ -28,14 +29,13 @@ const normalizeSocketUrlForHttps = (url) => {
 };
 
 let socket = null;
-const configuredSocketUrl = import.meta.env.VITE_SOCKET_URL;
-const socketUrl = normalizeSocketUrlForHttps(configuredSocketUrl || window.location.origin);
+const socketUrl = normalizeSocketUrlForHttps(SOCKET_URL);
 let missingSocketUrlWarningShown = false;
 
 const socketService = {
   connect(token) {
     if (socket?.connected) return socket;
-    if (!configuredSocketUrl && !missingSocketUrlWarningShown) {
+    if (!HAS_EXPLICIT_SOCKET_URL && !missingSocketUrlWarningShown) {
       console.warn('[Socket] VITE_SOCKET_URL is not set; using current origin fallback.');
       missingSocketUrlWarningShown = true;
     }

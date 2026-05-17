@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import socketService from '../services/socketService';
 import ticketService from '../services/ticketService';
+import { getAuthToken } from '../utils/authStorage';
 
 export default function LiveChat({ agentId }) {
   const [roomId, setRoomId] = useState(null);
@@ -19,7 +20,7 @@ export default function LiveChat({ agentId }) {
       const { roomId: rid } = res.data;
       setRoomId(rid);
 
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       socketService.connect(token);
       socketService.emit('join_room', { roomId: rid });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import notificationService from '../services/notificationService';
 import socketService from '../services/socketService';
+import { getAuthToken } from '../utils/authStorage';
 
 export default function useNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -23,7 +24,7 @@ export default function useNotifications() {
 
   useEffect(() => {
     fetchNotifications();
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (token) {
       socketService.connect(token);
       socketService.on('notification', (notification) => {
