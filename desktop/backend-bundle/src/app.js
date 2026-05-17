@@ -38,25 +38,37 @@ const reconciliationJob = require('./jobs/reconciliationJob');
 const app = express();
 app.locals.db = db;
 
-function getAllowedOrigins() {
-  const configured = process.env.CORS_ORIGIN || 'http://localhost:3000';
-  return configured
+const defaultCorsOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'app://local',
+  'capacitor://localhost',
+];
+
+function getAllowedCorsOrigins() {
+  const raw = process.env.CORS_ORIGIN;
+  if (!raw || !raw.trim()) {
+    return defaultCorsOrigins;
+  }
+
+  return raw
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
 }
 
+const allowedCorsOrigins = getAllowedCorsOrigins();
+
 // Security & logging middleware
 app.use(helmet());
 app.use(cors({
-  origin(origin, callback) {
-    const allowedOrigins = getAllowedOrigins();
+  origin: (origin, callback) => {
     if (!origin) {
       callback(null, true);
       return;
     }
 
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    if (allowedCorsOrigins.includes('*') || allowedCorsOrigins.includes(origin)) {
       callback(null, true);
       return;
     }
@@ -127,7 +139,9 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Start cron jobs
-autoSyncJob.start();
-reconciliationJob.start();
+if (process.env.NODE_ENV !== 'test' && process.env.DISABLE_JOBS !== 'true') {
+  autoSyncJob.start();
+  reconciliationJob.start();
+}
 
 module.exports = app;

@@ -2,7 +2,14 @@
 
 const BaseIntegration = require('../base/BaseIntegration');
 const TallyClient = require('./tallyClient');
-const { invoiceToTallyXml, paymentToTallyXml, tallyResponseToInvoice } = require('./tallyMapper');
+const {
+  invoiceToTallyXml,
+  paymentToTallyXml,
+  tallyResponseToInvoice,
+  tallyVoucherToOmsInvoice,
+  tallyLedgerToOmsCustomer,
+  tallyStockItemToOmsProduct
+} = require('./tallyMapper');
 const { validateInvoice, validatePayment } = require('./tallyValidation');
 
 class TallySync extends BaseIntegration {
@@ -152,6 +159,61 @@ class TallySync extends BaseIntegration {
     }
 
     return this.formatResult(errors.length === 0, synced, errors.length, errors);
+  }
+
+  async fetchFromTally({ fromDate, toDate } = {}) {
+    const result = { invoices: [], customers: [], products: [], errors: [] };
+
+    try {
+      const voucherData = await this.client.fetchVouchers({ fromDate, toDate, voucherType: 'Sales' });
+      const vouchers = this._extractList(voucherData, 'VOUCHER');
+      result.invoices = vouchers
+        .map(v => tallyVoucherToOmsInvoice(v))
+        .filter(Boolean);
+    } catch (err) {
+      this.log('error', `fetchFromTally: failed to fetch vouchers: ${err.message}`);
+      result.errors.push({ type: 'vouchers', error: err.message });
+    }
+
+    try {
+      const ledgerData = await this.client.fetchLedgers();
+      const ledgers = this._extractList(ledgerData, 'LEDGER');
+      result.customers = ledgers
+        .map(l => tallyLedgerToOmsCustomer(l))
+        .filter(Boolean);
+    } catch (err) {
+      this.log('error', `fetchFromTally: failed to fetch ledgers: ${err.message}`);
+      result.errors.push({ type: 'ledgers', error: err.message });
+    }
+
+    try {
+      const stockData = await this.client.fetchStockItems();
+      const items = this._extractList(stockData, 'STOCKITEM');
+      result.products = items
+        .map(i => tallyStockItemToOmsProduct(i))
+        .filter(Boolean);
+    } catch (err) {
+      this.log('error', `fetchFromTally: failed to fetch stock items: ${err.message}`);
+      result.errors.push({ type: 'stock_items', error: err.message });
+    }
+
+    return result;
+  }
+
+  _extractList(parsedXml, tagName) {
+    try {
+      const envelope = parsedXml && parsedXml.ENVELOPE;
+      if (!envelope) return [];
+      const body = envelope.BODY || envelope.body;
+      if (!body) return [];
+      const bodyNode = Array.isArray(body) ? body[0] : body;
+      const exportResult = bodyNode.EXPORTRESULT || bodyNode.exportresult || bodyNode.DATA || {};
+      const exportNode = Array.isArray(exportResult) ? exportResult[0] : exportResult;
+      const found = exportNode[tagName] || exportNode[tagName.toLowerCase()] || [];
+      return [].concat(found);
+    } catch {
+      return [];
+    }
   }
 }
 
