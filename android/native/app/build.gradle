@@ -1,5 +1,21 @@
 apply plugin: 'com.android.application'
 
+import java.util.Properties
+
+def signingProperties = new Properties()
+def signingPropertiesFile = rootProject.file("keystore.properties")
+if (signingPropertiesFile.exists()) {
+    signingProperties.load(new FileInputStream(signingPropertiesFile))
+}
+
+def releaseStoreFile = signingProperties.getProperty("storeFile") ?: System.getenv("BAHAMUT_UPLOAD_STORE_FILE")
+def releaseStorePassword = signingProperties.getProperty("storePassword") ?: System.getenv("BAHAMUT_UPLOAD_STORE_PASSWORD")
+def releaseKeyAlias = signingProperties.getProperty("keyAlias") ?: System.getenv("BAHAMUT_UPLOAD_KEY_ALIAS")
+def releaseKeyPassword = signingProperties.getProperty("keyPassword") ?: System.getenv("BAHAMUT_UPLOAD_KEY_PASSWORD")
+def releaseSigningConfigured = [releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword].every {
+    it != null && it.toString().trim()
+}
+
 android {
     namespace "com.bahamut.oms.android"
     compileSdk rootProject.ext.compileSdkVersion
@@ -16,8 +32,23 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (releaseSigningConfigured) {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (releaseSigningConfigured) {
+                signingConfig signingConfigs.release
+            } else {
+                logger.lifecycle("Release signing credentials are not configured. Add android/native/keystore.properties or BAHAMUT_UPLOAD_* environment variables.")
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

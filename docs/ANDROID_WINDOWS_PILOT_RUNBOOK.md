@@ -59,7 +59,25 @@ npm run open
 ```
 
 `npm run open` opens the native project in Android Studio.
-From Android Studio, generate signed APK/AAB and distribute through Play Internal Testing.
+
+### Signed production APK/AAB confirmation (Android Studio)
+
+1. Configure release signing (local only, do not commit secrets):
+   - Copy `/home/runner/work/bahamut-oms/bahamut-oms/android/native/keystore.properties.example` to `/home/runner/work/bahamut-oms/bahamut-oms/android/native/keystore.properties`
+   - Fill `storeFile`, `storePassword`, `keyAlias`, `keyPassword`
+2. In Android Studio, open `android/native/` and run:
+   - **Build > Generate Signed Bundle / APK**
+   - Generate **Android App Bundle (.aab)** for `release`
+   - Generate **APK** for `release`
+3. Confirm artifacts exist:
+   - `android/native/app/release/app-release.aab`
+   - `android/native/app/release/app-release.apk`
+4. Verify APK signature:
+   ```bash
+   /path/to/android-sdk/build-tools/35.0.0/apksigner verify --print-certs /home/runner/work/bahamut-oms/bahamut-oms/android/native/app/release/app-release.apk
+   ```
+5. Capture SHA-256 certificate fingerprint from `apksigner` output and attach it to pilot release evidence.
+6. Distribute the signed AAB to **Play Internal Testing**.
 
 ## 2) Windows pilot path
 
@@ -101,6 +119,7 @@ Go only when:
 - No P0/P1 blocker defects
 - Auth/session persistence works after app restart
 - API connectivity is stable for both tracks
+- Signed production APK/AAB is generated and signature-verified
 
 Then proceed:
 - Android: Play Internal Testing track
