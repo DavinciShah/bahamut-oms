@@ -911,7 +911,7 @@ List all tenants.
 **Response 200**
 
 ```json
-{ "success": true, "data": [ { "id": 1, "name": "Acme Corp", "slug": "acme", "plan": "pro" } ] }
+{ "success": true, "data": [ { "id": 1, "name": "Acme Corp", "slug": "acme", "plan": "professional" } ] }
 ```
 
 ---
@@ -923,7 +923,7 @@ Create a new tenant.
 **Request body**
 
 ```json
-{ "name": "Acme Corp", "slug": "acme", "domain": "acme.example.com", "plan": "pro", "settings": {} }
+{ "name": "Acme Corp", "slug": "acme", "domain": "acme.example.com", "plan": "professional", "settings": {} }
 ```
 
 **Response 201**
@@ -941,7 +941,7 @@ Get a tenant by ID.
 **Response 200**
 
 ```json
-{ "success": true, "data": { "id": 1, "name": "Acme Corp", "plan": "pro" } }
+{ "success": true, "data": { "id": 1, "name": "Acme Corp", "plan": "professional" } }
 ```
 
 ---
@@ -1100,8 +1100,8 @@ Get current tenant subscription.
 ```json
 {
   "status": "active",
-  "plan_name": "starter",
-  "plan_id": "starter",
+  "plan_name": "standard",
+  "plan_id": "standard",
   "interval": "monthly",
   "current_period_start": "2026-05-01T00:00:00.000Z",
   "current_period_end": "2026-06-01T00:00:00.000Z"
@@ -1117,7 +1117,7 @@ Update tenant subscription plan.
 **Request body**
 
 ```json
-{ "planId": "growth" }
+{ "planId": "professional" }
 ```
 
 **Response 200**
@@ -1125,8 +1125,8 @@ Update tenant subscription plan.
 ```json
 {
   "status": "active",
-  "plan_name": "growth",
-  "plan_id": "growth",
+  "plan_name": "professional",
+  "plan_id": "professional",
   "interval": "monthly"
 }
 ```
@@ -1142,8 +1142,8 @@ Cancel tenant subscription.
 ```json
 {
   "status": "cancelled",
-  "plan_name": "growth",
-  "plan_id": "growth",
+  "plan_name": "professional",
+  "plan_id": "professional",
   "interval": "monthly"
 }
 ```
@@ -1158,8 +1158,42 @@ List available subscription plans.
 
 ```json
 [
-  { "id": "free", "name": "Free", "price": 0, "currency": "usd", "features": ["Up to 5 orders/month"] },
-  { "id": "starter", "name": "Starter", "price": 29, "currency": "usd", "features": ["Up to 100 orders/month"] }
+  {
+    "id": "free",
+    "name": "Free",
+    "price": 0,
+    "currency": "usd",
+    "prices": { "usd": 0, "inr": 3, "aed": 0 },
+    "order_limit": 50,
+    "features": ["1 user", "1 warehouse", "Basic stock tracking"]
+  },
+  {
+    "id": "standard",
+    "name": "Standard",
+    "price": 29,
+    "currency": "usd",
+    "prices": { "usd": 29, "inr": 2400, "aed": 106 },
+    "order_limit": 500,
+    "features": ["2 users", "Multiple integrations", "Composite items"]
+  },
+  {
+    "id": "professional",
+    "name": "Professional",
+    "price": 79,
+    "currency": "usd",
+    "prices": { "usd": 79, "inr": 6550, "aed": 290 },
+    "order_limit": 3000,
+    "features": ["2 warehouses", "Serial/batch tracking"]
+  },
+  {
+    "id": "enterprise",
+    "name": "Enterprise",
+    "price": 149,
+    "currency": "usd",
+    "prices": { "usd": 149, "inr": 12350, "aed": 547 },
+    "order_limit": 15000,
+    "features": ["7 warehouses", "Advanced analytics"]
+  }
 ]
 ```
 

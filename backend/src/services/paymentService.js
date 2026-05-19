@@ -72,10 +72,42 @@ const paymentService = {
 
   getPlans() {
     return [
-      { id: 'free',       name: 'Free',       price: 0,    currency: 'usd', features: ['Up to 15 orders/month'] },
-      { id: 'starter',    name: 'Starter',    price: 29,   currency: 'usd', features: ['Up to 100 orders/month'] },
-      { id: 'growth',     name: 'Growth',     price: 99,   currency: 'usd', features: ['Unlimited orders'] },
-      { id: 'enterprise', name: 'Enterprise', price: null, currency: 'usd', features: ['Custom pricing'] },
+      {
+        id: 'free',
+        name: 'Free',
+        price: 0,
+        currency: 'usd',
+        prices: { usd: 0, inr: 3, aed: 0 },
+        order_limit: 50,
+        features: ['1 user', '1 warehouse', 'Basic stock tracking'],
+      },
+      {
+        id: 'standard',
+        name: 'Standard',
+        price: 29,
+        currency: 'usd',
+        prices: { usd: 29, inr: 2400, aed: 106 },
+        order_limit: 500,
+        features: ['2 users', 'Multiple integrations', 'Composite items'],
+      },
+      {
+        id: 'professional',
+        name: 'Professional',
+        price: 79,
+        currency: 'usd',
+        prices: { usd: 79, inr: 6550, aed: 290 },
+        order_limit: 3000,
+        features: ['2 warehouses', 'Serial/batch tracking'],
+      },
+      {
+        id: 'enterprise',
+        name: 'Enterprise',
+        price: 149,
+        currency: 'usd',
+        prices: { usd: 149, inr: 12350, aed: 547 },
+        order_limit: 15000,
+        features: ['7 warehouses', 'Advanced analytics'],
+      },
     ];
   },
 

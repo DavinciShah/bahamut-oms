@@ -180,7 +180,7 @@ describe('Billing and BI smoke tests', () => {
       request(app)
         .put('/api/payments/subscription')
         .set('Authorization', `Bearer ${token}`)
-        .send({ planId: 'starter' }),
+        .send({ planId: 'standard' }),
       request(app)
         .post('/api/payments/subscription/cancel')
         .set('Authorization', `Bearer ${token}`),

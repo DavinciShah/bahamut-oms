@@ -33,7 +33,7 @@ function generateTenantSlug(name) {
     .replace(/^-|-$/g, '');
 }
 
-const VALID_PLANS = ['free', 'starter', 'pro', 'enterprise'];
+const VALID_PLANS = ['free', 'standard', 'professional', 'enterprise'];
 
 /**
  * Validate that a plan name is known.
