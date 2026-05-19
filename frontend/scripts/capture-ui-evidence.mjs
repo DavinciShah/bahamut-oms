@@ -74,7 +74,7 @@ async function clickByAccessibleName(page, label) {
 
 function mockApiBody(url) {
   if (url.includes('/payments/subscription')) {
-    return { plan: 'starter', plan_name: 'Starter', status: 'active', current_period_end: '2026-12-31T00:00:00.000Z' };
+    return { plan: 'standard', plan_name: 'Standard', status: 'active', current_period_end: '2026-12-31T00:00:00.000Z' };
   }
 
   if (url.includes('/payments/invoices')) {
