@@ -8,7 +8,7 @@ const path = require('path');
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 
-const MIGRATIONS_DIR = path.resolve(__dirname, '../../migrations');
+const MIGRATIONS_DIR = __dirname;
 const VERSIONED_FILE_PATTERN = /^\d+_.*\.sql$/;
 
 function checksum(content) {

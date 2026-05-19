@@ -8,6 +8,7 @@ import SearchBar from '../components/Common/SearchBar';
 import Pagination from '../components/Common/Pagination';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import ErrorAlert from '../components/Common/ErrorAlert';
+import FreeTierBanner from '../components/Common/FreeTierBanner';
 import { useFetch } from '../hooks/useFetch';
 import { ordersService } from '../services/ordersService';
 import { ORDER_STATUSES, ITEMS_PER_PAGE } from '../utils/constants';
@@ -27,6 +28,7 @@ function OrdersPage() {
   const orders = data?.orders || data || [];
   const total = data?.total || orders.length;
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  const isFreeTier = data?.monthly_order_limit != null;
 
   return (
     <div className="app-container">
@@ -38,6 +40,13 @@ function OrdersPage() {
             <h2 className="page-title">Orders</h2>
             <Link to="/orders/create" className="btn btn-primary">+ New Order</Link>
           </div>
+
+          {isFreeTier && (
+            <FreeTierBanner
+              ordersUsed={data.monthly_orders_used ?? 0}
+              orderLimit={data.monthly_order_limit}
+            />
+          )}
 
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <SearchBar
