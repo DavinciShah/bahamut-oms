@@ -6,6 +6,7 @@ import RecentOrders from '../components/Dashboard/RecentOrders';
 import Charts from '../components/Dashboard/Charts';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import ErrorAlert from '../components/Common/ErrorAlert';
+import FreeTierBanner from '../components/Common/FreeTierBanner';
 import { useFetch } from '../hooks/useFetch';
 import { adminService } from '../services/adminService';
 import { ordersService } from '../services/ordersService';
@@ -23,6 +24,7 @@ function DashboardPage() {
   );
 
   const orders = ordersData?.orders || ordersData || [];
+  const isFreeTier = ordersData?.monthly_order_limit != null;
 
   return (
     <div className="app-container">
@@ -33,6 +35,13 @@ function DashboardPage() {
           <div className="page-header">
             <h2 className="page-title">Dashboard</h2>
           </div>
+
+          {isFreeTier && (
+            <FreeTierBanner
+              ordersUsed={ordersData.monthly_orders_used ?? 0}
+              orderLimit={ordersData.monthly_order_limit}
+            />
+          )}
 
           {statsError && <ErrorAlert message={statsError} />}
 

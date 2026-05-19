@@ -72,7 +72,7 @@ const paymentService = {
 
   getPlans() {
     return [
-      { id: 'free',       name: 'Free',       price: 0,    currency: 'usd', features: ['Up to 5 orders/month'] },
+      { id: 'free',       name: 'Free',       price: 0,    currency: 'usd', features: ['Up to 15 orders/month'] },
       { id: 'starter',    name: 'Starter',    price: 29,   currency: 'usd', features: ['Up to 100 orders/month'] },
       { id: 'growth',     name: 'Growth',     price: 99,   currency: 'usd', features: ['Unlimited orders'] },
       { id: 'enterprise', name: 'Enterprise', price: null, currency: 'usd', features: ['Custom pricing'] },

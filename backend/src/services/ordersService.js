@@ -4,14 +4,53 @@ const OrderItem = require('../models/OrderItem');
 const Product = require('../models/Product');
 const { createError } = require('../utils/errorHandler');
 
+const FREE_TIER_MONTHLY_ORDER_LIMIT = 15;
+
+async function getUserPlan(userId) {
+  const { rows: userRows } = await pool.query('SELECT tenant_id FROM users WHERE id = $1', [userId]);
+  const tenantId = userRows[0]?.tenant_id || null;
+  if (!tenantId) return 'free';
+  const { rows: tenantRows } = await pool.query('SELECT plan FROM tenants WHERE id = $1', [tenantId]);
+  return tenantRows[0]?.plan || 'free';
+}
+
+async function getMonthlyOrderCount(userId) {
+  const { rows } = await pool.query(
+    "SELECT COUNT(*) AS count FROM orders WHERE user_id = $1 AND created_at >= date_trunc('month', NOW())",
+    [userId]
+  );
+  return parseInt(rows[0].count, 10);
+}
+
 const getOrders = async (userId, role, page = 1, limit = 10, status) => {
   if (role === 'admin') {
     return await Order.findAll({ page: parseInt(page), limit: parseInt(limit), status });
   }
-  return await Order.findByUserId(userId, { page: parseInt(page), limit: parseInt(limit) });
+  const [result, plan, monthlyUsed] = await Promise.all([
+    Order.findByUserId(userId, { page: parseInt(page), limit: parseInt(limit) }),
+    getUserPlan(userId),
+    getMonthlyOrderCount(userId),
+  ]);
+  if (plan === 'free') {
+    result.monthly_orders_used = monthlyUsed;
+    result.monthly_order_limit = FREE_TIER_MONTHLY_ORDER_LIMIT;
+  }
+  return result;
 };
 
 const createOrder = async (userId, { items, shippingAddress, notes }) => {
+  // Enforce monthly order limit for free-tier users
+  const plan = await getUserPlan(userId);
+  if (plan === 'free') {
+    const monthlyUsed = await getMonthlyOrderCount(userId);
+    if (monthlyUsed >= FREE_TIER_MONTHLY_ORDER_LIMIT) {
+      throw createError(
+        `Free plan limit reached: ${FREE_TIER_MONTHLY_ORDER_LIMIT} orders per month. Please upgrade to continue.`,
+        429
+      );
+    }
+  }
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
