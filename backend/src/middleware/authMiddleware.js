@@ -18,6 +18,7 @@ function authenticate(req, res, next) {
       id: decoded.id || decoded.userId || decoded.sub,
       email: decoded.email,
       role: decoded.role,
+      tenant_id: decoded.tenant_id || decoded.tenantId || null,
     };
     next();
   } catch (err) {

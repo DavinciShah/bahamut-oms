@@ -5,15 +5,64 @@ const jwt = require('jsonwebtoken');
 
 jest.mock('../src/jobs/autoSyncJob', () => ({ start: jest.fn() }));
 jest.mock('../src/jobs/reconciliationJob', () => ({ start: jest.fn() }));
+jest.mock('../src/services/stripeService', () => ({
+  createPaymentIntent: jest.fn(async (amount, currency) => ({
+    id: 'pi_test_123',
+    client_secret: 'pi_test_123_secret',
+    amount: Math.round(Number(amount) * 100),
+    currency: (currency || 'usd').toLowerCase(),
+    status: 'requires_payment_method',
+  })),
+}));
 
 jest.mock('pg', () => {
-  const query = jest.fn(async (sql) => {
+  let subscriptionRow = null;
+  const query = jest.fn(async (sql, params = []) => {
     if (/information_schema\.columns/i.test(sql)) {
       return { rows: [{ '?column?': 1 }], rowCount: 1 };
     }
 
+    if (/INSERT\s+INTO\s+subscriptions/i.test(sql)) {
+      subscriptionRow = {
+        id: 1,
+        tenant_id: params[0],
+        plan: params[1],
+        status: params[2],
+        stripe_subscription_id: params[3] || null,
+        current_period_start: params[4] || null,
+        current_period_end: params[5] || null,
+        created_at: new Date().toISOString(),
+      };
+      return { rows: [subscriptionRow], rowCount: 1 };
+    }
+
+    if (/UPDATE\s+subscriptions/i.test(sql) && subscriptionRow) {
+      if (/plan\s*=\s*\$/i.test(sql)) {
+        subscriptionRow.plan = params[0];
+      }
+      if (/status\s*=\s*\$/i.test(sql)) {
+        subscriptionRow.status = params[subscriptionRow.plan === params[0] ? 1 : 0] || params[0];
+      }
+      const maybeDateStart = params.find((value) => value instanceof Date);
+      if (maybeDateStart) {
+        subscriptionRow.current_period_start = params.find((value) => value instanceof Date) || subscriptionRow.current_period_start;
+      }
+      if (params.some((value) => value instanceof Date)) {
+        const dates = params.filter((value) => value instanceof Date);
+        subscriptionRow.current_period_end = dates[dates.length - 1];
+      }
+      return { rows: [subscriptionRow], rowCount: 1 };
+    }
+
     if (/FROM\s+subscriptions/i.test(sql)) {
-      return { rows: [], rowCount: 0 };
+      return { rows: subscriptionRow ? [subscriptionRow] : [], rowCount: subscriptionRow ? 1 : 0 };
+    }
+
+    if (/FROM\s+invoices\s+WHERE\s+id\s*=\s*\$1/i.test(sql)) {
+      return {
+        rows: [{ id: params[0], total: '149.97', status: 'paid', created_at: new Date('2026-04-10T00:00:00Z') }],
+        rowCount: 1,
+      };
     }
 
     if (/FROM\s+orders/i.test(sql) && /DATE_TRUNC\('month'/i.test(sql)) {
@@ -119,6 +168,43 @@ describe('Billing and BI smoke tests', () => {
     expect(Array.isArray(invoices.body)).toBe(true);
     expect(history.status).toBe(200);
     expect(Array.isArray(history.body)).toBe(true);
+  });
+
+  it('supports frontend billing mutation endpoints for intent and subscription management', async () => {
+    const token = authToken();
+    const [intent, update, cancel] = await Promise.all([
+      request(app)
+        .post('/api/payments/intent')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ amount: 25, currency: 'USD' }),
+      request(app)
+        .put('/api/payments/subscription')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ planId: 'starter' }),
+      request(app)
+        .post('/api/payments/subscription/cancel')
+        .set('Authorization', `Bearer ${token}`),
+    ]);
+
+    expect(intent.status).toBe(201);
+    expect(intent.body).toHaveProperty('id');
+    expect(intent.body).toHaveProperty('client_secret');
+
+    expect(update.status).toBe(200);
+    expect(update.body).toHaveProperty('plan_id');
+
+    expect(cancel.status).toBe(200);
+    expect(cancel.body).toHaveProperty('status');
+  });
+
+  it('GET /api/payments/invoices/:id returns invoice payload', async () => {
+    const token = authToken();
+    const res = await request(app)
+      .get('/api/payments/invoices/7')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('id', 7);
   });
 
   it('GET /api/bi/dashboard and prediction/anomaly endpoints return 200', async () => {

@@ -1049,6 +1049,30 @@ Create a payment for an order.
 
 ---
 
+### POST /api/payments/intent
+
+Create a Stripe payment intent for billing UI checkout.
+
+**Request body**
+
+```json
+{ "amount": 149.97, "currency": "USD", "metadata": {} }
+```
+
+**Response 201**
+
+```json
+{
+  "id": "pi_...",
+  "client_secret": "pi_..._secret_...",
+  "amount": 14997,
+  "currency": "usd",
+  "status": "requires_payment_method"
+}
+```
+
+---
+
 ### GET /api/payments
 
 List payments.
@@ -1064,6 +1088,98 @@ List payments.
   "total": 1
 }
 ```
+
+---
+
+### GET /api/payments/subscription
+
+Get current tenant subscription.
+
+**Response 200**
+
+```json
+{
+  "status": "active",
+  "plan_name": "starter",
+  "plan_id": "starter",
+  "interval": "monthly",
+  "current_period_start": "2026-05-01T00:00:00.000Z",
+  "current_period_end": "2026-06-01T00:00:00.000Z"
+}
+```
+
+---
+
+### PUT /api/payments/subscription
+
+Update tenant subscription plan.
+
+**Request body**
+
+```json
+{ "planId": "growth" }
+```
+
+**Response 200**
+
+```json
+{
+  "status": "active",
+  "plan_name": "growth",
+  "plan_id": "growth",
+  "interval": "monthly"
+}
+```
+
+---
+
+### POST /api/payments/subscription/cancel
+
+Cancel tenant subscription.
+
+**Response 200**
+
+```json
+{
+  "status": "cancelled",
+  "plan_name": "growth",
+  "plan_id": "growth",
+  "interval": "monthly"
+}
+```
+
+---
+
+### GET /api/payments/plans
+
+List available subscription plans.
+
+**Response 200**
+
+```json
+[
+  { "id": "free", "name": "Free", "price": 0, "currency": "usd", "features": ["Up to 5 orders/month"] },
+  { "id": "starter", "name": "Starter", "price": 29, "currency": "usd", "features": ["Up to 100 orders/month"] }
+]
+```
+
+---
+
+### GET /api/payments/invoices
+
+List tenant invoices.
+
+---
+
+### GET /api/payments/invoices/:id
+
+Get one invoice by id.
+
+---
+
+### GET /api/payments/history
+
+List tenant payment history.
 
 ---
 
