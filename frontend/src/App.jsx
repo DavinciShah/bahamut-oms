@@ -24,6 +24,7 @@ import TicketDetail from './pages/TicketDetail';
 import BIPortal from './pages/BIPortal';
 import TenantSettings from './pages/TenantSettings';
 import TeamManagement from './pages/TeamManagement';
+import DownloadPage from './pages/DownloadPage';
 import NotificationBell from './components/NotificationBell';
 
 function NavBar() {
@@ -41,6 +42,7 @@ function NavBar() {
         ['/support', 'Support'],
         ['/bi', 'BI'],
         ['/settings/tenant', 'Settings'],
+        ['/download', '⬇ Windows App'],
       ].map(([path, label]) => (
         <Link key={path} to={path} style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>{label}</Link>
       ))}
@@ -214,6 +216,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <TeamManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/download"
+            element={
+              <ProtectedRoute>
+                <DownloadPage />
               </ProtectedRoute>
             }
           />
