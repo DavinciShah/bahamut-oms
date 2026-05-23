@@ -11,7 +11,7 @@ export default function TeamManagement() {
 
   useEffect(() => {
     tenantService.getTeam()
-      .then(res => setTeam(res.data || []))
+      .then(res => setTeam(res.data?.data || []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -22,7 +22,14 @@ export default function TeamManagement() {
     setError('');
     setSuccess('');
     try {
-      await tenantService.inviteUser(inviteForm);
+      const response = await tenantService.inviteUser(inviteForm);
+      const createdMember = response?.data?.data;
+      if (createdMember) {
+        setTeam((prev) => {
+          const withoutExisting = prev.filter((member) => member.id !== createdMember.id);
+          return [createdMember, ...withoutExisting];
+        });
+      }
       setSuccess(`Invitation sent to ${inviteForm.email}`);
       setInviteForm({ email: '', role: 'member' });
     } catch (err) {

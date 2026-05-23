@@ -3,6 +3,26 @@
 const tenantService = require('../services/tenantService');
 
 const tenantController = {
+  async getCurrent(req, res) {
+    try {
+      const tenant = await tenantService.getCurrentTenant(req.user);
+      res.json({ success: true, data: tenant });
+    } catch (err) {
+      console.error('[tenantController.getCurrent]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async updateCurrent(req, res) {
+    try {
+      const tenant = await tenantService.updateCurrentTenant(req.user, req.body || {});
+      res.json({ success: true, data: tenant });
+    } catch (err) {
+      console.error('[tenantController.updateCurrent]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
   async getAll(req, res) {
     try {
       const activeOnly = req.query.active === 'true';
@@ -84,6 +104,87 @@ const tenantController = {
       res.json({ success: true, data: users });
     } catch (err) {
       console.error('[tenantController.getUsers]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getTeam(req, res) {
+    try {
+      const users = await tenantService.getCurrentTeam(req.user);
+      res.json({ success: true, data: users });
+    } catch (err) {
+      console.error('[tenantController.getTeam]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async inviteTeamMember(req, res) {
+    try {
+      const member = await tenantService.inviteTeamMember(req.user, req.body || {});
+      res.status(201).json({ success: true, data: member });
+    } catch (err) {
+      console.error('[tenantController.inviteTeamMember]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async updateTeamMember(req, res) {
+    try {
+      const { role } = req.body || {};
+      const member = await tenantService.updateTeamMember(req.user, req.params.memberId, role);
+      res.json({ success: true, data: member });
+    } catch (err) {
+      console.error('[tenantController.updateTeamMember]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async removeTeamMember(req, res) {
+    try {
+      await tenantService.removeTeamMember(req.user, req.params.memberId);
+      res.json({ success: true, message: 'Team member removed' });
+    } catch (err) {
+      console.error('[tenantController.removeTeamMember]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getSettings(req, res) {
+    try {
+      const settings = await tenantService.getCurrentSettings(req.user);
+      res.json({ success: true, data: settings });
+    } catch (err) {
+      console.error('[tenantController.getSettings]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async updateSettings(req, res) {
+    try {
+      const tenant = await tenantService.updateCurrentSettings(req.user, req.body || {});
+      res.json({ success: true, data: tenant.settings || {} });
+    } catch (err) {
+      console.error('[tenantController.updateSettings]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async getDomains(req, res) {
+    try {
+      const domains = await tenantService.getCurrentDomains(req.user);
+      res.json({ success: true, data: domains });
+    } catch (err) {
+      console.error('[tenantController.getDomains]', err);
+      res.status(err.status || 500).json({ success: false, error: err.message });
+    }
+  },
+
+  async addDomain(req, res) {
+    try {
+      const domains = await tenantService.addCurrentDomain(req.user, req.body?.domain);
+      res.status(201).json({ success: true, data: domains });
+    } catch (err) {
+      console.error('[tenantController.addDomain]', err);
       res.status(err.status || 500).json({ success: false, error: err.message });
     }
   },
