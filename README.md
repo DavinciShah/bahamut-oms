@@ -150,25 +150,8 @@ CI workflows:
 4. The trial site will be published at:
    - `https://<owner>.github.io/<repository-name>/`
 
-### Custom Domain DNS Setup (GitHub Pages)
+### GitHub Free Domain (No Custom Domain)
 
-Current configured custom domain in this repo:
-
-- `bahamut-oms.space` (from `frontend/public/CNAME`)
-
-To point the custom domain to GitHub Pages:
-
-1. In your DNS provider, create apex (`@`) `A` records:
-   - `185.199.108.153`
-   - `185.199.109.153`
-   - `185.199.110.153`
-   - `185.199.111.153`
-2. Create `www` `CNAME` record pointing to:
-   - `davincishah.github.io`
-3. In **GitHub → Settings → Pages**, set **Custom domain** to `bahamut-oms.space`.
-4. Enable **Enforce HTTPS** after DNS propagation completes.
-
-Notes:
-
-- The deployed Pages artifact is built from `frontend/dist`, and `frontend/public/CNAME` is included automatically.
-- Keep `frontend/public/CNAME` exactly equal to the custom domain configured in GitHub Pages.
+- This repository is configured to use the default GitHub Pages domain.
+- Public URL: `https://davincishah.github.io/bahamut-oms/`
+- In **GitHub → Settings → Pages**, leave **Custom domain** empty.
