@@ -23,10 +23,16 @@ $DesktopDir  = Split-Path $PSScriptRoot -Parent
 $DistDir     = Join-Path $DesktopDir 'dist'
 $Unpacked    = Join-Path $DistDir 'win-unpacked'
 $StagingDir  = Join-Path $DistDir 'msix-staging'
-$OutputMsix  = Join-Path $DistDir 'Bahamut-OMS-1.0.0.msix'
 
-$PfxPath     = Join-Path $DesktopDir 'bahamut-oms-dev.pfx'
-$PfxPassword = 'BahamutOMS2024!'
+$PackageJsonPath = Join-Path $DesktopDir 'package.json'
+$PackageJson     = Get-Content $PackageJsonPath -Raw | ConvertFrom-Json
+$AppVersion      = "$($PackageJson.version).0"   # e.g. "1.0.0.0"
+$OutputMsix      = Join-Path $DistDir "Bahamut-OMS-$($PackageJson.version).msix"
+
+$PfxPath     = if ($env:PFX_PATH)     { $env:PFX_PATH }     else { Join-Path $DesktopDir 'bahamut-oms-dev.pfx' }
+# PFX_PASSWORD should always be set via GitHub Secrets in CI. The fallback below
+# is intentionally a placeholder for local developer self-signed test certificates only.
+$PfxPassword = if ($env:PFX_PASSWORD) { $env:PFX_PASSWORD } else { 'BahamutOMS2024!' }
 
 # ---------------------------------------------------------------------------
 # Locate makeappx + signtool from electron-builder winCodeSign cache
@@ -63,42 +69,50 @@ New-Item $StagingDir -ItemType Directory | Out-Null
 Copy-Item -Path "$Unpacked\*" -Destination $StagingDir -Recurse -Force
 
 # ---------------------------------------------------------------------------
-# Create Assets (placeholder logo images using .NET System.Drawing)
+# Copy MSIX store assets (pre-built branded PNGs)
 # ---------------------------------------------------------------------------
-Write-Host '[build-msix] Generating logo assets…'
-$AssetsDir = Join-Path $StagingDir 'Assets'
+Write-Host '[build-msix] Copying branded MSIX assets…'
+$AssetsDir   = Join-Path $StagingDir 'Assets'
+$SourceAssets = Join-Path $DesktopDir 'assets\msix'
 New-Item $AssetsDir -ItemType Directory -Force | Out-Null
 
-Add-Type -AssemblyName System.Drawing
+if (Test-Path $SourceAssets) {
+  Copy-Item -Path "$SourceAssets\*" -Destination $AssetsDir -Recurse -Force
+  Write-Host "[build-msix] Assets copied from $SourceAssets"
+} else {
+  # Fallback: generate placeholder logos using .NET System.Drawing
+  Write-Warning "assets\msix not found – generating placeholder logos."
+  Add-Type -AssemblyName System.Drawing
 
-function New-PlaceholderPng {
-  param([string]$Path, [int]$Width, [int]$Height)
-  $bmp = [System.Drawing.Bitmap]::new($Width, $Height)
-  $g   = [System.Drawing.Graphics]::FromImage($bmp)
-  $g.Clear([System.Drawing.Color]::FromArgb(30, 41, 59))   # #1e293b (dark blue)
-  $font  = [System.Drawing.Font]::new('Segoe UI', [Math]::Max(8, $Height * 0.4), [System.Drawing.FontStyle]::Bold)
-  $brush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::White)
-  $sf    = [System.Drawing.StringFormat]::new()
-  $sf.Alignment     = [System.Drawing.StringAlignment]::Center
-  $sf.LineAlignment = [System.Drawing.StringAlignment]::Center
-  $rect  = [System.Drawing.RectangleF]::new(0, 0, $Width, $Height)
-  $g.DrawString('B', $font, $brush, $rect, $sf)
-  $bmp.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
-  $g.Dispose(); $bmp.Dispose()
+  function New-PlaceholderPng {
+    param([string]$Path, [int]$Width, [int]$Height)
+    $bmp = [System.Drawing.Bitmap]::new($Width, $Height)
+    $g   = [System.Drawing.Graphics]::FromImage($bmp)
+    $g.Clear([System.Drawing.Color]::FromArgb(30, 41, 59))
+    $font  = [System.Drawing.Font]::new('Segoe UI', [Math]::Max(8, $Height * 0.4), [System.Drawing.FontStyle]::Bold)
+    $brush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::White)
+    $sf    = [System.Drawing.StringFormat]::new()
+    $sf.Alignment     = [System.Drawing.StringAlignment]::Center
+    $sf.LineAlignment = [System.Drawing.StringAlignment]::Center
+    $rect  = [System.Drawing.RectangleF]::new(0, 0, $Width, $Height)
+    $g.DrawString('B', $font, $brush, $rect, $sf)
+    $bmp.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
+    $g.Dispose(); $bmp.Dispose()
+  }
+
+  New-PlaceholderPng (Join-Path $AssetsDir 'Square44x44Logo.png')    44  44
+  New-PlaceholderPng (Join-Path $AssetsDir 'Square150x150Logo.png') 150 150
+  New-PlaceholderPng (Join-Path $AssetsDir 'Wide310x150Logo.png')   310 150
+  New-PlaceholderPng (Join-Path $AssetsDir 'StoreLogo.png')          50  50
+  New-PlaceholderPng (Join-Path $AssetsDir 'SplashScreen.png')      620 300
 }
-
-New-PlaceholderPng (Join-Path $AssetsDir 'Square44x44Logo.png')    44  44
-New-PlaceholderPng (Join-Path $AssetsDir 'Square150x150Logo.png') 150 150
-New-PlaceholderPng (Join-Path $AssetsDir 'Wide310x150Logo.png')   310 150
-New-PlaceholderPng (Join-Path $AssetsDir 'StoreLogo.png')          50  50
-New-PlaceholderPng (Join-Path $AssetsDir 'SplashScreen.png')      620 300
 
 # ---------------------------------------------------------------------------
 # Write AppxManifest.xml
 # ---------------------------------------------------------------------------
 Write-Host '[build-msix] Writing AppxManifest.xml…'
 $AppExe    = 'Bahamut OMS.exe'
-$Publisher = 'CN=BahamutOMS'     # must match PFX subject for sideload; Partner Center sets this for Store
+$Publisher = if ($env:MSIX_PUBLISHER) { $env:MSIX_PUBLISHER } else { 'CN=BahamutOMS' }
 
 $Manifest = @"
 <?xml version="1.0" encoding="utf-8"?>
@@ -111,7 +125,7 @@ $Manifest = @"
   <Identity
     Name="BahamutOMS.OMS"
     Publisher="$Publisher"
-    Version="1.0.0.0"
+    Version="$AppVersion"
     ProcessorArchitecture="x64" />
 
   <Properties>

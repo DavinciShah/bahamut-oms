@@ -2,7 +2,18 @@
   "name": "bahamut-oms-desktop",
   "version": "1.0.0",
   "private": true,
-  "description": "Windows desktop shell for Bahamut OMS",
+  "description": "Bahamut Order Management System – Windows desktop client",
+  "author": {
+    "name": "DavinciShah",
+    "email": "support@bahamut-oms.example.com",
+    "url": "https://github.com/DavinciShah/bahamut-oms"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/DavinciShah/bahamut-oms",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavinciShah/bahamut-oms.git"
+  },
   "main": "main.js",
   "scripts": {
     "prepare:backend": "node scripts/prepare-backend.js",
@@ -24,6 +35,9 @@
   "build": {
     "appId": "com.bahamut.oms",
     "productName": "Bahamut OMS",
+    "copyright": "Copyright © 2024 DavinciShah. All rights reserved.",
+    "icon": "assets/icon.ico",
+    "category": "public.app-category.business",
     "directories": {
       "output": "dist"
     },
@@ -53,19 +67,41 @@
       "target": [
         "nsis"
       ],
+      "icon": "assets/icon.ico",
       "artifactName": "Bahamut-OMS-Setup-${version}.${ext}",
       "signAndEditExecutable": false,
-      "forceCodeSigning": false
+      "forceCodeSigning": false,
+      "executableName": "Bahamut OMS",
+      "fileAssociations": [],
+      "extraMetadata": {
+        "CompanyName": "DavinciShah",
+        "FileDescription": "Bahamut Order Management System",
+        "InternalName": "bahamut-oms",
+        "OriginalFilename": "Bahamut OMS.exe",
+        "ProductName": "Bahamut OMS"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bahamut OMS",
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "license": "../LICENSE"
     },
     "appx": {
       "applicationId": "BahamutOMS",
       "backgroundColor": "#1e293b",
       "displayName": "Bahamut OMS",
       "identityName": "BahamutOMS.OMS",
-      "publisherDisplayName": "Bahamut OMS",
+      "publisherDisplayName": "DavinciShah",
       "publisher": "CN=BahamutOMS",
       "languages": ["en-US"],
-      "artifactName": "Bahamut-OMS-${version}.${ext}"
+      "artifactName": "Bahamut-OMS-${version}.${ext}",
+      "assets": "assets/msix"
     }
   }
 }
