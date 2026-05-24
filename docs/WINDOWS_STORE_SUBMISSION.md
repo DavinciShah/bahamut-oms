@@ -125,15 +125,21 @@ Upon approval, the app becomes available in the Microsoft Store.
 
 ## 8. Winget Community Repo Submission
 
-After the GitHub Release is published with the `.exe` artifact:
+After the `.exe` installer is built:
 
 1. Calculate the SHA-256 of the NSIS installer:
    ```powershell
    CertUtil -hashfile Bahamut-OMS-Setup-1.0.0.exe SHA256
    ```
 2. Update `desktop/winget/manifest.yaml`:
+   - Set `InstallerUrl` to a direct hot-link URL that starts download immediately (**HTTP 200, no redirect**).
+   - Example: `https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe`
+   - Verify with:
+     ```bash
+     curl -I https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
+     ```
+     The response should be `200 OK` with no `Location` redirect header.
    - Replace `InstallerSha256` with the real hash.
-   - Update `InstallerUrl` if the release tag differs.
 3. Fork [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) and open a PR
    adding the manifest under `manifests/d/DavinciShah/BahamutOMS/1.0.0/`.
 
