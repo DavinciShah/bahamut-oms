@@ -140,6 +140,8 @@ After the `.exe` installer is built:
      ```
      The response should be `200 OK` with no `Location` redirect header.
    - Replace `InstallerSha256` with the real hash.
+   - Set `PackageUrl` to the same direct Win32 `.exe` package URL.
+   - Update `InstallerUrl` if the release tag differs.
 3. Fork [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) and open a PR
    adding the manifest under `manifests/d/DavinciShah/BahamutOMS/1.0.0/`.
 
