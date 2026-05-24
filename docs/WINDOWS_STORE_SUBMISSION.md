@@ -133,6 +133,7 @@ After the GitHub Release is published with the `.exe` artifact:
    ```
 2. Update `desktop/winget/manifest.yaml`:
    - Replace `InstallerSha256` with the real hash.
+   - Set `PackageUrl` to the same direct Win32 `.exe` package URL.
    - Update `InstallerUrl` if the release tag differs.
 3. Fork [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) and open a PR
    adding the manifest under `manifests/d/DavinciShah/BahamutOMS/1.0.0/`.

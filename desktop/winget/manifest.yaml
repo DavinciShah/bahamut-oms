@@ -1,6 +1,6 @@
 # Winget package manifest for Bahamut OMS Windows desktop installer.
 #
-# PackageUrl  — project homepage (used by winget to show package info)
+# PackageUrl  — direct URL to the Win32 NSIS installer package for Store checks
 # InstallerUrl — direct download URL for the Win32 NSIS installer produced by
 #                `npm run dist:win` (Bahamut-OMS-Setup-1.0.0.exe).
 #
@@ -16,7 +16,7 @@ PackageName: Bahamut OMS
 Publisher: DavinciShah
 License: MIT
 ShortDescription: Bahamut Order Management System — Windows desktop client
-PackageUrl: https://github.com/DavinciShah/bahamut-oms
+PackageUrl: https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
 Installers:
   - Architecture: x64
     InstallerType: nullsoft
