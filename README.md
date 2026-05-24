@@ -33,12 +33,14 @@ See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
 	npm install
 	```
 3. Create `backend/.env` from `backend/.env.example` and update configuration values.
+   - For Supabase, set `DATABASE_URL` to your Supabase Postgres connection string and set `DB_SSL=true`.
 4. Run database migrations:
 	```bash
 	npm run migrate
 	```
    - This now runs the unified versioned migration runner (`backend/src/migrations/run-latest.js`).
    - It applies all `backend/migrations/<number>_*.sql` files in order and records applied versions in `schema_migrations`.
+   - Core migration `001_core_tables.sql` creates the `users` table used for people/user data persistence.
 5. Start the backend server:
 	```bash
 	npm start
@@ -129,6 +131,7 @@ Before publishing:
 9. Verify health endpoints after deployment:
 	- `GET /health`
 	- `GET /api/health`
+ 	- `GET /api/health/database`
 
 CI workflows:
 

@@ -3,7 +3,7 @@ import Sidebar from '../components/Common/Sidebar';
 import Footer from '../components/Common/Footer';
 
 const WINDOWS_INSTALLER_URL =
-  'https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe';
+  'https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe';
 
 function DownloadPage() {
   return (
