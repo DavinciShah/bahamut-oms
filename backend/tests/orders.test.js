@@ -29,12 +29,14 @@ const adminToken = jwt.sign({ id: 2, email: 'admin@example.com', role: 'admin' }
 
 describe('Orders Routes', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   describe('GET /api/orders', () => {
     it('should return orders for authenticated user', async () => {
       query
+        .mockResolvedValueOnce({ rows: [{ tenant_id: null }] })
+        .mockResolvedValueOnce({ rows: [{ count: '1' }] })
         .mockResolvedValueOnce({ rows: [{ id: 1, user_id: 1, status: 'pending', total_amount: 100 }] })
         .mockResolvedValueOnce({ rows: [{ count: '1' }] });
 
@@ -66,6 +68,8 @@ describe('Orders Routes', () => {
       pool.connect.mockResolvedValue(mockClient);
 
       query
+        .mockResolvedValueOnce({ rows: [{ tenant_id: null }] }) // getUserPlan
+        .mockResolvedValueOnce({ rows: [{ count: '0' }] }) // getMonthlyOrderCount
         .mockResolvedValueOnce({ rows: [{ id: 1, name: 'Product A', price: 100, stock: 10 }] }) // findById product
         .mockResolvedValueOnce({ rows: [{ id: 1, order_id: 1, product_id: 1, quantity: 2, unit_price: 100 }] }); // findByOrderId
 
