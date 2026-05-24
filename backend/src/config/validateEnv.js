@@ -1,6 +1,6 @@
 'use strict';
 
-const REQUIRED_IN_PROD = ['JWT_SECRET', 'DB_HOST', 'DB_NAME', 'DB_USER'];
+const REQUIRED_DB_FIELDS_IN_PROD = ['DB_HOST', 'DB_NAME', 'DB_USER'];
 
 function isWeakSecret(value) {
   if (!value) return true;
@@ -10,12 +10,23 @@ function isWeakSecret(value) {
 
 function validateEnv() {
   const warnings = [];
+  const hasDatabaseUrl = Boolean(
+    process.env.DATABASE_URL ||
+    process.env.SUPABASE_DB_URL ||
+    process.env.SUPABASE_DATABASE_URL
+  );
 
   if ((process.env.NODE_ENV || 'development') === 'production') {
-    for (const key of REQUIRED_IN_PROD) {
-      if (!process.env[key]) {
-        throw new Error(`Missing required environment variable in production: ${key}`);
+    if (!hasDatabaseUrl) {
+      for (const key of REQUIRED_DB_FIELDS_IN_PROD) {
+        if (!process.env[key]) {
+          throw new Error(`Missing required environment variable in production: ${key}`);
+        }
       }
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error('Missing required environment variable in production: JWT_SECRET');
     }
 
     if (isWeakSecret(process.env.JWT_SECRET)) {
