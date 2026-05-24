@@ -110,6 +110,24 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+app.get('/api/health/database', async (req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({
+      status: 'OK',
+      database: 'connected',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    logger.error(`Database health check failed: ${error.message}`);
+    res.status(503).json({
+      status: 'ERROR',
+      database: 'disconnected',
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', apiLimiter, usersRoutes);
