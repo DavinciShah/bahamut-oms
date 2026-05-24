@@ -5,7 +5,7 @@
 #                `npm run dist:win` (Bahamut-OMS-Setup-1.0.0.exe).
 #
 # Before submitting to the winget community repo:
-#   1. Publish a GitHub Release tagged v1.0.0 and attach the .exe artifact.
+#   1. Upload the .exe to a direct hot-link URL that returns HTTP 200 (no redirects).
 #   2. Replace InstallerSha256 with the real SHA-256 of the uploaded installer:
 #        shasum -a 256 Bahamut-OMS-Setup-1.0.0.exe   (macOS/Linux)
 #        CertUtil -hashfile Bahamut-OMS-Setup-1.0.0.exe SHA256   (Windows)
@@ -20,7 +20,7 @@ PackageUrl: https://github.com/DavinciShah/bahamut-oms
 Installers:
   - Architecture: x64
     InstallerType: nullsoft
-    InstallerUrl: https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
+    InstallerUrl: https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
     InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
 ManifestType: singleton
 ManifestVersion: 1.6.0
