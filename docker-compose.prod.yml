@@ -56,7 +56,6 @@ services:
     container_name: bahamut-frontend-prod
     ports:
       - "80:80"
-      - "443:443"
     depends_on:
       - backend
     restart: always
