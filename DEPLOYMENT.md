@@ -15,34 +15,34 @@ cd bahamut-oms
 
 ### Step 2: Create .env File
 ```bash
-cp backend/.env.example backend/.env
+cp .env.example .env
 ```
 
 ### Step 3: Edit .env (Optional - Use defaults for local testing)
 ```bash
 # On Linux/Mac
-nano backend/.env
+nano .env
 
 # On Windows (PowerShell)
-notepad backend\.env
+notepad .env
 ```
 
 **Key settings for local development:**
 - DB_HOST=postgres (already set for Docker)
-- DB_USER=bahamut_user
-- DB_PASSWORD=CHANGE_ME_IN_PRODUCTION
+- DB_USER=postgres
+- DB_PASSWORD=postgres
 - JWT_SECRET=REPLACE_WITH_RANDOM_STRING_MIN_32_CHARS
 
 ### Step 4: Start Application
 ```bash
 # Start all services (backend, frontend, database)
-docker-compose up
+docker compose up
 
 # Run in background
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Step 5: Access Application
@@ -57,7 +57,7 @@ docker-compose logs -f
 ### Step 6: Create Test User (Optional)
 ```bash
 # Access backend container
-docker-compose exec backend sh
+docker compose exec backend sh
 
 # Run seed script (if available)
 npm run seed
@@ -78,13 +78,13 @@ curl -X POST http://localhost:5000/api/auth/register \
 
 ```bash
 # Create .env.prod file with production values
-cp backend/.env.example backend/.env.prod
+cp .env.example .env.prod
 
 # Edit with production values
-nano backend/.env.prod
+nano .env.prod
 
 # Deploy using production compose file
-docker-compose -f docker-compose.prod.yml up -d
+docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
 ```
 
 ### Environment Variables for Production
@@ -104,30 +104,30 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ```bash
 # View running containers
-docker-compose ps
+docker compose ps
 
 # View logs
-docker-compose logs backend
-docker-compose logs frontend
-docker-compose logs postgres
+docker compose logs backend
+docker compose logs frontend
+docker compose logs postgres
 
 # Stop all services
-docker-compose down
+docker compose down
 
 # Stop and remove volumes (deletes data!)
-docker-compose down -v
+docker compose down -v
 
 # Rebuild images
-docker-compose up --build
+docker compose up --build
 
 # Access backend shell
-docker-compose exec backend sh
+docker compose exec backend sh
 
 # Run migrations
-docker-compose exec backend npm run migrate
+docker compose exec backend npm run migrate
 
 # View database
-docker-compose exec postgres psql -U bahamut_user -d bahamut_oms
+docker compose exec postgres psql -U postgres -d bahamut_oms
 ```
 
 ## Troubleshooting
@@ -142,7 +142,7 @@ docker-compose exec postgres psql -U bahamut_user -d bahamut_oms
 ### Database Connection Failed
 ```bash
 # Ensure postgres is running
-docker-compose logs postgres
+docker compose logs postgres
 
 # Verify credentials in .env match docker-compose.yml
 ```
@@ -150,7 +150,7 @@ docker-compose logs postgres
 ### Frontend Can't Connect to Backend
 ```bash
 # Check backend is running
-docker-compose exec frontend curl http://backend:5000/api/health
+docker compose exec frontend curl http://backend:5000/api/health
 
 # Verify CORS settings in backend
 ```
@@ -168,12 +168,12 @@ curl http://localhost
 
 ### Database Backup
 ```bash
-docker-compose exec postgres pg_dump -U bahamut_user bahamut_oms > backup.sql
+docker compose exec postgres pg_dump -U postgres bahamut_oms > backup.sql
 ```
 
 ### Database Restore
 ```bash
-docker-compose exec -T postgres psql -U bahamut_user bahamut_oms < backup.sql
+docker compose exec -T postgres psql -U postgres bahamut_oms < backup.sql
 ```
 
 ## Next Steps
@@ -187,6 +187,6 @@ docker-compose exec -T postgres psql -U bahamut_user bahamut_oms < backup.sql
 ## Support
 
 For issues or questions:
-1. Check logs: `docker-compose logs`
+1. Check logs: `docker compose logs`
 2. Review documentation: See README.md
 3. Open an issue: https://github.com/DavinciShah/bahamut-oms/issues

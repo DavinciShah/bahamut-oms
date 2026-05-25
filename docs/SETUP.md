@@ -97,9 +97,10 @@ docker compose up --build
 
 | Service  | URL                       |
 |----------|---------------------------|
-| Frontend | http://localhost:3000      |
+| Frontend | http://localhost           |
 | Backend  | http://localhost:5000      |
 | Postgres | localhost:5432             |
+| PgAdmin  | http://localhost:5050      |
 
 ### Stop all services
 
