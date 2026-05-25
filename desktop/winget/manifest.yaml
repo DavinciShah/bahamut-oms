@@ -16,7 +16,7 @@ PackageName: Bahamut OMS
 Publisher: DavinciShah
 License: MIT
 ShortDescription: Bahamut Order Management System — Windows desktop client
-PackageUrl: https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
+PackageUrl: https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
 Installers:
   - Architecture: x64
     InstallerType: nullsoft
