@@ -33,7 +33,12 @@ async function main() {
     CSC_IDENTITY_AUTO_DISCOVERY: 'false',
   };
 
-  await run(npmCmd, ['exec', 'electron-builder', '--', '--win', 'nsis', '--publish', 'never'], desktopDir, env);
+  await run(
+    npmCmd,
+    ['exec', 'electron-builder', '--', '--win', 'nsis', '--x64', '--ia32', '--publish', 'never'],
+    desktopDir,
+    env
+  );
 }
 
 main().catch((err) => {

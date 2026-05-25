@@ -129,6 +129,8 @@ jobs:
               --notes-file $notesPath
           }
 
+          gh release edit $tag --draft=false
+
           $assets = @(
             "desktop/dist/Bahamut-OMS-Setup-$version.exe",
             "desktop/dist/Bahamut-OMS-$version.msix"
