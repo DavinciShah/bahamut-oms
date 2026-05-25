@@ -1,0 +1,143 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (for example v1.0.0)'
+        required: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release metadata
+        id: release
+        shell: pwsh
+        run: |
+          $tag = if ("${{ github.event_name }}" -eq 'workflow_dispatch') { "${{ github.event.inputs.tag }}" } else { "${{ github.ref_name }}" }
+          if (-not $tag) {
+            throw 'Release tag is required.'
+          }
+
+          $version = $tag -replace '^v', ''
+          if (-not $version) {
+            throw "Could not derive version from tag '$tag'."
+          }
+
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Install desktop dependencies
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build Windows installer
+        working-directory: desktop
+        run: npm run dist:win
+
+      - name: Build Windows MSIX
+        working-directory: desktop
+        shell: pwsh
+        run: npm run dist:msix
+
+      - name: Generate release notes
+        id: notes
+        shell: pwsh
+        run: |
+          $version = '${{ steps.release.outputs.version }}'
+          $lines = Get-Content 'CHANGELOG.md'
+          $start = -1
+          $end = $lines.Count
+
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -match "^## \[$([regex]::Escape($version))\]") {
+              $start = $i
+              continue
+            }
+
+            if ($start -ge 0 -and $lines[$i] -match '^## \[') {
+              $end = $i
+              break
+            }
+          }
+
+          $notesPath = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          if ($start -ge 0) {
+            $lines[$start..($end - 1)] | Set-Content $notesPath
+          } else {
+            @(
+              "## [$version]"
+              ''
+              'Release notes were not found in CHANGELOG.md.'
+            ) | Set-Content $notesPath
+          }
+
+          "path=$notesPath" >> $env:GITHUB_OUTPUT
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = '${{ steps.release.outputs.tag }}'
+          $version = '${{ steps.release.outputs.version }}'
+          $notesPath = '${{ steps.notes.outputs.path }}'
+          $title = "Bahamut OMS $tag"
+
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag `
+              --target $env:GITHUB_SHA `
+              --title $title `
+              --notes-file $notesPath
+          } else {
+            gh release edit $tag `
+              --title $title `
+              --notes-file $notesPath
+          }
+
+          $assets = @(
+            "desktop/dist/Bahamut-OMS-Setup-$version.exe",
+            "desktop/dist/Bahamut-OMS-$version.msix"
+          )
+
+          foreach ($asset in $assets) {
+            if (-not (Test-Path $asset)) {
+              throw "Expected release asset not found: $asset"
+            }
+          }
+
+          gh release upload $tag $assets --clobber
