@@ -60,10 +60,41 @@ function getAllowedCorsOrigins() {
 const allowedCorsOrigins = getAllowedCorsOrigins();
 
 // Security & logging middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc:  ["'none'"],
+      scriptSrc:   ["'none'"],
+      styleSrc:    ["'none'"],
+      imgSrc:      ["'none'"],
+      connectSrc:  ["'none'"],
+      objectSrc:   ["'none'"],
+      frameSrc:    ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: true,
+  crossOriginOpenerPolicy:   { policy: 'same-origin' },
+  crossOriginResourcePolicy: { policy: 'same-origin' },
+  hsts: {
+    maxAge:            31_536_000, // 1 year in seconds
+    includeSubDomains: true,
+    preload:           true,
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+}));
 app.use(cors({
   origin: (origin, callback) => {
+    // No Origin header: sent by server-to-server calls, native apps (Capacitor/Electron),
+    // and — critically — sandboxed <iframe>s/data: URIs (a known CORS bypass vector).
+    // Block unconditionally in production unless explicitly opted-in.
     if (!origin) {
+      if (
+        process.env.NODE_ENV === 'production' &&
+        process.env.CORS_ALLOW_NULL_ORIGIN !== 'true'
+      ) {
+        callback(new Error('Not allowed by CORS'));
+        return;
+      }
       callback(null, true);
       return;
     }
