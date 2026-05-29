@@ -7,7 +7,7 @@ const { authenticateJWT } = require('../middleware/auth');
 const rateLimit  = require('express-rate-limit');
 
 // Strict rate limit for auth endpoints (20 requests per 15 min per IP)
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 20, standardHeaders: 'draft-7', legacyHeaders: false });
 
 router.use(authLimiter);
 

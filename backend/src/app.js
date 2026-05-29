@@ -3,10 +3,12 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const { RedisStore } = require('rate-limit-redis');
 require('dotenv').config();
 
 const logger = require('./config/logger');
 const db = require('./config/database');
+const redis = require('./config/redis');
 const errorHandler = require('./middleware/errorHandler');
 
 // Accounting integration routes
@@ -115,21 +117,31 @@ app.use(morgan('combined', {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting — tighter limit on auth routes, broader on everything else
+// Rate limiting — tighter limit on auth routes, broader on everything else.
+// Uses a Redis store when REDIS_URL is configured so counters are shared across
+// all horizontally scaled backend instances; falls back to in-memory for local dev.
+function makeStore(prefix) {
+  const client = redis.getClient();
+  if (!client) return undefined; // express-rate-limit defaults to MemoryStore
+  return new RedisStore({ sendCommand: (...args) => client.call(...args), prefix });
+}
+
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
-  standardHeaders: true,
+  limit: 20,
+  standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
+  store: makeStore('rl:auth:'),
 });
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true,
+  limit: 200,
+  standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
+  store: makeStore('rl:api:'),
 });
 
 // Health Check (no rate limit)

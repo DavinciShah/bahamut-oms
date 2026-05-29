@@ -9,8 +9,8 @@ const ctrl = require('../controllers/webhookController');
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true,
+  limit: 200,
+  standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
 });
