@@ -178,6 +178,7 @@ app.use('/api/shipping', apiLimiter, shippingRoutes);
 app.use('/api/support', apiLimiter, ticketRoutes);
 app.use('/api/bi', apiLimiter, biRoutes);
 app.use('/webhooks/shipping', require('./webhooks/shippingWebhook'));
+app.use('/api/webhooks', apiLimiter, webhookRoutes);
 
 // 404 handler
 app.use((req, res) => {
