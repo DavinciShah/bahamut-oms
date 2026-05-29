@@ -2,23 +2,17 @@
 
 const express = require('express');
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
+// Rate limiting for this router is applied upstream in app.js (Redis-backed apiLimiter).
+// Do NOT add a local express-rate-limit here — it would use in-memory storage and break
+// multi-instance deployments.
 const { authenticateToken } = require('../middleware/auth');
 const verifyWebhookSignature = require('../middleware/webhookSignature');
 const ctrl = require('../controllers/webhookController');
 
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 200,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
-  message: { error: 'Too many requests, please try again later.' },
-});
-
-router.post('/register', apiLimiter, authenticateToken, ctrl.registerWebhook);
-router.get('/', apiLimiter, authenticateToken, ctrl.listWebhooks);
-router.delete('/:id', apiLimiter, authenticateToken, ctrl.deleteWebhook);
-router.post('/test/:id', apiLimiter, authenticateToken, ctrl.testWebhook);
+router.post('/register', authenticateToken, ctrl.registerWebhook);
+router.get('/', authenticateToken, ctrl.listWebhooks);
+router.delete('/:id', authenticateToken, ctrl.deleteWebhook);
+router.post('/test/:id', authenticateToken, ctrl.testWebhook);
 // Public endpoint for receiving accounting events — signature-verified by HMAC-SHA256.
 router.post(
   '/accounting-events',

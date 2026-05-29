@@ -1,5 +1,13 @@
 const { query } = require('../config/database');
 
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}(T[\d:.Z+-]+)?$/;
+
+function assertIsoDate(value, name) {
+  if (value !== undefined && value !== null && !ISO_DATE_RE.test(value)) {
+    throw Object.assign(new Error(`Invalid date format for ${name}: expected ISO 8601`), { status: 400 });
+  }
+}
+
 const getStats = async () => {
   const [usersResult, ordersResult, revenueResult, productsResult, pendingResult] = await Promise.all([
     query('SELECT COUNT(*) FROM users'),
@@ -19,6 +27,8 @@ const getStats = async () => {
 };
 
 const getOrdersReport = async (startDate, endDate) => {
+  assertIsoDate(startDate, 'startDate');
+  assertIsoDate(endDate, 'endDate');
   const result = await query(
     `SELECT o.*, u.name as user_name, u.email as user_email
      FROM orders o
@@ -45,6 +55,8 @@ const getInventoryReport = async () => {
 };
 
 const getRevenueReport = async (startDate, endDate) => {
+  assertIsoDate(startDate, 'startDate');
+  assertIsoDate(endDate, 'endDate');
   const result = await query(
     `SELECT DATE(created_at) as date, COUNT(*) as order_count, COALESCE(SUM(total_amount), 0) as revenue
      FROM orders
