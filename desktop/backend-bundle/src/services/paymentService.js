@@ -1,16 +1,9 @@
 'use strict';
 
 const Payment = require('../models/Payment');
-const Invoice = require('../models/Invoice');
 const Subscription = require('../models/Subscription');
+const Invoice = require('../models/Invoice');
 const stripeService = require('./stripeService');
-
-const BILLING_PLANS = [
-  { id: 'free', name: 'Free', price: 0, features: ['Basic usage', 'Community support'] },
-  { id: 'starter', name: 'Starter', price: 29, features: ['Up to 1,000 orders', 'Email support'] },
-  { id: 'pro', name: 'Pro', price: 99, features: ['Up to 10,000 orders', 'Priority support', 'Advanced analytics'] },
-  { id: 'enterprise', name: 'Enterprise', price: 299, features: ['Unlimited orders', 'Dedicated support', 'Custom integrations'] },
-];
 
 const paymentService = {
   async createPayment(orderId, amount, currency = 'usd', method = 'stripe', extra = {}) {
@@ -61,6 +54,151 @@ const paymentService = {
     return payment;
   },
 
+  async getSubscription(tenantId) {
+    const rows = await Subscription.findByTenant(tenantId);
+    if (!rows || rows.length === 0) {
+      return { status: 'active', plan_name: 'free', plan_id: 'free', interval: 'monthly' };
+    }
+    const sub = rows[0];
+    return {
+      status: sub.status,
+      plan_name: sub.plan,
+      plan_id: sub.plan,
+      interval: 'monthly',
+      current_period_start: sub.current_period_start,
+      current_period_end: sub.current_period_end,
+    };
+  },
+
+  getPlans() {
+    return [
+      {
+        id: 'free',
+        name: 'Free',
+        price: 0,
+        currency: 'usd',
+        prices: { usd: 0, inr: 3, aed: 0 },
+        order_limit: 50,
+        features: ['1 user', '1 warehouse', 'Basic stock tracking'],
+      },
+      {
+        id: 'standard',
+        name: 'Standard',
+        price: 29,
+        currency: 'usd',
+        prices: { usd: 29, inr: 2400, aed: 106 },
+        order_limit: 500,
+        features: ['2 users', 'Multiple integrations', 'Composite items'],
+      },
+      {
+        id: 'professional',
+        name: 'Professional',
+        price: 79,
+        currency: 'usd',
+        prices: { usd: 79, inr: 6550, aed: 290 },
+        order_limit: 3000,
+        features: ['2 warehouses', 'Serial/batch tracking'],
+      },
+      {
+        id: 'enterprise',
+        name: 'Enterprise',
+        price: 149,
+        currency: 'usd',
+        prices: { usd: 149, inr: 12350, aed: 547 },
+        order_limit: 15000,
+        features: ['7 warehouses', 'Advanced analytics'],
+      },
+    ];
+  },
+
+  async getInvoices(tenantId) {
+    return Invoice.findAll({ tenantId });
+  },
+
+  async getInvoiceById(id) {
+    const invoice = await Invoice.findById(id);
+    if (!invoice) throw Object.assign(new Error('Invoice not found'), { status: 404 });
+    return invoice;
+  },
+
+  async getHistory(tenantId, options = {}) {
+    const { limit = 50, offset = 0 } = options;
+    return Payment.findAll({ tenantId, limit, offset });
+  },
+
+  async createPaymentIntent(amount, currency = 'usd', metadata = {}) {
+    const numericAmount = Number(amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      throw Object.assign(new Error('amount must be a positive number'), { status: 400 });
+    }
+
+    const intent = await stripeService.createPaymentIntent(numericAmount, currency, metadata);
+    return {
+      id: intent.id,
+      client_secret: intent.client_secret,
+      amount: intent.amount,
+      currency: intent.currency,
+      status: intent.status,
+    };
+  },
+
+  async updateSubscription(tenantId, planId) {
+    const plan = this.getPlans().find((item) => item.id === planId);
+    if (!plan) {
+      throw Object.assign(new Error('Invalid plan id'), { status: 400 });
+    }
+
+    const now = new Date();
+    const nextMonth = new Date(now);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    const rows = await Subscription.findByTenant(tenantId);
+    const existing = rows[0];
+    const status = plan.id === 'free' ? 'active' : 'active';
+
+    if (existing) {
+      await Subscription.update(existing.id, {
+        plan: plan.id,
+        status,
+        currentPeriodStart: now,
+        currentPeriodEnd: nextMonth,
+      });
+    } else {
+      await Subscription.create({
+        tenantId,
+        plan: plan.id,
+        status,
+        currentPeriodStart: now,
+        currentPeriodEnd: nextMonth,
+      });
+    }
+
+    return this.getSubscription(tenantId);
+  },
+
+  async cancelSubscription(tenantId) {
+    const rows = await Subscription.findByTenant(tenantId);
+    const existing = rows[0];
+    const now = new Date();
+
+    if (existing) {
+      await Subscription.update(existing.id, {
+        status: 'cancelled',
+        currentPeriodEnd: now,
+      });
+      return this.getSubscription(tenantId);
+    }
+
+    await Subscription.create({
+      tenantId,
+      plan: 'free',
+      status: 'cancelled',
+      currentPeriodStart: now,
+      currentPeriodEnd: now,
+    });
+    return this.getSubscription(tenantId);
+  },
+
   async refundPayment(paymentId, amount) {
     const payment = await this.getPaymentById(paymentId);
 
@@ -70,147 +208,6 @@ const paymentService = {
 
     const updated = await Payment.updateStatus(paymentId, 'refunded');
     return updated;
-  },
-
-  async getSubscription(tenantId) {
-    if (!tenantId) {
-      return {
-        plan_id: 'free',
-        plan: 'Free',
-        plan_name: 'Free',
-        status: 'active',
-        interval: 'Monthly',
-        current_period_end: null,
-      };
-    }
-
-    const subscriptions = await Subscription.findByTenant(tenantId);
-    const current = subscriptions[0];
-
-    if (!current) {
-      return {
-        plan_id: 'free',
-        plan: 'Free',
-        plan_name: 'Free',
-        status: 'active',
-        interval: 'Monthly',
-        current_period_end: null,
-      };
-    }
-
-    const matchingPlan = BILLING_PLANS.find((plan) => plan.id === current.plan);
-    return {
-      ...current,
-      plan_id: current.plan,
-      plan_name: matchingPlan?.name || current.plan,
-      interval: 'Monthly',
-      current_period_end: current.current_period_end,
-    };
-  },
-
-  async getPlans() {
-    return BILLING_PLANS;
-  },
-
-  async updateSubscription(tenantId, planId) {
-    const selectedPlan = BILLING_PLANS.find((plan) => plan.id === planId);
-    if (!selectedPlan) {
-      throw Object.assign(new Error('Invalid plan selected'), { status: 400 });
-    }
-
-    if (!tenantId) {
-      throw Object.assign(new Error('Unable to resolve tenant for subscription update'), { status: 400 });
-    }
-
-    const now = new Date();
-    const nextCycle = new Date(now);
-    nextCycle.setDate(nextCycle.getDate() + 30);
-
-    const subscriptions = await Subscription.findByTenant(tenantId);
-    const existing = subscriptions[0];
-    let updated;
-
-    if (existing) {
-      updated = await Subscription.update(existing.id, {
-        plan: selectedPlan.id,
-        status: 'active',
-        currentPeriodStart: now,
-        currentPeriodEnd: nextCycle,
-      });
-    } else {
-      updated = await Subscription.create({
-        tenantId,
-        plan: selectedPlan.id,
-        status: 'active',
-        currentPeriodStart: now,
-        currentPeriodEnd: nextCycle,
-      });
-    }
-
-    return {
-      ...updated,
-      plan_id: selectedPlan.id,
-      plan_name: selectedPlan.name,
-      interval: 'Monthly',
-      current_period_end: updated.current_period_end,
-    };
-  },
-
-  async cancelSubscription(tenantId) {
-    if (!tenantId) {
-      throw Object.assign(new Error('Unable to resolve tenant for subscription cancellation'), { status: 400 });
-    }
-
-    const subscriptions = await Subscription.findByTenant(tenantId);
-    const existing = subscriptions[0];
-
-    if (!existing) {
-      return {
-        plan_id: 'free',
-        plan: 'Free',
-        plan_name: 'Free',
-        status: 'canceled',
-        interval: 'Monthly',
-        current_period_end: new Date(),
-      };
-    }
-
-    const updated = await Subscription.update(existing.id, {
-      status: 'canceled',
-      currentPeriodEnd: new Date(),
-    });
-
-    const selectedPlan = BILLING_PLANS.find((plan) => plan.id === updated.plan);
-    return {
-      ...updated,
-      plan_id: updated.plan,
-      plan_name: selectedPlan?.name || updated.plan,
-      interval: 'Monthly',
-      current_period_end: updated.current_period_end,
-    };
-  },
-
-  async getInvoices(tenantId, options = {}) {
-    const { limit = 50, offset = 0 } = options;
-    return Invoice.findAll({ tenantId, limit, offset });
-  },
-
-  async getInvoiceById(id) {
-    const invoice = await Invoice.findById(id);
-    if (!invoice) {
-      throw Object.assign(new Error('Invoice not found'), { status: 404 });
-    }
-    return invoice;
-  },
-
-  async getPaymentHistory(tenantId, options = {}) {
-    const { limit = 50, offset = 0 } = options;
-    const payments = await Payment.findAll({ tenantId, limit, offset });
-    return payments.map((payment) => ({
-      ...payment,
-      payment_method: payment.provider || 'Card',
-      description: payment.description || 'Payment',
-    }));
   },
 };
 

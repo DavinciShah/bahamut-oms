@@ -1,12 +1,6 @@
 'use strict';
 
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-});
+const { pool } = require('../config/database');
 
 const TenantUser = {
   async findByTenant(tenantId, { activeOnly = true } = {}) {
@@ -44,6 +38,17 @@ const TenantUser = {
     return rows[0] || null;
   },
 
+  async findByMembershipId(tenantId, membershipId) {
+    const { rows } = await pool.query(
+      `SELECT tu.*, u.email, u.name
+       FROM tenant_users tu
+       LEFT JOIN users u ON u.id = tu.user_id
+       WHERE tu.tenant_id = $1 AND tu.id = $2`,
+      [tenantId, membershipId]
+    );
+    return rows[0] || null;
+  },
+
   async create({ tenantId, userId, role = 'member' }) {
     const { rows } = await pool.query(
       `INSERT INTO tenant_users (tenant_id, user_id, role, active, joined_at)
@@ -71,6 +76,28 @@ const TenantUser = {
        WHERE tenant_id = $1 AND user_id = $2
        RETURNING *`,
       [tenantId, userId]
+    );
+    return rows[0] || null;
+  },
+
+  async updateRoleByMembershipId(tenantId, membershipId, role) {
+    const { rows } = await pool.query(
+      `UPDATE tenant_users
+       SET role = $3
+       WHERE tenant_id = $1 AND id = $2
+       RETURNING *`,
+      [tenantId, membershipId, role]
+    );
+    return rows[0] || null;
+  },
+
+  async deactivateByMembershipId(tenantId, membershipId) {
+    const { rows } = await pool.query(
+      `UPDATE tenant_users
+       SET active = false
+       WHERE tenant_id = $1 AND id = $2
+       RETURNING *`,
+      [tenantId, membershipId]
     );
     return rows[0] || null;
   },

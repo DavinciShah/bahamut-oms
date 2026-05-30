@@ -1,44 +1,25 @@
 'use strict';
 
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-});
+const { pool } = require('../config/database');
 
 const Invoice = {
   async findAll({ tenantId, customerId, status, limit = 50, offset = 0 } = {}) {
-    try {
-      const conditions = [];
-      const values = [];
-      let i = 1;
+    const conditions = [];
+    const values = [];
+    let i = 1;
 
-      if (tenantId)    { conditions.push(`tenant_id = $${i++}`);    values.push(tenantId); }
-      if (customerId)  { conditions.push(`customer_id = $${i++}`);  values.push(customerId); }
-      if (status)      { conditions.push(`status = $${i++}`);       values.push(status); }
+    if (tenantId)    { conditions.push(`tenant_id = $${i++}`);    values.push(tenantId); }
+    if (customerId)  { conditions.push(`customer_id = $${i++}`);  values.push(customerId); }
+    if (status)      { conditions.push(`status = $${i++}`);       values.push(status); }
 
-      const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-      values.push(limit, offset);
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    values.push(limit, offset);
 
-      const { rows } = await pool.query(
-        `SELECT * FROM invoices ${where} ORDER BY created_at DESC LIMIT $${i} OFFSET $${i + 1}`,
-        values
-      );
-      return rows;
-    } catch (err) {
-      // Backward compatibility for legacy schemas that do not have tenant_id.
-      if (err.code === '42703' && /tenant_id/.test(err.message)) {
-        const values = [limit, offset];
-        const { rows } = await pool.query(
-          'SELECT * FROM invoices ORDER BY created_at DESC LIMIT $1 OFFSET $2',
-          values
-        );
-        return rows;
-      }
-      throw err;
-    }
+    const { rows } = await pool.query(
+      `SELECT * FROM invoices ${where} ORDER BY created_at DESC LIMIT $${i} OFFSET $${i + 1}`,
+      values
+    );
+    return rows;
   },
 
   async findById(id) {

@@ -1,12 +1,6 @@
 'use strict';
 
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-});
+const { pool } = require('../config/database');
 
 const Payment = {
   async findAll({ tenantId, orderId, status, limit = 50, offset = 0 } = {}) {

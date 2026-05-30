@@ -1,9 +1,9 @@
 'use strict';
 
 const stripeService = require('../services/stripeService');
+const { query } = require('../config/database');
 const Payment = require('../models/Payment');
 const Subscription = require('../models/Subscription');
-const Tenant = require('../models/Tenant');
 
 const stripeWebhook = {
   async handleWebhook(req, res) {
@@ -49,7 +49,7 @@ const stripeWebhook = {
   },
 
   async _handlePaymentSucceeded(paymentIntent) {
-    const { rows } = await _pool().query(
+    const { rows } = await query(
       'SELECT * FROM payments WHERE provider_payment_id = $1',
       [paymentIntent.id]
     );
@@ -59,7 +59,7 @@ const stripeWebhook = {
   },
 
   async _handlePaymentFailed(paymentIntent) {
-    const { rows } = await _pool().query(
+    const { rows } = await query(
       'SELECT * FROM payments WHERE provider_payment_id = $1',
       [paymentIntent.id]
     );
@@ -86,18 +86,5 @@ const stripeWebhook = {
     }
   },
 };
-
-let _poolInstance = null;
-function _pool() {
-  if (!_poolInstance) {
-    const { Pool } = require('pg');
-    _poolInstance = new Pool({
-      connectionString:
-        process.env.DATABASE_URL ||
-        `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`,
-    });
-  }
-  return _poolInstance;
-}
 
 module.exports = stripeWebhook;

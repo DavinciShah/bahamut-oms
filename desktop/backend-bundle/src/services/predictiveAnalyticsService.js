@@ -1,22 +1,5 @@
 const { Pool } = require('pg');
 const pool = new Pool({ connectionString: process.env.DATABASE_URL || `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}` });
-const columnCache = new Map();
-
-async function hasColumn(tableName, columnName) {
-  const key = `${tableName}.${columnName}`;
-  if (columnCache.has(key)) return columnCache.get(key);
-
-  const result = await pool.query(
-    `SELECT 1
-     FROM information_schema.columns
-     WHERE table_schema = 'public' AND table_name = $1 AND column_name = $2
-     LIMIT 1`,
-    [tableName, columnName]
-  );
-  const exists = result.rowCount > 0;
-  columnCache.set(key, exists);
-  return exists;
-}
 
 function linearRegression(xs, ys) {
   const n = xs.length;
@@ -32,12 +15,6 @@ function linearRegression(xs, ys) {
 
 const predictiveAnalyticsService = {
   async predictChurn(tenantId) {
-    const hasUsersTenant = await hasColumn('users', 'tenant_id');
-    const hasOrdersCustomerId = await hasColumn('orders', 'customer_id');
-    const userOrderKey = hasOrdersCustomerId ? 'o.customer_id' : 'o.user_id';
-    const tenantFilter = hasUsersTenant && tenantId ? 'u.tenant_id = $1 AND ' : '';
-    const params = hasUsersTenant && tenantId ? [tenantId] : [];
-
     const result = await pool.query(
       `SELECT
          u.id, u.name, u.email,
@@ -46,11 +23,11 @@ const predictiveAnalyticsService = {
          COALESCE(SUM(o.total_amount), 0) AS lifetime_value,
          EXTRACT(DAY FROM NOW() - MAX(o.created_at)) AS days_since_last_order
        FROM users u
-       LEFT JOIN orders o ON ${userOrderKey} = u.id AND o.status = 'completed'
-       WHERE ${tenantFilter}u.role != 'admin'
+       LEFT JOIN orders o ON o.customer_id = u.id AND o.status = 'completed'
+       WHERE u.tenant_id = $1 AND u.role = 'customer'
        GROUP BY u.id, u.name, u.email
        HAVING MAX(o.created_at) IS NOT NULL`,
-      params
+      [tenantId]
     );
 
     return result.rows.map(c => {
@@ -65,17 +42,13 @@ const predictiveAnalyticsService = {
   },
 
   async predictRevenue(tenantId, months = 6) {
-    const hasOrdersTenant = await hasColumn('orders', 'tenant_id');
-    const tenantFilter = hasOrdersTenant && tenantId ? 'WHERE tenant_id = $1 AND status = \'completed\'' : 'WHERE status = \'completed\'';
-    const params = hasOrdersTenant && tenantId ? [tenantId] : [];
-
     const result = await pool.query(
       `SELECT DATE_TRUNC('month', created_at) AS month,
               COALESCE(SUM(total_amount), 0) AS revenue
        FROM orders
-       ${tenantFilter}
+       WHERE tenant_id = $1 AND status = 'completed'
        GROUP BY month ORDER BY month`,
-      params
+      [tenantId]
     );
 
     const rows = result.rows;
@@ -119,8 +92,8 @@ const predictiveAnalyticsService = {
        JOIN orders o1 ON o1.id = oi1.order_id
        JOIN order_items oi2 ON oi2.order_id = o1.id AND oi2.product_id != oi1.product_id
        JOIN products p ON p.id = oi2.product_id
-       WHERE oi1.product_id = ANY($1::bigint[])
-         AND oi2.product_id != ALL($1::bigint[])
+       WHERE oi1.product_id = ANY($1::uuid[])
+         AND oi2.product_id != ALL($1::uuid[])
        GROUP BY oi2.product_id, p.name, p.price
        ORDER BY frequency DESC
        LIMIT 10`,

@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Shipment = require('../models/Shipment');
 const TrackingEvent = require('../models/TrackingEvent');
+const verifyWebhookSignature = require('../middleware/webhookSignature');
 
-router.post('/fedex', express.raw({ type: 'application/json' }), async (req, res) => {
+const rawJson = express.raw({ type: 'application/json' });
+const verifyShippingSignature = verifyWebhookSignature('SHIPPING_WEBHOOK_SECRET', 'x-shipping-signature');
+
+router.post('/fedex', rawJson, verifyShippingSignature, async (req, res) => {
   try {
     const event = JSON.parse(req.body);
     const { trackingNumber, status, timestamp, location, description } = event;
@@ -28,7 +32,7 @@ router.post('/fedex', express.raw({ type: 'application/json' }), async (req, res
   }
 });
 
-router.post('/ups', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/ups', rawJson, verifyShippingSignature, async (req, res) => {
   try {
     const event = JSON.parse(req.body);
     const { trackingNumber, status, timestamp, location } = event;
@@ -53,7 +57,7 @@ router.post('/ups', express.raw({ type: 'application/json' }), async (req, res) 
   }
 });
 
-router.post('/dhl', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/dhl', rawJson, verifyShippingSignature, async (req, res) => {
   try {
     const event = JSON.parse(req.body);
     const { shipmentTrackingNumber, events } = event;

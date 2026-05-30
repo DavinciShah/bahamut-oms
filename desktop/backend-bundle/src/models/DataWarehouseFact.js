@@ -1,5 +1,4 @@
-const { Pool } = require('pg');
-const pool = new Pool({ connectionString: process.env.DATABASE_URL || `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}` });
+const { pool } = require('../config/database');
 
 class DataWarehouseFact {
   static async create({ tenant_id, order_id, product_id, customer_id, date_key, quantity, revenue, cost, profit }) {
@@ -40,8 +39,18 @@ class DataWarehouseFact {
     const validDimensions = { product: 'product_id', customer: 'customer_id', date: 'date_key' };
     const validMetrics = { revenue: 'SUM(revenue)', cost: 'SUM(cost)', profit: 'SUM(profit)', quantity: 'SUM(quantity)', orders: 'COUNT(DISTINCT order_id)' };
 
-    const dim = validDimensions[dimension] || 'date_key';
-    const met = validMetrics[metric] || 'SUM(revenue)';
+    // Strict whitelist — reject unknown values outright so they never reach the query.
+    if (!validDimensions[dimension]) {
+      throw Object.assign(new Error(`Invalid dimension: ${dimension}`), { status: 400 });
+    }
+    if (!validMetrics[metric]) {
+      throw Object.assign(new Error(`Invalid metric: ${metric}`), { status: 400 });
+    }
+
+    // dim and met are resolved exclusively from the hardcoded lookup maps above;
+    // no user-supplied string is interpolated into the SQL.
+    const dim = validDimensions[dimension];
+    const met = validMetrics[metric];
 
     const result = await pool.query(
       `SELECT ${dim} AS dimension, ${met} AS value

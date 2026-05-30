@@ -14,16 +14,16 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 router.use(authenticate);
 router.use(limiter);
 
-router.get('/subscription',   paymentController.getSubscription);
-router.put('/subscription',   paymentController.updateSubscription);
-router.post('/subscription/cancel', paymentController.cancelSubscription);
-router.get('/plans',          paymentController.getPlans);
-router.get('/invoices',       paymentController.getInvoices);
-router.get('/invoices/:id',   paymentController.getInvoiceById);
-router.get('/history',        paymentController.getPaymentHistory);
-
 router.post('/create',       paymentController.createPayment);
+router.post('/intent',       paymentController.createPaymentIntent);
 router.get('/',              paymentController.getPayments);
+router.get('/subscription',  paymentController.getSubscription);
+router.put('/subscription',  paymentController.updateSubscription);
+router.post('/subscription/cancel', paymentController.cancelSubscription);
+router.get('/plans',         paymentController.getPlans);
+router.get('/invoices',      paymentController.getInvoices);
+router.get('/invoices/:id',  paymentController.getInvoiceById);
+router.get('/history',       paymentController.getHistory);
 router.get('/:id',           paymentController.getPaymentById);
 router.post('/:id/refund',   paymentController.refundPayment);
 

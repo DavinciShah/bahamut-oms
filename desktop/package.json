@@ -38,7 +38,13 @@
     "productName": "Bahamut OMS",
     "copyright": "Copyright © 2024 DavinciShah. All rights reserved.",
     "icon": "assets/icon.ico",
-    "category": "public.app-category.business",
+    "extraMetadata": {
+      "CompanyName": "DavinciShah",
+      "FileDescription": "Bahamut Order Management System",
+      "InternalName": "bahamut-oms",
+      "OriginalFilename": "Bahamut OMS.exe",
+      "ProductName": "Bahamut OMS"
+    },
     "directories": {
       "output": "dist"
     },
@@ -73,14 +79,7 @@
       "signAndEditExecutable": false,
       "forceCodeSigning": false,
       "executableName": "Bahamut OMS",
-      "fileAssociations": [],
-      "extraMetadata": {
-        "CompanyName": "DavinciShah",
-        "FileDescription": "Bahamut Order Management System",
-        "InternalName": "bahamut-oms",
-        "OriginalFilename": "Bahamut OMS.exe",
-        "ProductName": "Bahamut OMS"
-      }
+      "fileAssociations": []
     },
     "nsis": {
       "oneClick": false,
@@ -101,8 +100,7 @@
       "publisherDisplayName": "DavinciShah",
       "publisher": "CN=BahamutOMS",
       "languages": ["en-US"],
-      "artifactName": "Bahamut-OMS-${version}.${ext}",
-      "assets": "assets/msix"
+      "artifactName": "Bahamut-OMS-${version}.${ext}"
     }
   }
 }
