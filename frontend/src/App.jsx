@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -56,6 +57,16 @@ function NavBar() {
 export default function App() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/unauthorized';
+
+  useEffect(() => {
+    if (window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title || 'Bahamut OMS'
+      });
+    }
+  }, [location]);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: 'system-ui, sans-serif' }}>

@@ -23,7 +23,8 @@
     "dist:win": "node scripts/dist-win.js",
     "dist:winstore": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
     "dist:msix": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
-    "dist:all": "node scripts/dist-win.js && powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1"
+    "dist:all": "node scripts/dist-win.js && powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "create:hotlink": "powershell -ExecutionPolicy Bypass -File scripts/create-launch-hotlink.ps1"
   },
   "devDependencies": {
     "electron": "^39.8.5",
