@@ -1,4 +1,6 @@
-const { body, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
+
+const VALID_ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 const validateRegistration = [
   body('name').trim().notEmpty().withMessage('Name is required'),
@@ -23,6 +25,17 @@ const validateOrder = [
   body('items.*.quantity').isInt({ gt: 0 }).withMessage('Quantity must be a positive integer')
 ];
 
+const validateOrderStatus = [
+  body('status')
+    .notEmpty().withMessage('Status is required')
+    .isIn(VALID_ORDER_STATUSES)
+    .withMessage(`Status must be one of: ${VALID_ORDER_STATUSES.join(', ')}`)
+];
+
+const validateOrderId = [
+  param('id').isInt({ min: 1 }).withMessage('Order ID must be a positive integer')
+];
+
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -40,5 +53,7 @@ module.exports = {
   validateLogin,
   validateProduct,
   validateOrder,
+  validateOrderStatus,
+  validateOrderId,
   handleValidationErrors
 };

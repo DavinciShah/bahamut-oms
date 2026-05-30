@@ -47,7 +47,9 @@ async function testWebhook(req, res, next) {
 
 async function handleAccountingEvent(req, res, next) {
   try {
-    const result = await webhookService.handleAccountingEvent(req.body);
+    // req.body is a raw Buffer (express.raw was used to preserve it for signature verification).
+    const event = JSON.parse(req.body.toString('utf8'));
+    const result = await webhookService.handleAccountingEvent(event);
     res.json({ success: true, data: result });
   } catch (err) {
     next(err);

@@ -66,20 +66,23 @@ const StockTransfer = {
     if (!VALID_STATUSES.includes(status)) {
       throw new Error(`Invalid status: ${status}`);
     }
-    const values = [id, status];
-    let completedAtExpr;
+    // Use two static queries to avoid template-literal SQL construction.
     if (status === 'completed') {
-      completedAtExpr = `$3`;
-      values.push(new Date());
-    } else {
-      completedAtExpr = `NULL`;
+      const { rows } = await pool.query(
+        `UPDATE stock_transfers
+         SET status = $2, completed_at = $3
+         WHERE id = $1
+         RETURNING *`,
+        [id, status, new Date()]
+      );
+      return rows[0] || null;
     }
     const { rows } = await pool.query(
       `UPDATE stock_transfers
-       SET status = $2, completed_at = ${completedAtExpr}
+       SET status = $2, completed_at = NULL
        WHERE id = $1
        RETURNING *`,
-      values
+      [id, status]
     );
     return rows[0] || null;
   },

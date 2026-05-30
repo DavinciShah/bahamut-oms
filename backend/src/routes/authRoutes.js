@@ -4,12 +4,10 @@ const express    = require('express');
 const router     = express.Router();
 const authCtrl   = require('../controllers/authController');
 const { authenticateJWT } = require('../middleware/auth');
-const rateLimit  = require('express-rate-limit');
 
-// Strict rate limit for auth endpoints (20 requests per 15 min per IP)
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
-
-router.use(authLimiter);
+// Rate limiting for this router is applied upstream in app.js (Redis-backed authLimiter).
+// Do NOT add a local express-rate-limit here — it would use in-memory storage and break
+// multi-instance deployments.
 
 router.post('/register', authCtrl.register);
 router.post('/login',    authCtrl.login);
