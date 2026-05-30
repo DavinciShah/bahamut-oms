@@ -1,7 +1,7 @@
 {
-  "name": "bahamut-oms-backend",
+  "name": "devibe-oms-backend",
   "version": "1.0.0",
-  "description": "Bahamut Order Management System - Backend API with Accounting Integration",
+  "description": "De Vibe Order Management System - Backend API with Accounting Integration",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

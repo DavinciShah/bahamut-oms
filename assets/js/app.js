@@ -12,7 +12,7 @@ const PAGE_MAP = {
   settings: { file: 'settings.html', label: 'Settings', icon: '⚙️', intro: 'Configure tenant details, team access, alert rules, and security defaults.' },
 };
 
-const STORAGE_KEY = 'bahamut-oms-static-v1';
+const STORAGE_KEY = 'devibe-oms-static-v1';
 const SEARCH_PLACEHOLDER = 'Search orders, tickets, SKUs, carriers...';
 const viewState = {
   notificationOpen: false,
@@ -29,7 +29,7 @@ const viewState = {
 };
 
 const defaultState = {
-  company: { name: 'Bahamut OMS', tier: 'Enterprise Control Plane', uptime: '99.96%' },
+  company: { name: 'De Vibe OMS', tier: 'Enterprise Control Plane', uptime: '99.96%' },
   orders: [
     { id: 'ORD-24071', customer: 'Dragon Retail Pvt Ltd', channel: 'Shopify', status: 'pending', value: 124500, createdAt: '2026-05-12T09:40:00Z', priority: 'High', warehouse: 'Mumbai FC', items: 6 },
     { id: 'ORD-24072', customer: 'Ember Mart', channel: 'Amazon', status: 'picking', value: 86200, createdAt: '2026-05-12T12:10:00Z', priority: 'Medium', warehouse: 'Delhi FC', items: 4 },
@@ -39,12 +39,12 @@ const defaultState = {
     { id: 'ORD-24076', customer: 'Atlas Home', channel: 'Website', status: 'delivered', value: 36800, createdAt: '2026-05-10T08:10:00Z', priority: 'Low', warehouse: 'Kolkata FC', items: 3 },
   ],
   inventory: [
-    { sku: 'BHM-AX12', product: 'Bahamut Steel Rack', warehouse: 'Mumbai FC', onHand: 28, reorderPoint: 22, inbound: 16, status: 'healthy', category: 'Storage' },
-    { sku: 'BHM-LT09', product: 'Lotus Tote Pack', warehouse: 'Delhi FC', onHand: 12, reorderPoint: 18, inbound: 24, status: 'low', category: 'Apparel' },
-    { sku: 'BHM-RD44', product: 'Redline Dock Crate', warehouse: 'Bengaluru FC', onHand: 8, reorderPoint: 14, inbound: 30, status: 'critical', category: 'Industrial' },
-    { sku: 'BHM-OP11', product: 'Onyx Packing Tape', warehouse: 'Kolkata FC', onHand: 65, reorderPoint: 30, inbound: 0, status: 'healthy', category: 'Consumables' },
-    { sku: 'BHM-AV03', product: 'Aviator Label Printer', warehouse: 'Mumbai FC', onHand: 5, reorderPoint: 6, inbound: 10, status: 'critical', category: 'Hardware' },
-    { sku: 'BHM-CR27', product: 'Crimson Return Kit', warehouse: 'Delhi FC', onHand: 22, reorderPoint: 20, inbound: 8, status: 'healthy', category: 'Reverse Logistics' },
+    { sku: 'DVB-AX12', product: 'De Vibe Steel Rack', warehouse: 'Mumbai FC', onHand: 28, reorderPoint: 22, inbound: 16, status: 'healthy', category: 'Storage' },
+    { sku: 'DVB-LT09', product: 'Lotus Tote Pack', warehouse: 'Delhi FC', onHand: 12, reorderPoint: 18, inbound: 24, status: 'low', category: 'Apparel' },
+    { sku: 'DVB-RD44', product: 'Redline Dock Crate', warehouse: 'Bengaluru FC', onHand: 8, reorderPoint: 14, inbound: 30, status: 'critical', category: 'Industrial' },
+    { sku: 'DVB-OP11', product: 'Onyx Packing Tape', warehouse: 'Kolkata FC', onHand: 65, reorderPoint: 30, inbound: 0, status: 'healthy', category: 'Consumables' },
+    { sku: 'DVB-AV03', product: 'Aviator Label Printer', warehouse: 'Mumbai FC', onHand: 5, reorderPoint: 6, inbound: 10, status: 'critical', category: 'Hardware' },
+    { sku: 'DVB-CR27', product: 'Crimson Return Kit', warehouse: 'Delhi FC', onHand: 22, reorderPoint: 20, inbound: 8, status: 'healthy', category: 'Reverse Logistics' },
   ],
   analytics: {
     revenue: [
@@ -97,7 +97,7 @@ const defaultState = {
     EC1387621: ['Scheduled for pickup · 13 May, 10:20', 'Driver assigned · 13 May, 11:15'],
   },
   tickets: [
-    { id: 'TKT-901', subject: 'Warehouse stock mismatch for BHM-RD44', priority: 'Critical', status: 'Open', owner: 'Ops Control', updatedAt: '2026-05-13T06:14:00Z', notes: 'Cycle count variance observed in Bengaluru FC.' },
+    { id: 'TKT-901', subject: 'Warehouse stock mismatch for DVB-RD44', priority: 'Critical', status: 'Open', owner: 'Ops Control', updatedAt: '2026-05-13T06:14:00Z', notes: 'Cycle count variance observed in Bengaluru FC.' },
     { id: 'TKT-902', subject: 'QuickBooks posting timeout for B2B invoice', priority: 'High', status: 'Investigating', owner: 'Finance Ops', updatedAt: '2026-05-13T04:52:00Z', notes: 'Retry succeeding on second pass; monitor webhook retries.' },
     { id: 'TKT-903', subject: 'Need custom branding for storefront emails', priority: 'Medium', status: 'Pending Customer', owner: 'CSM', updatedAt: '2026-05-12T19:05:00Z', notes: 'Awaiting logo pack from merchant team.' },
   ],
@@ -107,7 +107,7 @@ const defaultState = {
     { title: 'Finance close checklist for OMS-led invoicing', topic: 'Billing', readTime: '5 min' },
   ],
   notifications: [
-    { id: 'NT-1', title: 'Critical stock alert', body: 'BHM-RD44 dropped below safety stock in Bengaluru FC.', read: false, stamp: '2026-05-13T06:15:00Z' },
+    { id: 'NT-1', title: 'Critical stock alert', body: 'DVB-RD44 dropped below safety stock in Bengaluru FC.', read: false, stamp: '2026-05-13T06:15:00Z' },
     { id: 'NT-2', title: 'Billing renewal in 19 days', body: 'Scale+ subscription renews on 01 Jun 2026.', read: false, stamp: '2026-05-13T05:55:00Z' },
     { id: 'NT-3', title: 'Amazon sync complete', body: '788 orders pulled successfully into control plane.', read: true, stamp: '2026-05-13T06:37:00Z' },
     { id: 'NT-4', title: 'Ticket escalated', body: 'TKT-901 assigned to Ops Control for same-day resolution.', read: true, stamp: '2026-05-13T06:20:00Z' },
@@ -115,16 +115,16 @@ const defaultState = {
   settings: {
     timezone: 'Asia/Kolkata',
     currency: 'INR',
-    notificationEmail: 'ops@bahamutoms.com',
+    notificationEmail: 'ops@devibeoms.com',
     supportPhone: '+91 22 5555 0101',
-    domain: 'control.bahamutoms.com',
+    domain: 'control.devibeoms.com',
     mfa: true,
     alertDigest: 'twice-daily',
   },
   team: [
-    { name: 'Aarya Shah', role: 'Tenant Admin', email: 'aarya@bahamutoms.com', status: 'Active' },
-    { name: 'Meera Rao', role: 'Finance Ops', email: 'meera@bahamutoms.com', status: 'Active' },
-    { name: 'Kabir Nanda', role: 'Warehouse Lead', email: 'kabir@bahamutoms.com', status: 'Invited' },
+    { name: 'Aarya Shah', role: 'Tenant Admin', email: 'aarya@devibeoms.com', status: 'Active' },
+    { name: 'Meera Rao', role: 'Finance Ops', email: 'meera@devibeoms.com', status: 'Active' },
+    { name: 'Kabir Nanda', role: 'Warehouse Lead', email: 'kabir@devibeoms.com', status: 'Invited' },
   ],
 };
 
@@ -134,8 +134,36 @@ function deepClone(value) {
 
 function loadState() {
   try {
+    const isRegistered = localStorage.getItem('devibe-oms-registered') === 'true';
+    const profile = JSON.parse(localStorage.getItem('devibe-oms-current-user') || 'null');
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    return parsed && typeof parsed === 'object' ? parsed : deepClone(defaultState);
+    
+    let activeState;
+    if (parsed && typeof parsed === 'object') {
+      activeState = parsed;
+    } else {
+      activeState = deepClone(defaultState);
+    }
+
+    if (isRegistered && profile) {
+      activeState.company.name = profile.company;
+      activeState.company.tier = 'Enterprise Control Plane (Active User)';
+      activeState.userProfile = profile;
+      
+      const cleanMode = localStorage.getItem('devibe-oms-clean-mode') !== 'false';
+      if (cleanMode) {
+        activeState.orders = [];
+        activeState.inventory = [];
+        activeState.notifications = [
+          { id: 'NT-WELCOME', title: 'Welcome to De Vibe OMS!', body: 'Your new clean dashboard is active. You can create orders or restock SKUs from the menu above.', read: false, stamp: new Date().toISOString() }
+        ];
+        activeState.shipments = [];
+        activeState.tickets = [];
+        activeState.integrations = [];
+        activeState.integrationLog = [];
+      }
+    }
+    return activeState;
   } catch {
     return deepClone(defaultState);
   }
@@ -150,11 +178,20 @@ function persist() {
 }
 
 function resetState() {
+  localStorage.setItem('devibe-oms-clean-mode', 'false');
   state = deepClone(defaultState);
   persist();
   renderCurrentPage();
-  showToast('Demo data reset.');
+  showToast('Mock demo data loaded.');
 }
+
+window.logoutStaticUser = function() {
+  localStorage.removeItem('devibe-oms-registered');
+  localStorage.removeItem('devibe-oms-current-user');
+  localStorage.removeItem('devibe-oms-clean-mode');
+  localStorage.removeItem(STORAGE_KEY);
+  window.location.reload();
+};
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -217,10 +254,10 @@ function renderSidebar() {
   const sidebar = document.getElementById('sidebar');
   sidebar.innerHTML = `
     <div class="sidebar-header">
-      <img class="brand-logo" src="assets/img/logo.svg" alt="Bahamut dragon logo" />
+      <img class="brand-logo" src="assets/img/logo.svg" alt="De Vibe logo" />
       <div class="brand-copy">
-        <strong>Bahamut OMS</strong>
-        <span>Dragon-grade order control</span>
+        <strong>De Vibe OMS</strong>
+        <span>Vibe-grade order control</span>
       </div>
     </div>
     <div class="sidebar-section-title">Core navigation</div>
@@ -233,9 +270,16 @@ function renderSidebar() {
     </nav>
     <div class="sidebar-footer">
       <div class="mini-card">
-        <div class="tiny">Tenant uptime</div>
-        <div class="value" style="font-size: 1.4rem; margin: 10px 0 4px;">${escapeHtml(state.company.uptime)}</div>
-        <div class="subtle">Everything from order ingest to finance sync is visible from this static control plane demo.</div>
+        ${state.userProfile ? `
+          <div class="tiny" style="color: var(--primary); font-weight: 600;">ACTIVE SESSION</div>
+          <div class="value" style="font-size: 1.1rem; margin: 6px 0 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; color: var(--text-base);">${escapeHtml(state.userProfile.name)}</div>
+          <div class="subtle" style="font-size: 0.75rem; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(state.userProfile.email)}</div>
+          <button class="danger-button" style="margin-top: 4px; width: 100%; font-size: 0.75rem; padding: 6px 12px; border-radius: 6px;" onclick="logoutStaticUser()">Logout</button>
+        ` : `
+          <div class="tiny">Tenant Uptime</div>
+          <div class="value" style="font-size: 1.2rem; margin: 4px 0;">${escapeHtml(state.company.uptime)}</div>
+          <a class="primary-button" href="signup.html" style="margin-top: 8px; width: 100%; font-size: 0.75rem; padding: 8px 12px; text-align: center; text-decoration: none; display: block; border-radius: 6px; box-sizing: border-box;">Create Clean Workspace</a>
+        `}
       </div>
     </div>`;
 }
@@ -545,7 +589,7 @@ function renderSupport() {
 
 function renderBI() {
   return `
-    <section class="page-intro"><div><h2>Bahamut BI portal</h2><p>Operational intelligence for leaders who want anomaly alerts and revenue predictions in one dragon-themed cockpit.</p></div></section>
+    <section class="page-intro"><div><h2>De Vibe BI portal</h2><p>Operational intelligence for leaders who want anomaly alerts and revenue predictions in one harmonized cockpit.</p></div></section>
     <section class="kpi-grid">
       ${statCard('Churn risk accounts', 7, 'Merchants needing proactive success outreach.', 'warning')}
       ${statCard('Anomaly alerts', 3, 'Shipment and stock patterns outside control limits.', 'danger')}
@@ -556,8 +600,8 @@ function renderBI() {
       <div class="tab-row">${['overview','data','predictions','anomalies','trends'].map((tab) => `<button class="tab-button ${viewState.biTab === tab ? 'active' : ''}" data-bi-tab="${tab}">${tab}</button>`).join('')}</div>
       ${viewState.biTab === 'overview' ? `<div class="dual-grid"><div class="chart-panel"><div class="panel-header"><h3 class="panel-title">Forecast curve</h3></div><div class="spark-grid">${[8.8, 9.4, 10.1, 10.8, 11.6, 12.4].map((value, index) => `<div class="spark-bar" style="height:${value * 12}px"><span>M${index + 1}</span></div>`).join('')}</div></div><div class="panel"><div class="panel-header"><h3 class="panel-title">Executive notes</h3></div><div class="activity-list"><div class="activity-item"><strong>Returns anomaly</strong><div class="subtle">Delhi FC exceeded rolling 14-day returns threshold by 1.7x.</div></div><div class="activity-item"><strong>Revenue headroom</strong><div class="subtle">B2B channel can sustain a 12% promotional uplift without breaching pick-pack capacity.</div></div></div></div></div>` : ''}
       ${viewState.biTab === 'data' ? `<div class="table-shell"><table><thead><tr><th>Dataset</th><th>Freshness</th><th>Rows</th><th>Owner</th></tr></thead><tbody><tr><td>orders_fact</td><td>4 min</td><td>1.2M</td><td>Ops BI</td></tr><tr><td>inventory_snapshot</td><td>9 min</td><td>182K</td><td>Warehouse BI</td></tr><tr><td>finance_postings</td><td>13 min</td><td>97K</td><td>Finance Systems</td></tr></tbody></table></div>` : ''}
-      ${viewState.biTab === 'predictions' ? `<div class="triple-grid"><div class="callout"><strong>Demand spike</strong><p class="subtle">Shopify flagship projected +18% over the next 2 weeks.</p></div><div class="callout"><strong>Carrier cost drift</strong><p class="subtle">BlueDart air lanes show 6% upward pressure next month.</p></div><div class="callout"><strong>Stockout risk</strong><p class="subtle">BHM-AV03 could stock out in 5 days without transfer or PO.</p></div></div>` : ''}
-      ${viewState.biTab === 'anomalies' ? `<div class="activity-list"><div class="activity-item"><strong>Inventory anomaly</strong><div class="subtle">BHM-RD44 variance is 42% above normal cycle count drift.</div></div><div class="activity-item"><strong>Shipping anomaly</strong><div class="subtle">Late scan events rose 24% on Delhi outbound volume.</div></div><div class="activity-item"><strong>Finance anomaly</strong><div class="subtle">QuickBooks exception rate crossed 2.1% for B2B invoices.</div></div></div>` : ''}
+      ${viewState.biTab === 'predictions' ? `<div class="triple-grid"><div class="callout"><strong>Demand spike</strong><p class="subtle">Shopify flagship projected +18% over the next 2 weeks.</p></div><div class="callout"><strong>Carrier cost drift</strong><p class="subtle">BlueDart air lanes show 6% upward pressure next month.</p></div><div class="callout"><strong>Stockout risk</strong><p class="subtle">DVB-AV03  could stock out in 5 days without transfer or PO.</p></div></div>` : ''}
+      ${viewState.biTab === 'anomalies' ? `<div class="activity-list"><div class="activity-item"><strong>Inventory anomaly</strong><div class="subtle">DVB-RD44 variance is 42% above normal cycle count drift.</div></div><div class="activity-item"><strong>Shipping anomaly</strong><div class="subtle">Late scan events rose 24% on Delhi outbound volume.</div></div><div class="activity-item"><strong>Finance anomaly</strong><div class="subtle">QuickBooks exception rate crossed 2.1% for B2B invoices.</div></div></div>` : ''}
       ${viewState.biTab === 'trends' ? `<div class="chart">${['Revenue per order','Pick efficiency','On-time dispatch','Return rate'].map((label, index) => `<div class="chart-row"><strong>${label}</strong><div class="chart-track"><div class="chart-bar" style="width:${[86, 79, 92, 31][index]}%"></div></div><span>${[86, 79, 92, 31][index]}%</span></div>`).join('')}</div>` : ''}
     </section>`;
 }

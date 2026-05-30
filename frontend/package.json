@@ -1,7 +1,7 @@
 {
-  "name": "bahamut-oms-frontend",
+  "name": "devibe-oms-frontend",
   "version": "1.0.0",
-  "description": "Bahamut Order Management System - Frontend",
+  "description": "De Vibe Order Management System - Frontend",
   "private": true,
   "scripts": {
     "dev": "vite",

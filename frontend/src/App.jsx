@@ -31,7 +31,7 @@ import NotificationBell from './components/NotificationBell';
 function NavBar() {
   return (
     <nav style={{ background: '#1e293b', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-      <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: 20, marginRight: 16 }}>Bahamut OMS</span>
+      <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: 20, marginRight: 16 }}>De Vibe OMS</span>
       {[
         ['/dashboard', 'Dashboard'],
         ['/orders', 'Orders'],
@@ -63,7 +63,7 @@ export default function App() {
       window.gtag('event', 'page_view', {
         page_path: location.pathname + location.search,
         page_location: window.location.href,
-        page_title: document.title || 'Bahamut OMS'
+        page_title: document.title || 'De Vibe OMS'
       });
     }
   }, [location]);

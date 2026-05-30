@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up â€” De Vibe OMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <style>
+      :root {
+        --bg-color: #0b0f19;
+        --card-bg: rgba(17, 24, 39, 0.7);
+        --primary: #6366f1;
+        --primary-glow: rgba(99, 102, 241, 0.15);
+        --text-base: #f3f4f6;
+        --text-muted: #9ca3af;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.03);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        background-image: 
+          radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+        color: var(--text-base);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+      }
+
+      .auth-container {
+        width: 100%;
+        max-width: 440px;
+        padding: 24px;
+      }
+
+      .auth-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 40px 32px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 80px var(--primary-glow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #06b6d4);
+      }
+
+      .logo-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 32px;
+        text-align: center;
+      }
+
+      .logo-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+        filter: drop-shadow(0 0 8px var(--primary));
+      }
+
+      .logo-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 60%, #a5b4fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.02em;
+      }
+
+      .logo-tagline {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .form-input {
+        width: 100%;
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 14px;
+        color: var(--text-base);
+        font-family: inherit;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .primary-button {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        margin-top: 8px;
+      }
+
+      .primary-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      }
+
+      .primary-button:active {
+        transform: translateY(1px);
+      }
+
+      .footer-links {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+      }
+
+      .footer-links a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .footer-links a:hover {
+        text-decoration: underline;
+      }
+
+      .alert {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #f87171;
+      }
+
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #34d399;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="logo-section">
+          <!-- Inline modern abstract Vibe shape SVG instead of default icon -->
+          <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="20" fill="url(#grad)" />
+            <path d="M30 40C30 34.4772 34.4772 30 40 30H60C65.5228 30 70 34.4772 70 40V60C70 65.5228 65.5228 70 60 70H40C34.4772 70 30 65.5228 30 60V40Z" fill="url(#grad2)" fill-opacity="0.2"/>
+            <path d="M45 42L55 50L62 38" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1" />
+                <stop offset="1" stop-color="#06b6d4" />
+              </linearGradient>
+              <linearGradient id="grad2" x1="30" y1="30" x2="70" y2="70" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffffff" />
+                <stop offset="1" stop-color="#a5b4fc" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <h1 class="logo-title">De Vibe OMS</h1>
+          <p class="logo-tagline">Create your new empty workspace</p>
+        </div>
+
+        <div id="alert-error" class="alert alert-danger"></div>
+        <div id="alert-success" class="alert alert-success"></div>
+
+        <form id="signup-form">
+          <div class="form-group">
+            <label class="form-label" for="company">Company Name</label>
+            <input class="form-input" id="company" type="text" placeholder="e.g. Vibe Logistics" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="fullname">Full Name</label>
+            <input class="form-input" id="fullname" type="text" placeholder="e.g. Akshay Kumar" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input class="form-input" id="email" type="email" placeholder="name@company.com" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-input" id="password" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required />
+          </div>
+
+          <button class="primary-button" type="submit">Initialize Workspace</button>
+        </form>
+
+        <div class="footer-links">
+          Evaluating the product? 
+          <a href="#" onclick="launchMockDemo()">Explore Mock Demo</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = 'devibe-oms-static-v1';
+
+      function showError(msg) {
+        const div = document.getElementById('alert-error');
+        div.innerText = msg;
+        div.style.display = 'block';
+        document.getElementById('alert-success').style.display = 'none';
+      }
+
+      function showSuccess(msg) {
+        const div = document.getElementById('alert-success');
+        div.innerText = msg;
+        div.style.display = 'block';
+        document.getElementById('alert-error').style.display = 'none';
+      }
+
+      document.getElementById('signup-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const company = document.getElementById('company').value.trim();
+        const fullname = document.getElementById('fullname').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!company || !fullname || !email || !password) {
+          showError('All fields are required.');
+          return;
+        }
+
+        try {
+          // Initialize De Vibe local state fields
+          localStorage.setItem('devibe-oms-registered', 'true');
+          localStorage.setItem('devibe-oms-current-user', JSON.stringify({
+            name: fullname,
+            email: email,
+            company: company
+          }));
+          localStorage.setItem('devibe-oms-clean-mode', 'true'); // Enforce clean empty state
+          localStorage.removeItem(STORAGE_KEY); // Clear any cached state to force load new welcome profile
+
+          showSuccess('Workspace initialized! Loading empty control plane...');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } catch (err) {
+          showError('Failed to initialize local storage. Please enable cookies.');
+        }
+      });
+
+      function launchMockDemo() {
+        localStorage.removeItem('devibe-oms-registered');
+        localStorage.removeItem('devibe-oms-current-user');
+        localStorage.removeItem('devibe-oms-clean-mode');
+        localStorage.removeItem(STORAGE_KEY);
+        
+        showSuccess('Loading standard pre-seeded mock demo...');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1200);
+      }
+    </script>
+  </body>
+</html>
+

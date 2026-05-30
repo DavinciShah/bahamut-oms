@@ -10,6 +10,28 @@ const http = require('http');
 let mainWindow;
 let backendProcess;
 
+// Force single instance lock for DeVibe OMS
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
+// Register custom protocol handler for deep linking (devibe-oms://)
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('devibe-oms', process.execPath, [path.resolve(process.argv[1])]);
+  }
+} else {
+  app.setAsDefaultProtocolClient('devibe-oms');
+}
+
 function getBackendEntry() {
   if (app.isPackaged) {
     return path.join(process.resourcesPath, 'backend', 'server.js');

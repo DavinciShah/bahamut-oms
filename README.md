@@ -24,8 +24,8 @@ See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
 
 1. Clone the repository:
 	```bash
-	git clone https://github.com/DavinciShah/bahamut-oms.git
-	cd bahamut-oms
+	git clone https://github.com/DavinciShah/devibe-oms.git
+	cd devibe-oms
 	```
 2. Navigate to the backend folder and install dependencies:
 	```bash
@@ -156,5 +156,5 @@ CI workflows:
 ### GitHub Free Domain (No Custom Domain)
 
 - This repository is configured to use the default GitHub Pages domain.
-- Public URL: `https://davincishah.github.io/bahamut-oms/`
+- Public URL: `https://davincishah.github.io/devibe-oms/`
 - In **GitHub → Settings → Pages**, leave **Custom domain** empty.

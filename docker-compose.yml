@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: bahamut-postgres-dev
+    container_name: devibe-postgres-dev
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-bahamut_oms}
+      POSTGRES_DB: ${DB_NAME:-devibe_oms}
     ports:
       - "5432:5432"
     volumes:
@@ -19,7 +19,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: bahamut-redis-dev
+    container_name: devibe-redis-dev
     ports:
       - "6379:6379"
     healthcheck:
@@ -32,13 +32,13 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: bahamut-backend-dev
+    container_name: devibe-backend-dev
     environment:
       NODE_ENV: development
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_HOST: postgres
-      DB_NAME: ${DB_NAME:-bahamut_oms}
+      DB_NAME: ${DB_NAME:-devibe_oms}
       DB_PORT: 5432
       JWT_SECRET: ${JWT_SECRET:-dev-secret-key-change-in-production}
       PORT: 5000
@@ -62,7 +62,7 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    container_name: bahamut-frontend-dev
+    container_name: devibe-frontend-dev
     ports:
       - "80:80"
     depends_on:
@@ -73,7 +73,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: bahamut-pgadmin-dev
+    container_name: devibe-pgadmin-dev
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
@@ -87,4 +87,4 @@ volumes:
 
 networks:
   default:
-    name: bahamut-network
+    name: devibe-network
