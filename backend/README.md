@@ -1,4 +1,4 @@
-# Bahamut OMS — Backend
+# De Vibe OMS — Backend
 
 Node.js/Express REST API for the Bahamut Order Management System with PostgreSQL and JWT authentication.
 

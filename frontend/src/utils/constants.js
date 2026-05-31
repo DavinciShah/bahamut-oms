@@ -1,4 +1,4 @@
-export const APP_NAME = 'Bahamut OMS';
+export const APP_NAME = 'De Vibe OMS';
 
 import { RUNTIME_CONFIG } from './runtimeConfig';
 

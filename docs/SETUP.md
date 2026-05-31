@@ -16,8 +16,8 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/DavinciShah/bahamut-oms.git
-cd bahamut-oms
+git clone https://github.com/DavinciShah/devibe-oms.git
+cd devibe-oms
 ```
 
 ### 2. Backend setup
@@ -34,7 +34,7 @@ NODE_ENV=development
 PORT=5000
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=bahamut_oms
+DB_NAME=devibe_oms
 DB_USER=postgres
 DB_PASSWORD=yourpassword
 JWT_SECRET=your-jwt-secret
@@ -46,10 +46,10 @@ CORS_ORIGIN=http://localhost:3000
 
 ```bash
 # Create the database
-psql -U postgres -c "CREATE DATABASE bahamut_oms;"
+psql -U postgres -c "CREATE DATABASE devibe_oms;"
 
 # Run the init migration
-psql -U postgres -d bahamut_oms -f backend/migrations/init.sql
+psql -U postgres -d devibe_oms -f backend/migrations/init.sql
 ```
 
 ### 4. Start the backend
@@ -126,7 +126,7 @@ docker compose down -v
 | `PORT`              | `5000`                         | HTTP server port                     |
 | `DB_HOST`           | `localhost`                    | PostgreSQL host                      |
 | `DB_PORT`           | `5432`                         | PostgreSQL port                      |
-| `DB_NAME`           | `bahamut_oms`                  | Database name                        |
+| `DB_NAME`           | `devibe_oms`                  | Database name                        |
 | `DB_USER`           | `postgres`                     | Database user                        |
 | `DB_PASSWORD`       | `password`                     | Database password                    |
 | `JWT_SECRET`        | —                              | Secret for signing access tokens     |
@@ -170,7 +170,7 @@ Coverage reports are written to `frontend/coverage/`.
 docker compose logs -f backend
 
 # Open a psql shell inside the running Postgres container
-docker compose exec postgres psql -U postgres -d bahamut_oms
+docker compose exec postgres psql -U postgres -d devibe_oms
 
 # Rebuild a single service
 docker compose up --build backend

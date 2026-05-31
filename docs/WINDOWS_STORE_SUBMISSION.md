@@ -1,6 +1,6 @@
 # Windows Store Submission Guide
 
-This document walks through the end-to-end process of submitting **Bahamut OMS** to the
+This document walks through the end-to-end process of submitting **De Vibe OMS** to the
 Microsoft Store via **Partner Center**.
 
 ---
@@ -21,8 +21,8 @@ Microsoft Store via **Partner Center**.
 
 1. Go to <https://partner.microsoft.com/dashboard/windows/overview>.
 2. Click **Create a new app**.
-3. Reserve the name **Bahamut OMS**.
-4. Note the **Package/Identity Name** (e.g. `12345Publisher.BahamutOMS`) and
+3. Reserve the name **De Vibe OMS**.
+4. Note the **Package/Identity Name** (e.g. `12345Publisher.DeVibeOMS`) and
    **Publisher** identity string (e.g. `CN=12345Publisher, O=..., L=..., C=US`).
 
 > **Update these values before packaging:**
@@ -37,7 +37,7 @@ Microsoft Store via **Partner Center**.
 # From the desktop\ directory:
 $env:MSIX_PUBLISHER = "CN=<your-partner-center-publisher-string>"
 npm run dist:win          # produces dist\win-unpacked\
-npm run dist:msix         # produces dist\Bahamut-OMS-1.0.0.msix
+npm run dist:msix         # produces dist\De-Vibe-OMS-1.0.0.msix
 ```
 
 For **signed** packages (required for sideload and recommended before Store upload):
@@ -60,15 +60,15 @@ Fill these in Partner Center → **Store listing** tab:
 
 | Field | Value |
 |-------|-------|
-| App name | Bahamut OMS |
+| App name | De Vibe OMS |
 | Short description (≤ 200 chars) | Manage orders, inventory, suppliers and billing in a single Windows app. |
 | Description | See `README.md` → project overview section |
 | Category | Business > Productivity |
 | Sub-category | Business Management Software |
 | Keywords | OMS, order management, inventory, ERP, warehouse |
 | Privacy policy URL | Your hosted privacy policy page |
-| Website URL | <https://github.com/DavinciShah/bahamut-oms> |
-| Support contact | support@bahamut-oms.example.com |
+| Website URL | <https://github.com/DavinciShah/devibe-oms> |
+| Support contact | support@devibe-oms.example.com |
 
 ### Screenshots
 
@@ -94,7 +94,7 @@ The QA-evidence screenshots in `docs/qa-evidence/` may be used as a starting poi
 ## 5. Age Ratings
 
 Complete the **Age ratings questionnaire** in Partner Center.  
-Bahamut OMS is a business app with no user-generated content, violence, or mature themes.
+De Vibe OMS is a business app with no user-generated content, violence, or mature themes.
 Expected rating: **Everyone (3+)** / **PEGI 3**.
 
 ---
@@ -102,7 +102,7 @@ Expected rating: **Everyone (3+)** / **PEGI 3**.
 ## 6. Upload the Package
 
 1. In Partner Center → **Packages** → **Upload packages**.
-2. Upload `desktop/dist/Bahamut-OMS-<version>.msix`.
+2. Upload `desktop/dist/De-Vibe-OMS-<version>.msix`.
 3. Partner Center validates the manifest automatically.
 4. Fix any validation errors shown in the portal.
 
@@ -129,21 +129,21 @@ After the `.exe` installer is built:
 
 1. Calculate the SHA-256 of the NSIS installer:
    ```powershell
-   CertUtil -hashfile Bahamut-OMS-Setup-1.0.0.exe SHA256
+   CertUtil -hashfile De-Vibe-OMS-Setup-1.0.0.exe SHA256
    ```
 2. Update `desktop/winget/manifest.yaml`:
    - Set `InstallerUrl` to a direct hot-link URL that starts download immediately (**HTTP 200, no redirect**).
-   - Example: `https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe`
+   - Example: `https://downloads.devibe-oms.com/windows/v1.0.0/De-Vibe-OMS-Setup-1.0.0.exe`
    - Verify with:
      ```bash
-     curl -I https://downloads.bahamut-oms.com/windows/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe
+     curl -I https://downloads.devibe-oms.com/windows/v1.0.0/De-Vibe-OMS-Setup-1.0.0.exe
      ```
      The response should be `200 OK` with no `Location` redirect header.
    - Replace `InstallerSha256` with the real hash.
    - Set `PackageUrl` to the same direct Win32 `.exe` package URL.
    - Update `InstallerUrl` if the release tag differs.
 3. Fork [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) and open a PR
-   adding the manifest under `manifests/d/DavinciShah/BahamutOMS/1.0.0/`.
+   adding the manifest under `manifests/d/DavinciShah/DeVibeOMS/1.0.0/`.
 
 ---
 

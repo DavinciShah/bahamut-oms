@@ -3,7 +3,7 @@ import Sidebar from '../components/Common/Sidebar';
 import Footer from '../components/Common/Footer';
 
 const WINDOWS_INSTALLER_URL =
-  'https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/Bahamut-OMS-Setup-1.0.0.exe';
+  'https://github.com/DavinciShah/devibe-oms/releases/download/v1.0.0/De-Vibe-OMS-Setup-1.0.0.exe';
 
 function DownloadPage() {
   return (
@@ -21,7 +21,7 @@ function DownloadPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <span style={{ fontSize: '2.5rem' }}>🖥️</span>
                 <div>
-                  <h3 style={{ margin: 0 }}>Bahamut OMS for Windows</h3>
+                  <h3 style={{ margin: 0 }}>De Vibe OMS for Windows</h3>
                   <p style={{ margin: '0.25rem 0 0', color: 'var(--gray-500)', fontSize: 'var(--font-size-sm)' }}>
                     Version 1.0.0 · Windows 10/11 (x64)
                   </p>
@@ -54,7 +54,7 @@ function DownloadPage() {
                   Or install via <strong>winget</strong>:
                 </p>
                 <code style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-700)' }}>
-                  winget install DavinciShah.BahamutOMS
+                  winget install DavinciShah.DeVibeOMS
                 </code>
               </div>
             </div>

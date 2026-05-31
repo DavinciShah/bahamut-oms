@@ -18,7 +18,7 @@ const logger = winston.createLogger({
     errors({ stack: true }),
     json()
   ),
-  defaultMeta: { service: 'bahamut-oms' },
+  defaultMeta: { service: 'devibe-oms' },
   transports: [
     new winston.transports.File({
       filename: path.join(logsDir, 'error.log'),

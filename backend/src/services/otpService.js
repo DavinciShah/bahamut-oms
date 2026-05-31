@@ -100,7 +100,7 @@ const otpService = {
     }
     if (bits > 0) secret += alphabet[(value << (5 - bits)) & 31];
 
-    const issuer = process.env.APP_NAME || 'BahamutOMS';
+    const issuer = process.env.APP_NAME || 'DeVibeOMS';
     const otpauthUrl = `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(String(userId))}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=${TOTP_DIGITS}&period=${TOTP_STEP}`;
     return { secret, otpauthUrl };
   },

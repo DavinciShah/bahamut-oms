@@ -158,7 +158,7 @@ jobs:
           - **Timestamp:** $TIMESTAMP
           - **Tester:** $TESTER
           - **VM environment:** $VM_ENVIRONMENT
-          - **Installer artifact run:** $INSTALLER_RUN_ID (Bahamut-OMS-Setup-1.0.0.exe)
+          - **Installer artifact run:** $INSTALLER_RUN_ID (De-Vibe-OMS-Setup-1.0.0.exe)
           - **Gate workflow run:** $RUN_URL
 
           ## Manual VM Gate Results

@@ -1,5 +1,5 @@
 -- 001_init.sql
--- Initial schema for Bahamut OMS
+-- Initial schema for De Vibe OMS
 -- Run with: psql $DATABASE_URL -f migrations/001_init.sql
 
 -- Users table

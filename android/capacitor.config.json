@@ -1,6 +1,6 @@
 {
   "appId": "com.bahamut.oms.android",
-  "appName": "Bahamut OMS",
+  "appName": "De Vibe OMS",
   "webDir": "../frontend/dist",
   "bundledWebRuntime": false,
   "android": {

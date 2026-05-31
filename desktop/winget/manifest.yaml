@@ -1,14 +1,14 @@
-# Winget package manifest for Bahamut OMS Windows desktop installer.
+# Winget package manifest for De Vibe OMS Windows desktop installer.
 #
 # PackageUrl  — direct URL to the Win32 NSIS installer package for Store checks
 # InstallerUrl — direct download URL for the Win32 NSIS installer produced by
-#                `npm run dist:win` (Bahamut-OMS-Setup-1.0.0.exe).
+#                `npm run dist:win` (De-Vibe-OMS-Setup-1.0.0.exe).
 #
 # Before submitting to the winget community repo:
 #   1. Upload the .exe to a direct hot-link URL that returns HTTP 200 (no redirects).
 #   2. Replace InstallerSha256 with the real SHA-256 of the uploaded installer:
-#        shasum -a 256 Bahamut-OMS-Setup-1.0.0.exe   (macOS/Linux)
-#        CertUtil -hashfile Bahamut-OMS-Setup-1.0.0.exe SHA256   (Windows)
+#        shasum -a 256 De-Vibe-OMS-Setup-1.0.0.exe   (macOS/Linux)
+#        CertUtil -hashfile De-Vibe-OMS-Setup-1.0.0.exe SHA256   (Windows)
 
 PackageIdentifier: DavinciShah.DeVibeOMS
 PackageVersion: 1.0.0
@@ -21,6 +21,6 @@ Installers:
   - Architecture: x64
     InstallerType: nullsoft
     InstallerUrl: https://github.com/DavinciShah/devibe-oms/releases/download/v1.0.0/De-Vibe-OMS-Setup-1.0.0.exe
-    InstallerSha256: 06C7532E981ECE88EE8771867888580B051F7476C1B6D08DEA82D7485FB49E41
+    InstallerSha256: 564F09EC1345D047C4AA9449409D595B31A1F4BB3B42F9A6403569CE03DCA9E1
 ManifestType: singleton
 ManifestVersion: 1.6.0

@@ -1,6 +1,6 @@
 {
-  "apiBaseUrl": "https://api.bahamut-oms.space/api",
-  "socketBaseUrl": "https://api.bahamut-oms.space",
-  "authStorageKey": "bahamut_oms_auth",
+  "apiBaseUrl": "https://api.devibe-oms.space/api",
+  "socketBaseUrl": "https://api.devibe-oms.space",
+  "authStorageKey": "devibe_oms_auth",
   "requestTimeoutMs": 20000
 }

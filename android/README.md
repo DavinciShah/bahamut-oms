@@ -1,7 +1,7 @@
-# Bahamut OMS Android Track
+# De Vibe OMS Android Track
 
 ## Scope
-This folder is the Android-first track for Bahamut OMS.
+This folder is the Android-first track for De Vibe OMS.
 
 The website remains maintenance-only while Android and Windows app delivery are prioritized.
 
@@ -45,7 +45,7 @@ When you run `npm run sync` from this folder, the selected runtime config is wri
 
 ## Local Setup
 0. Ensure backend database is on latest migration format:
-   - `cd /home/runner/work/bahamut-oms/bahamut-oms/backend && npm ci && npm run migrate`
+   - `cd /home/runner/work/devibe-oms/devibe-oms/backend && npm ci && npm run migrate`
 1. Install Android shell dependencies:
    - `cd android && npm install`
 2. Activate staging or production profile and sync web assets:

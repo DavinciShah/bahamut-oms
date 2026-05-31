@@ -1,4 +1,4 @@
-# Launch Checklist – Bahamut OMS v1.0.0
+# Launch Checklist – De Vibe OMS v1.0.0
 
 Work through every item below before going live. Check off each item as it is completed.
 
@@ -25,26 +25,26 @@ Work through every item below before going live. Check off each item as it is co
 - [ ] `VITE_API_URL` set to production backend URL
 - [ ] `npm run build` succeeds with no errors
 - [ ] GitHub Pages deployment workflow (`deploy-frontend-pages.yml`) completed successfully
-- [ ] App loads at <https://davincishah.github.io/bahamut-oms/> and login works
+- [ ] App loads at <https://davincishah.github.io/devibe-oms/> and login works
 - [ ] Stripe publishable key configured in frontend env
 
 ## 3. Windows Desktop Client
 
 - [ ] `desktop/package.json` version bumped to release version
 - [ ] Icon files present: `desktop/assets/icon.ico`, `desktop/assets/msix/`
-- [ ] NSIS installer builds: `npm run dist:win` → `Bahamut-OMS-Setup-1.0.0.exe`
+- [ ] NSIS installer builds: `npm run dist:win` → `De-Vibe-OMS-Setup-1.0.0.exe`
 - [ ] Installer tested on a clean Windows 10/11 machine
-- [ ] `Bahamut-OMS-Setup-1.0.0.exe` attached to the `v1.0.0` GitHub Release
+- [ ] `De-Vibe-OMS-Setup-1.0.0.exe` attached to the `v1.0.0` GitHub Release
 - [ ] Winget manifest SHA-256 updated in `desktop/winget/manifest.yaml`
 - [ ] Winget PR opened against `microsoft/winget-pkgs` *(optional at launch)*
 
 ### Windows Store (MSIX)
 
 - [ ] Partner Center developer account created
-- [ ] App name **Bahamut OMS** reserved in Partner Center
+- [ ] App name **De Vibe OMS** reserved in Partner Center
 - [ ] `$env:MSIX_PUBLISHER` set to Partner Center publisher string
 - [ ] `desktop/package.json` → `build.appx.publisher` and `build.appx.identityName` updated
-- [ ] MSIX builds: `npm run dist:msix` → `Bahamut-OMS-1.0.0.msix`
+- [ ] MSIX builds: `npm run dist:msix` → `De-Vibe-OMS-1.0.0.msix`
 - [ ] MSIX signed with Partner Center certificate
 - [ ] Store listing complete (description, screenshots, icons, age rating, privacy policy)
 - [ ] Package uploaded and validated in Partner Center
@@ -102,8 +102,8 @@ Work through every item below before going live. Check off each item as it is co
 - [ ] `desktop/package.json` version = `1.0.0`
 - [ ] Git tag `v1.0.0` created and pushed
 - [ ] GitHub Release created from tag with:
-  - [ ] `Bahamut-OMS-Setup-1.0.0.exe` (Windows NSIS installer)
-  - [ ] `Bahamut-OMS-1.0.0.msix` (Windows Store / sideload package)
+  - [ ] `De-Vibe-OMS-Setup-1.0.0.exe` (Windows NSIS installer)
+  - [ ] `De-Vibe-OMS-1.0.0.msix` (Windows Store / sideload package)
   - [ ] Release notes copied from `CHANGELOG.md`
 
 ---

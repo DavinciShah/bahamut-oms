@@ -5,7 +5,7 @@
 - Route new feature delivery to Windows (`desktop/`) and Android (`android/`) tracks.
 
 ## Milestone A — Windows Stabilization + Pilot
-- [ ] Validate packaged runtime config editing workflow (`%APPDATA%/Bahamut OMS/runtime-config.json`).
+- [ ] Validate packaged runtime config editing workflow (`%APPDATA%/De Vibe OMS/runtime-config.json`).
 - [ ] Run installer smoke checks on clean Windows VM.
 - [x] Add CI workflow to build Windows installer artifacts on demand.
 - [x] Pilot distribution checklist (install, launch, auth, order workflow, uninstall).

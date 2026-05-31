@@ -1,8 +1,8 @@
 {
-  "name": "bahamut-oms-android",
+  "name": "devibe-oms-android",
   "version": "1.0.0",
   "private": true,
-  "description": "Android shell for Bahamut OMS",
+  "description": "Android shell for De Vibe OMS",
   "scripts": {
     "build:web": "npm --prefix ../frontend run build && node ./scripts/write-runtime-config.mjs",
     "use:config": "node ./scripts/use-runtime-config.mjs",

@@ -1,6 +1,6 @@
 {
   "apiBaseUrl": "http://10.0.2.2:5000/api",
   "socketBaseUrl": "http://10.0.2.2:5000",
-  "authStorageKey": "bahamut_oms_auth",
+  "authStorageKey": "devibe_oms_auth",
   "requestTimeoutMs": 15000
 }

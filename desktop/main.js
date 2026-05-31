@@ -78,7 +78,7 @@ function ensureRuntimeConfig() {
     db: {
       host: existing.db?.host || 'localhost',
       port: existing.db?.port || 5432,
-      name: existing.db?.name || 'bahamut_oms',
+      name: existing.db?.name || 'devibe_oms',
       user: existing.db?.user || 'postgres',
       password: existing.db?.password || 'password',
     },

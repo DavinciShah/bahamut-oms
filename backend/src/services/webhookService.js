@@ -35,7 +35,7 @@ async function testWebhook(id, userId) {
   const testPayload = {
     event: 'test',
     timestamp: new Date().toISOString(),
-    data: { message: 'This is a test event from Bahamut OMS' }
+    data: { message: 'This is a test event from De Vibe OMS' }
   };
 
   const result = await deliverWebhook(webhook, testPayload);

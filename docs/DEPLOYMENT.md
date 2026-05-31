@@ -13,7 +13,7 @@ docker compose up --build
 1. Create `.env.prod` in the repo root:
 
 ```env
-DB_NAME=bahamut_oms
+DB_NAME=devibe_oms
 DB_USER=postgres
 DB_PASSWORD=<strong-password>
 JWT_SECRET=<random-64-char-string>

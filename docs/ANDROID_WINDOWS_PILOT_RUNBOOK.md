@@ -16,7 +16,7 @@ This runbook implements the pilot release path for both launch tracks.
 ## 0) Backend DB baseline (required before app sync/build)
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/backend
+cd /home/runner/work/devibe-oms/devibe-oms/backend
 npm ci
 npm run migrate
 ```
@@ -26,7 +26,7 @@ npm run migrate
 Optional validation:
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/backend
+cd /home/runner/work/devibe-oms/devibe-oms/backend
 node -e "const {query,pool}=require('./src/config/database');query('select filename,applied_at from schema_migrations order by filename').then(r=>{console.table(r.rows);pool.end();}).catch(e=>{console.error(e);pool.end();process.exit(1);});"
 ```
 
@@ -41,7 +41,7 @@ Tracked profiles:
 Activate profile into `android/runtime-config.json`:
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/android
+cd /home/runner/work/devibe-oms/devibe-oms/android
 npm run use:config:staging
 # or
 npm run use:config:production
@@ -50,7 +50,7 @@ npm run use:config:production
 ### Shell flow
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/android
+cd /home/runner/work/devibe-oms/devibe-oms/android
 npm install
 npm run sync:staging
 # or npm run sync:production
@@ -63,7 +63,7 @@ npm run open
 ### Signed production APK/AAB confirmation (Android Studio)
 
 1. Configure release signing (local only, do not commit secrets):
-   - Copy `/home/runner/work/bahamut-oms/bahamut-oms/android/native/keystore.properties.example` to `/home/runner/work/bahamut-oms/bahamut-oms/android/native/keystore.properties`
+   - Copy `/home/runner/work/devibe-oms/devibe-oms/android/native/keystore.properties.example` to `/home/runner/work/devibe-oms/devibe-oms/android/native/keystore.properties`
    - Fill `storeFile`, `storePassword`, `keyAlias`, `keyPassword`
 2. In Android Studio, open `android/native/` and run:
    - **Build > Generate Signed Bundle / APK**
@@ -74,7 +74,7 @@ npm run open
    - `android/native/app/release/app-release.apk`
 4. Verify APK signature:
    ```bash
-   /path/to/android-sdk/build-tools/35.0.0/apksigner verify --print-certs /home/runner/work/bahamut-oms/bahamut-oms/android/native/app/release/app-release.apk
+   /path/to/android-sdk/build-tools/35.0.0/apksigner verify --print-certs /home/runner/work/devibe-oms/devibe-oms/android/native/app/release/app-release.apk
    ```
 5. Capture SHA-256 certificate fingerprint from `apksigner` output and attach it to pilot release evidence.
 6. Distribute the signed AAB to **Play Internal Testing**.
@@ -84,14 +84,14 @@ npm run open
 ### Dependency hygiene
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/frontend && npm ci
-cd /home/runner/work/bahamut-oms/bahamut-oms/desktop && npm ci
+cd /home/runner/work/devibe-oms/devibe-oms/frontend && npm ci
+cd /home/runner/work/devibe-oms/devibe-oms/desktop && npm ci
 ```
 
 ### Build and packaging
 
 ```bash
-cd /home/runner/work/bahamut-oms/bahamut-oms/desktop
+cd /home/runner/work/devibe-oms/devibe-oms/desktop
 npm run dist:win
 ```
 

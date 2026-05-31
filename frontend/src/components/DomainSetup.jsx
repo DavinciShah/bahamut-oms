@@ -35,7 +35,7 @@ export default function DomainSetup() {
     <div style={{ background: '#fff', borderRadius: 8, padding: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.08)', maxWidth: 560 }}>
       <h3 style={{ marginBottom: 8 }}>Custom Domains</h3>
       <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
-        Configure custom domains for your OMS portal. Point your DNS CNAME to <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>app.bahamutoms.com</code>
+        Configure custom domains for your OMS portal. Point your DNS CNAME to <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>app.devibeoms.com</code>
       </p>
 
       {error && <div style={{ color: '#dc2626', marginBottom: 12, fontSize: 14 }}>{error}</div>}
@@ -73,7 +73,7 @@ export default function DomainSetup() {
               {!d.verified && (
                 <div style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>
                   Add CNAME record:<br />
-                  <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: 4 }}>app.bahamutoms.com</code>
+                  <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: 4 }}>app.devibeoms.com</code>
                 </div>
               )}
             </div>

@@ -1,4 +1,4 @@
-# Bahamut OMS — API Documentation
+# De Vibe OMS — API Documentation
 
 > **Canonical reference**: [`docs/API.md`](../docs/API.md) contains the full, detailed API documentation including request/response examples for every endpoint.
 

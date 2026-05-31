@@ -1,6 +1,6 @@
 # Desktop Icon Assets
 
-This directory contains all icon and image assets for the Bahamut OMS desktop app.
+This directory contains all icon and image assets for the De Vibe OMS desktop app.
 
 ## Files
 

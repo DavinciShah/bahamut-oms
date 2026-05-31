@@ -14,10 +14,10 @@ Fill in every field, then submit results via the **Windows Pilot Go/No-Go Gate**
 | VM type | <!-- Hyper-V / VirtualBox / Azure / GCP / other --> |
 | Guest OS | <!-- e.g. Windows 11 22H2 --> |
 | VM snapshot taken before install | <!-- Yes / No --> |
-| Installer artifact | `Bahamut-OMS-Setup-1.0.0.exe` |
+| Installer artifact | `De-Vibe-OMS-Setup-1.0.0.exe` |
 | GitHub Actions run ID | `25987376181` |
 | Artifact ID | `7041324141` (expires 2026-08-15) |
-| Installer SHA-256 | <!-- run `certutil -hashfile Bahamut-OMS-Setup-1.0.0.exe SHA256` and paste result --> |
+| Installer SHA-256 | <!-- run `certutil -hashfile De-Vibe-OMS-Setup-1.0.0.exe SHA256` and paste result --> |
 
 ---
 
@@ -25,7 +25,7 @@ Fill in every field, then submit results via the **Windows Pilot Go/No-Go Gate**
 
 - [ ] Downloaded `windows-desktop-installer` artifact from Actions run `25987376181`
 - [ ] Transferred installer into clean VM
-- [ ] Ran `Bahamut-OMS-Setup-1.0.0.exe` — install completed without error
+- [ ] Ran `De-Vibe-OMS-Setup-1.0.0.exe` — install completed without error
 - [ ] App launched on first run — no startup crash
 - [ ] App title bar / About shows version **1.0.0**
 - [ ] Screenshot captured: install success

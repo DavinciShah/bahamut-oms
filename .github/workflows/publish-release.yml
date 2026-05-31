@@ -115,7 +115,7 @@ jobs:
           $tag = '${{ steps.release.outputs.tag }}'
           $version = '${{ steps.release.outputs.version }}'
           $notesPath = '${{ steps.notes.outputs.path }}'
-          $title = "Bahamut OMS $tag"
+          $title = "De Vibe OMS $tag"
 
           gh release view $tag *> $null
           if ($LASTEXITCODE -ne 0) {
@@ -132,8 +132,8 @@ jobs:
           gh release edit $tag --draft=false
 
           $assets = @(
-            "desktop/dist/Bahamut-OMS-Setup-$version.exe",
-            "desktop/dist/Bahamut-OMS-$version.msix"
+            "desktop/dist/De-Vibe-OMS-Setup-$version.exe",
+            "desktop/dist/De-Vibe-OMS-$version.msix"
           )
 
           foreach ($asset in $assets) {

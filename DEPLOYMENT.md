@@ -1,4 +1,4 @@
-# Bahamut OMS - Deployment Guide
+# De Vibe OMS - Deployment Guide
 
 ## Quick Start (5 minutes)
 
@@ -9,8 +9,8 @@
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/DavinciShah/bahamut-oms.git
-cd bahamut-oms
+git clone https://github.com/DavinciShah/devibe-oms.git
+cd devibe-oms
 ```
 
 ### Step 2: Create .env File
@@ -127,7 +127,7 @@ docker compose exec backend sh
 docker compose exec backend npm run migrate
 
 # View database
-docker compose exec postgres psql -U postgres -d bahamut_oms
+docker compose exec postgres psql -U postgres -d devibe_oms
 ```
 
 ## Troubleshooting
@@ -168,12 +168,12 @@ curl http://localhost
 
 ### Database Backup
 ```bash
-docker compose exec postgres pg_dump -U postgres bahamut_oms > backup.sql
+docker compose exec postgres pg_dump -U postgres devibe_oms > backup.sql
 ```
 
 ### Database Restore
 ```bash
-docker compose exec -T postgres psql -U postgres bahamut_oms < backup.sql
+docker compose exec -T postgres psql -U postgres devibe_oms < backup.sql
 ```
 
 ## Next Steps
@@ -189,4 +189,4 @@ docker compose exec -T postgres psql -U postgres bahamut_oms < backup.sql
 For issues or questions:
 1. Check logs: `docker compose logs`
 2. Review documentation: See README.md
-3. Open an issue: https://github.com/DavinciShah/bahamut-oms/issues
+3. Open an issue: https://github.com/DavinciShah/devibe-oms/issues

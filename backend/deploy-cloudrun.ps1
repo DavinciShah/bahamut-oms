@@ -6,7 +6,7 @@ param(
   [string]$Region = "us-central1",
 
   [Parameter(Mandatory = $false)]
-  [string]$ServiceName = "bahamut-oms-api",
+  [string]$ServiceName = "devibe-oms-api",
 
   [Parameter(Mandatory = $true)]
   [string]$DatabaseUrl,

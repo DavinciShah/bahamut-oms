@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Build a Windows Store MSIX package for Bahamut OMS.
+  Build a Windows Store MSIX package for De Vibe OMS.
   Uses makeappx.exe / signtool.exe from the electron-builder winCodeSign cache.
 
 .NOTES
@@ -27,12 +27,12 @@ $StagingDir  = Join-Path $DistDir 'msix-staging'
 $PackageJsonPath = Join-Path $DesktopDir 'package.json'
 $PackageJson     = Get-Content $PackageJsonPath -Raw | ConvertFrom-Json
 $AppVersion      = "$($PackageJson.version).0"   # e.g. "1.0.0.0"
-$OutputMsix      = Join-Path $DistDir "Bahamut-OMS-$($PackageJson.version).msix"
+$OutputMsix      = Join-Path $DistDir "De-Vibe-OMS-$($PackageJson.version).msix"
 
-$PfxPath     = if ($env:PFX_PATH)     { $env:PFX_PATH }     else { Join-Path $DesktopDir 'bahamut-oms-dev.pfx' }
+$PfxPath     = if ($env:PFX_PATH)     { $env:PFX_PATH }     else { Join-Path $DesktopDir 'devibe-oms-dev.pfx' }
 # PFX_PASSWORD should always be set via GitHub Secrets in CI. The fallback below
 # is intentionally a placeholder for local developer self-signed test certificates only.
-$PfxPassword = if ($env:PFX_PASSWORD) { $env:PFX_PASSWORD } else { 'BahamutOMS2024!' }
+$PfxPassword = if ($env:PFX_PASSWORD) { $env:PFX_PASSWORD } else { 'DeVibeOMS2024!' }
 
 # ---------------------------------------------------------------------------
 # Locate makeappx + signtool from electron-builder winCodeSign cache
@@ -111,8 +111,8 @@ if (Test-Path $SourceAssets) {
 # Write AppxManifest.xml
 # ---------------------------------------------------------------------------
 Write-Host '[build-msix] Writing AppxManifest.xml…'
-$AppExe    = 'Bahamut OMS.exe'
-$Publisher = if ($env:MSIX_PUBLISHER) { $env:MSIX_PUBLISHER } else { 'CN=BahamutOMS' }
+$AppExe    = 'De Vibe OMS.exe'
+$Publisher = if ($env:MSIX_PUBLISHER) { $env:MSIX_PUBLISHER } else { 'CN=DeVibeOMS' }
 
 $Manifest = @"
 <?xml version="1.0" encoding="utf-8"?>
@@ -123,14 +123,14 @@ $Manifest = @"
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="BahamutOMS.OMS"
+    Name="DeVibeOMS.OMS"
     Publisher="$Publisher"
     Version="$AppVersion"
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Bahamut OMS</DisplayName>
-    <PublisherDisplayName>Bahamut OMS</PublisherDisplayName>
+    <DisplayName>De Vibe OMS</DisplayName>
+    <PublisherDisplayName>De Vibe OMS</PublisherDisplayName>
     <Description>Bahamut Order Management System</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -144,9 +144,9 @@ $Manifest = @"
   </Resources>
 
   <Applications>
-    <Application Id="BahamutOMS" Executable="$AppExe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="DeVibeOMS" Executable="$AppExe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="Bahamut OMS"
+        DisplayName="De Vibe OMS"
         Description="Bahamut Order Management System"
         BackgroundColor="#1e293b"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -201,6 +201,6 @@ if ($Signed) {
 Write-Host ''
 Write-Host 'To sideload on this machine:'
 Write-Host "  Add-AppxPackage -Path '$OutputMsix'"
-Write-Host '  (First trust the dev cert: Import-Certificate -FilePath bahamut-oms-dev.pfx -CertStoreLocation Cert:\LocalMachine\TrustedPeople)'
+Write-Host '  (First trust the dev cert: Import-Certificate -FilePath devibe-oms-dev.pfx -CertStoreLocation Cert:\LocalMachine\TrustedPeople)'
 Write-Host ''
 Write-Host 'For Microsoft Store submission, replace the PFX with your Partner Center certificate.'

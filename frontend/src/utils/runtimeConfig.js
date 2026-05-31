@@ -1,4 +1,4 @@
-const DEFAULT_AUTH_STORAGE_KEY = 'bahamut_oms_auth';
+const DEFAULT_AUTH_STORAGE_KEY = 'devibe_oms_auth';
 const DEFAULT_REQUEST_TIMEOUT_MS = 30000;
 
 const getWindowRuntimeConfig = () => {

@@ -1,4 +1,4 @@
-# OMS (Order Management System) Run Script
+﻿# De Vibe OMS Run Script
 # Usage: .\RUN.ps1 [option]
 # Options: docker, backend, frontend, both
 
@@ -34,11 +34,11 @@ function Invoke-Compose {
 }
 
 function Run-Docker {
-    Write-Host "🐳 Starting OMS with Docker Compose..." -ForegroundColor Cyan
+    Write-Host "[docker] Starting De Vibe OMS with Docker Compose..." -ForegroundColor Cyan
     Set-Location $ProjectRoot
 
     if (!(Test-Path "backend/.env") -and (Test-Path "backend/.env.example")) {
-        Write-Host "⚠️  backend/.env file not found. Creating from backend/.env.example..." -ForegroundColor Yellow
+        Write-Host "[warning] backend/.env file not found. Creating from backend/.env.example..." -ForegroundColor Yellow
         Copy-Item "backend/.env.example" "backend/.env"
     }
 
@@ -47,18 +47,18 @@ function Run-Docker {
         throw "Docker compose failed to start services."
     }
 
-    Write-Host "✅ Docker services started (PostgreSQL on 5432, Backend on 5000, Frontend on 80)" -ForegroundColor Green
-    Write-Host "📊 PostgreSQL: localhost:5432" -ForegroundColor Gray
-    Write-Host "🔧 Backend:    http://localhost:5000" -ForegroundColor Gray
-    Write-Host "🌐 Frontend:   http://localhost" -ForegroundColor Gray
+    Write-Host "[success] Docker services started (PostgreSQL on 5432, Backend on 5000, Frontend on 80)" -ForegroundColor Green
+    Write-Host "PostgreSQL: localhost:5432" -ForegroundColor Gray
+    Write-Host "Backend:    http://localhost:5000" -ForegroundColor Gray
+    Write-Host "Frontend:   http://localhost" -ForegroundColor Gray
 }
 
 function Run-Backend {
-    Write-Host "🔧 Starting Backend Server..." -ForegroundColor Cyan
+    Write-Host "[backend] Starting Backend Server..." -ForegroundColor Cyan
     Set-Location $BackendDir
 
     if (!(Test-Path "node_modules")) {
-        Write-Host "📦 Installing backend dependencies..." -ForegroundColor Yellow
+        Write-Host "[backend] Installing backend dependencies..." -ForegroundColor Yellow
         npm install
         if ($LASTEXITCODE -ne 0) { throw "Backend dependency installation failed." }
     }
@@ -67,11 +67,11 @@ function Run-Backend {
 }
 
 function Run-Frontend {
-    Write-Host "🌐 Starting Frontend Dev Server..." -ForegroundColor Cyan
+    Write-Host "[frontend] Starting Frontend Dev Server..." -ForegroundColor Cyan
     Set-Location $FrontendDir
 
     if (!(Test-Path "node_modules")) {
-        Write-Host "📦 Installing frontend dependencies..." -ForegroundColor Yellow
+        Write-Host "[frontend] Installing frontend dependencies..." -ForegroundColor Yellow
         npm install
         if ($LASTEXITCODE -ne 0) { throw "Frontend dependency installation failed." }
     }
@@ -80,7 +80,7 @@ function Run-Frontend {
 }
 
 function Run-Both {
-    Write-Host "🚀 Starting Both Services (Backend and Frontend)..." -ForegroundColor Cyan
+    Write-Host "[launch] Starting Both Services (Backend and Frontend)..." -ForegroundColor Cyan
 
     $backendCmd = "cd '$BackendDir'; npm install; if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }; npm start"
     $frontendCmd = "cd '$FrontendDir'; npm install; if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }; npm run dev"
@@ -102,7 +102,7 @@ switch ($Option.ToLower()) {
     "frontend" { Run-Frontend }
     "both" { Run-Both }
     default {
-        Write-Host "OMS Run Script" -ForegroundColor Cyan
+        Write-Host "De Vibe OMS Run Script" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Usage: .\RUN.ps1 [option]" -ForegroundColor White
         Write-Host ""

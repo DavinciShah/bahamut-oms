@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Bahamut OMS</string>
-    <string name="title_activity_main">Bahamut OMS</string>
+    <string name="app_name">De Vibe OMS</string>
+    <string name="title_activity_main">De Vibe OMS</string>
     <string name="package_name">com.bahamut.oms.android</string>
     <string name="custom_url_scheme">com.bahamut.oms.android</string>
     <string name="admob_app_id">ca-app-pub-3329711838881296~2281114793</string>
