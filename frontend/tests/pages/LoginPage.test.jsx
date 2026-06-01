@@ -25,7 +25,7 @@ const renderLoginPage = () => {
 describe('LoginPage', () => {
   it('renders the page heading', () => {
     renderLoginPage();
-    expect(screen.getAllByText(/bahamut oms/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/de vibe oms/i).length).toBeGreaterThan(0);
   });
 
   it('renders the sign in subheading', () => {

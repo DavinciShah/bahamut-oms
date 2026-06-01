@@ -21,7 +21,7 @@ const renderWithContext = (user, isAdmin = false) => {
 describe('Header', () => {
   it('renders the app name', () => {
     renderWithContext(null);
-    expect(screen.getByText(/bahamut oms/i)).toBeTruthy();
+    expect(screen.getByText(/de vibe oms/i)).toBeTruthy();
   });
 
   it('shows user name when authenticated', () => {
