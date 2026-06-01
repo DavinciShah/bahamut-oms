@@ -4,30 +4,37 @@ const crypto = require('crypto');
 const Integration = require('../models/Integration');
 const IntegrationFactory = require('../integrations/base/IntegrationFactory');
 const IntegrationRegistry = require('../integrations/base/IntegrationRegistry');
+const encryptionService = require('./encryptionService');
 const logger = require('../config/logger');
 
-const ALGORITHM = 'aes-256-cbc';
-const IV_LENGTH = 16;
-
-function getEncryptionKey() {
+function getLegacyEncryptionKey() {
   const key = process.env.ENCRYPTION_KEY || '';
   return Buffer.from(key.padEnd(32, '0').slice(0, 32));
 }
 
 function encryptCredentials(credentials) {
-  const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv(ALGORITHM, getEncryptionKey(), iv);
   const text = typeof credentials === 'string' ? credentials : JSON.stringify(credentials);
-  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
-  return iv.toString('hex') + ':' + encrypted.toString('hex');
+  return encryptionService.encrypt(text);
 }
 
 function decryptCredentials(encrypted) {
-  const [ivHex, dataHex] = encrypted.split(':');
-  const iv = Buffer.from(ivHex, 'hex');
-  const data = Buffer.from(dataHex, 'hex');
-  const decipher = crypto.createDecipheriv(ALGORITHM, getEncryptionKey(), iv);
-  const decrypted = Buffer.concat([decipher.update(data), decipher.final()]).toString('utf8');
+  let decrypted;
+  try {
+    decrypted = encryptionService.decrypt(encrypted);
+  } catch (err) {
+    const [ivHex, dataHex] = String(encrypted).split(':');
+    if (
+      !ivHex || !dataHex ||
+      !/^[0-9a-f]+$/i.test(ivHex) ||
+      !/^[0-9a-f]+$/i.test(dataHex)
+    ) {
+      throw err;
+    }
+    const iv = Buffer.from(ivHex, 'hex');
+    const data = Buffer.from(dataHex, 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-cbc', getLegacyEncryptionKey(), iv);
+    decrypted = Buffer.concat([decipher.update(data), decipher.final()]).toString('utf8');
+  }
   try {
     return JSON.parse(decrypted);
   } catch {
