@@ -44,9 +44,15 @@ jobs:
         working-directory: android
         run: npm ci
 
-      - name: Sync web assets (${{ github.event.inputs.environment }})
+      - name: Sync web assets (staging)
+        if: github.event.inputs.environment == 'staging'
         working-directory: android
-        run: npm run sync:${{ github.event.inputs.environment }}
+        run: npm run sync:staging
+
+      - name: Sync web assets (production)
+        if: github.event.inputs.environment == 'production'
+        working-directory: android
+        run: npm run sync:production
 
       - name: Make Gradle wrapper executable
         working-directory: android/native
