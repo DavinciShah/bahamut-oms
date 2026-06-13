@@ -1,4 +1,4 @@
-export const APP_NAME = 'De Vibe OMS';
+export const APP_NAME = 'Vibe Agent Studio';
 
 import { RUNTIME_CONFIG } from './runtimeConfig';
 

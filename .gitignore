@@ -37,3 +37,5 @@ desktop/backend-bundle/
 
 # Android local runtime config
 android/runtime-config.json
+
+frontend/public/*.exe

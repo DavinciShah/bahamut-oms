@@ -21,7 +21,7 @@ function DownloadPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <span style={{ fontSize: '2.5rem' }}>🖥️</span>
                 <div>
-                  <h3 style={{ margin: 0 }}>De Vibe OMS for Windows</h3>
+                  <h3 style={{ margin: 0 }}>Vibe Agent Studio for Windows</h3>
                   <p style={{ margin: '0.25rem 0 0', color: 'var(--gray-500)', fontSize: 'var(--font-size-sm)' }}>
                     Version 1.0.0 · Windows 10/11 (x64)
                   </p>
@@ -29,8 +29,8 @@ function DownloadPage() {
               </div>
 
               <p style={{ margin: 0, color: 'var(--gray-600)', fontSize: 'var(--font-size-sm)' }}>
-                The native Windows desktop client gives you offline access to your orders,
-                inventory, and reports — no browser required.
+                The native Windows desktop client gives you offline access to your projects,
+                agents, and build logs — no browser required.
               </p>
 
               <a
@@ -54,7 +54,7 @@ function DownloadPage() {
                   Or install via <strong>winget</strong>:
                 </p>
                 <code style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-700)' }}>
-                  winget install DavinciShah.DeVibeOMS
+                  winget install DavinciShah.VibeAgentStudio
                 </code>
               </div>
             </div>

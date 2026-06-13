@@ -28,7 +28,7 @@ function RegisterPage() {
   return (
     <div className="auth-layout">
       <div className="auth-card">
-        <h1>De Vibe OMS</h1>
+        <h1>Vibe Agent Studio</h1>
         <p style={{ textAlign: 'center', color: 'var(--gray-500)', marginBottom: '1.5rem', fontSize: 'var(--font-size-sm)' }}>
           Create a new account
         </p>

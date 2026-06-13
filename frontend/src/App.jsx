@@ -31,17 +31,17 @@ import NotificationBell from './components/NotificationBell';
 function NavBar() {
   return (
     <nav style={{ background: '#1e293b', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-      <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: 20, marginRight: 16 }}>De Vibe OMS</span>
+      <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: 20, marginRight: 16 }}>Vibe Agent Studio</span>
       {[
-        ['/dashboard', 'Dashboard'],
-        ['/orders', 'Orders'],
-        ['/inventory', 'Inventory'],
-        ['/analytics', 'Analytics'],
-        ['/reports', 'Reports'],
-        ['/billing', 'Billing'],
-        ['/shipping', 'Shipping'],
-        ['/support', 'Support'],
-        ['/bi', 'BI'],
+        ['/dashboard', 'Command Deck'],
+        ['/orders', 'Projects'],
+        ['/inventory', 'Agent Pool'],
+        ['/analytics', 'Metrics'],
+        ['/reports', 'Build Logs'],
+        ['/billing', 'Resources'],
+        ['/shipping', 'Deployments'],
+        ['/support', 'Issues'],
+        ['/bi', 'AI Engine'],
         ['/settings/tenant', 'Settings'],
         ['/download', '⬇ Windows App'],
       ].map(([path, label]) => (
