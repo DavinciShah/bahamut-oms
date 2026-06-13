@@ -161,3 +161,41 @@ describe('GET /api/auth/profile', () => {
     expect(res.status).toBe(401);
   });
 });
+
+// ---------------------------------------------------------------------------
+// POST /api/auth/google
+// ---------------------------------------------------------------------------
+
+const googleAuthService = require('../src/services/googleAuthService');
+jest.mock('../src/services/googleAuthService', () => ({
+  loginOrRegisterWithGoogle: jest.fn(),
+}));
+
+describe('POST /api/auth/google', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('returns 200 and user data on successful Google login', async () => {
+    googleAuthService.loginOrRegisterWithGoogle.mockResolvedValueOnce({
+      user: SAFE_USER,
+      token: 'google.jwt.token',
+    });
+
+    const res = await request(app)
+      .post('/api/auth/google')
+      .send({ credential: 'mock-google-id-token' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBe('google.jwt.token');
+    expect(res.body.user).toMatchObject({ email: 'test@example.com' });
+  });
+
+  it('returns 400 when credential token is missing', async () => {
+    const res = await request(app)
+      .post('/api/auth/google')
+      .send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Google credential token is required');
+  });
+});
+

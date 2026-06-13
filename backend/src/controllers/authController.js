@@ -3,6 +3,7 @@
 const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 const authService = require('../services/authService');
+const googleAuthService = require('../services/googleAuthService');
 const { jwtSecret, jwtExpiration } = require('../config/auth');
 
 /**
@@ -81,4 +82,20 @@ async function refresh(req, res, next) {
   }
 }
 
-module.exports = { register, login, logout, profile, refresh };
+/**
+ * POST /api/auth/google
+ */
+async function googleLogin(req, res, next) {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ error: 'Google credential token is required' });
+    }
+    const { user, token } = await googleAuthService.loginOrRegisterWithGoogle(credential);
+    return res.status(200).json({ user, token });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { register, login, logout, profile, refresh, googleLogin };
