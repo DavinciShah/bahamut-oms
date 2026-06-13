@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — De Vibe OMS | DPDP Act 2023 Compliant</title>
+  <meta name="description" content="Privacy Policy for De Vibe Order Management System (OMS). Compliant with India's Digital Personal Data Protection (DPDP) Act, 2023." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0d14;
+      --surface: #111827;
+      --surface2: #1a2234;
+      --border: rgba(255,255,255,0.07);
+      --accent: #6366f1;
+      --accent2: #818cf8;
+      --accent-glow: rgba(99,102,241,0.18);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --radius: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,13,20,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .header-title { font-size: 17px; font-weight: 700; color: var(--text); }
+    .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    /* ── Hero Banner ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1a0a2e 50%, #0f172a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 24px 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.15), transparent);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: var(--accent2);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #e2e8f0 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .hero-meta-item .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* ── TOC ── */
+    .toc-wrap {
+      max-width: 860px;
+      margin: 40px auto 0;
+      padding: 0 24px;
+    }
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+    }
+    .toc-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .toc-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 24px;
+      list-style: none;
+    }
+    .toc-list a {
+      font-size: 14px;
+      color: var(--accent2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+    .toc-list a:hover { color: #fff; }
+    .toc-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      min-width: 22px;
+    }
+
+    /* ── Main Content ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 90px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .section-num {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    h2 {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    p { color: var(--text-muted); margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 20px 0 10px;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    li { font-size: 15px; }
+    li strong { color: var(--text); font-weight: 600; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .right-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .right-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .right-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .right-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ── Alert Box ── */
+    .alert {
+      display: flex;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .alert-amber {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.2);
+    }
+    .alert-green {
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+    .alert-icon { font-size: 20px; flex-shrink: 0; }
+
+    /* ── Contact Card ── */
+    .contact-card {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .contact-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 6px;
+    }
+    .contact-card p { font-size: 14px; }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-link:hover {
+      background: var(--surface2);
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .toc-list { grid-template-columns: 1fr; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">D</div>
+    <div>
+      <div class="header-title">De Vibe OMS</div>
+      <div class="header-sub">Privacy Policy</div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">🛡️ DPDP Act, 2023 Compliant</div>
+  <h1>Privacy Policy</h1>
+  <div class="hero-meta">
+    <span class="hero-meta-item"><span class="dot"></span> Effective: 14 June 2026</span>
+    <span class="hero-meta-item">📍 Governed under Indian Law</span>
+    <span class="hero-meta-item">🏢 DavinciShah, India</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-wrap">
+  <div class="toc">
+    <div class="toc-title">Table of Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">01</span> Who We Are</a></li>
+      <li><a href="#s2"><span class="toc-num">02</span> Data We Collect</a></li>
+      <li><a href="#s3"><span class="toc-num">03</span> Purpose of Processing</a></li>
+      <li><a href="#s4"><span class="toc-num">04</span> Legal Basis & Consent</a></li>
+      <li><a href="#s5"><span class="toc-num">05</span> Data Storage & Security</a></li>
+      <li><a href="#s6"><span class="toc-num">06</span> Data Retention & Erasure</a></li>
+      <li><a href="#s7"><span class="toc-num">07</span> Your Rights (DPDP)</a></li>
+      <li><a href="#s8"><span class="toc-num">08</span> Third-Party Services</a></li>
+      <li><a href="#s9"><span class="toc-num">09</span> Children's Data</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span> Breach Notification</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span> Cross-Border Transfers</a></li>
+      <li><a href="#s12"><span class="toc-num">12</span> Grievance Redressal</a></li>
+    </ul>
+  </div>
+</div>
+
+<main>
+
+  <div class="alert alert-amber">
+    <span class="alert-icon">⚖️</span>
+    <div>This Privacy Policy is governed by and compliant with the <strong>Digital Personal Data Protection (DPDP) Act, 2023</strong> and the DPDP Rules, 2025, enacted by the Government of India. By using De Vibe OMS, you ("Data Principal") acknowledge this notice before consenting to data processing.</div>
+  </div>
+
+  <!-- S1: Who We Are -->
+  <section id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Who We Are (Data Fiduciary)</h2>
+    </div>
+    <p><strong>DavinciShah</strong> ("we", "us", "our") is the Data Fiduciary under the DPDP Act, 2023, responsible for determining the purpose and means of processing your personal data.</p>
+    <div class="card">
+      <h3>Organisation Details</h3>
+      <ul>
+        <li><strong>Legal Name:</strong> DavinciShah (Sole Proprietor)</li>
+        <li><strong>Application:</strong> De Vibe Order Management System (OMS) — Windows Desktop Application</li>
+        <li><strong>Country of Registration:</strong> India</li>
+        <li><strong>Contact Email:</strong> devibe70@gmail.com</li>
+        <li><strong>GitHub:</strong> <a href="https://github.com/DavinciShah/bahamut-oms" style="color:var(--accent2)">github.com/DavinciShah/bahamut-oms</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- S2 -->
+  <section id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Personal Data We Collect</h2>
+    </div>
+    <p>In accordance with the <strong>principle of data minimisation</strong> under the DPDP Act, 2023, we collect only such personal data as is necessary for the stated purpose.</p>
+
+    <h3>A. Identity & Account Data</h3>
+    <ul>
+      <li>Email address (for account creation and Google SSO login)</li>
+      <li>Name or username (as provided during registration)</li>
+      <li>Hashed authentication credentials (passwords are never stored in plaintext)</li>
+    </ul>
+
+    <h3>B. Business & Transactional Data</h3>
+    <p>This data is entered directly by you and stored on your own designated database server:</p>
+    <ul>
+      <li>Customer names, contact numbers, and email addresses</li>
+      <li>Order details, product inventory records, billing amounts</li>
+      <li>GST numbers, invoice metadata, and shipping information</li>
+    </ul>
+
+    <h3>C. Technical Configuration Data</h3>
+    <ul>
+      <li>Runtime configuration (API host, port — stored locally in <code>%APPDATA%/De Vibe OMS/</code>)</li>
+      <li>Session tokens (stored in memory; cleared on logout)</li>
+    </ul>
+
+    <h3>D. Data We Do NOT Collect</h3>
+    <ul>
+      <li>We do not collect telemetry, crash dumps, or diagnostic reports</li>
+      <li>We do not collect biometric data, financial account numbers, or Aadhaar numbers</li>
+      <li>We do not track your browsing behaviour or location</li>
+    </ul>
+  </section>
+
+  <!-- S3 -->
+  <section id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Purpose of Processing</h2>
+    </div>
+    <p>Under <strong>Section 5 of the DPDP Act, 2023</strong>, personal data may only be processed for a specified, clear, and lawful purpose. We process your data for the following purposes only:</p>
+    <div class="card-grid">
+      <div class="right-card">
+        <span class="right-icon">🔐</span>
+        <div>
+          <h4>Authentication</h4>
+          <p>Verify your identity and allow secure login via email/password or Google SSO.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">📦</span>
+        <div>
+          <h4>Order Management</h4>
+          <p>Enable tracking, creating, and managing customer orders and inventory.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">🧾</span>
+        <div>
+          <h4>Billing & Invoicing</h4>
+          <p>Generate invoices and apply applicable GST rules (18%).</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">📊</span>
+        <div>
+          <h4>Business Analytics</h4>
+          <p>Display sales metrics and inventory health dashboards within your own data.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">🔧</span>
+        <div>
+          <h4>App Configuration</h4>
+          <p>Store local settings (host/port) to connect to your self-hosted backend.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">📬</span>
+        <div>
+          <h4>Grievance Response</h4>
+          <p>Respond to any data-related queries you submit via our support channel.</p>
+        </div>
+      </div>
+    </div>
+    <p>We will not use your personal data for any purpose beyond what is stated above without obtaining fresh, explicit consent.</p>
+  </section>
+
+  <!-- S4 -->
+  <section id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Legal Basis & Consent</h2>
+    </div>
+    <p>Under <strong>Sections 4 and 6 of the DPDP Act, 2023</strong>, personal data may be processed only on a lawful basis. We rely on the following bases:</p>
+    <ul>
+      <li><strong>Free, Specific, and Informed Consent:</strong> When you create an account and use the application, you provide clear consent for the processing described in Section 3 above.</li>
+      <li><strong>Legitimate Use:</strong> Processing of transactional data that you actively enter into the OMS (orders, inventory, billing) is necessary to deliver the core service you requested.</li>
+      <li><strong>Compliance with Law:</strong> We may retain or disclose data where required by applicable Indian law or court order.</li>
+    </ul>
+    <div class="alert alert-green">
+      <span class="alert-icon">✅</span>
+      <div><strong>Withdrawal of Consent:</strong> You have the right to withdraw consent at any time by deleting your account or contacting us at devibe70@gmail.com. Withdrawal does not affect the lawfulness of processing conducted prior to withdrawal.</div>
+    </div>
+  </section>
+
+  <!-- S5 -->
+  <section id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Data Storage & Security</h2>
+    </div>
+    <p>In accordance with <strong>Section 8(5) of the DPDP Act, 2023</strong>, we implement reasonable technical and organisational safeguards to protect your personal data against unauthorised access, loss, or disclosure.</p>
+
+    <h3>Security Measures</h3>
+    <ul>
+      <li><strong>Passwords:</strong> Hashed using bcrypt with a salt factor of 12 — never stored in plaintext</li>
+      <li><strong>API Authentication:</strong> JSON Web Tokens (JWT) with short-lived expiry windows</li>
+      <li><strong>Local Configuration:</strong> Runtime configuration stored in user-space directory (<code>%APPDATA%</code>) with OS-level access controls</li>
+      <li><strong>Transport Security:</strong> All communications between the desktop client and backend use HTTPS / secure WebSockets</li>
+      <li><strong>CORS Enforcement:</strong> Backend restricts API access to trusted origins only</li>
+    </ul>
+
+    <div class="alert alert-amber">
+      <span class="alert-icon">🗄️</span>
+      <div><strong>Data Location:</strong> Your business data (orders, inventory, customers) is stored on <em>your own</em> self-hosted database server. DavinciShah does not host, access, or own a copy of your transactional data.</div>
+    </div>
+  </section>
+
+  <!-- S6 -->
+  <section id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Data Retention & Erasure</h2>
+    </div>
+    <p>Under <strong>Section 8(7) of the DPDP Act, 2023</strong>, personal data must not be retained beyond the period necessary for the specified purpose.</p>
+    <ul>
+      <li><strong>Account Credentials:</strong> Retained for the lifetime of your account and deleted within 30 days of account deletion request.</li>
+      <li><strong>Session Tokens:</strong> Stored in memory only; automatically cleared on logout or session expiry.</li>
+      <li><strong>Business Data:</strong> Stored entirely on your own database server — you have full control and responsibility for retention and deletion.</li>
+      <li><strong>Support Correspondence:</strong> Any emails or queries sent to us are retained for up to 12 months for grievance resolution purposes.</li>
+    </ul>
+    <p>To request deletion of your account data, email us at <strong>devibe70@gmail.com</strong> with the subject line <em>"Data Erasure Request"</em>.</p>
+  </section>
+
+  <!-- S7 -->
+  <section id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Your Rights as a Data Principal</h2>
+    </div>
+    <p>The DPDP Act, 2023 grants you the following rights under <strong>Chapter III (Sections 11–13)</strong>. You may exercise any of these rights by contacting us at devibe70@gmail.com:</p>
+    <div class="card-grid">
+      <div class="right-card">
+        <span class="right-icon">👁️</span>
+        <div>
+          <h4>Right to Access (Sec. 11)</h4>
+          <p>Request a summary of the personal data we hold about you and how it is being used.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">✏️</span>
+        <div>
+          <h4>Right to Correction (Sec. 12)</h4>
+          <p>Request correction or completion of inaccurate or incomplete personal data.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">🗑️</span>
+        <div>
+          <h4>Right to Erasure (Sec. 12)</h4>
+          <p>Request deletion of your personal data once the purpose is fulfilled or upon consent withdrawal.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">🚫</span>
+        <div>
+          <h4>Right to Withdraw Consent (Sec. 6)</h4>
+          <p>Withdraw previously given consent at any time without affecting prior lawful processing.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">📋</span>
+        <div>
+          <h4>Right to Nominate (Sec. 14)</h4>
+          <p>Nominate another person to exercise your data rights on your behalf in the event of death or incapacity.</p>
+        </div>
+      </div>
+      <div class="right-card">
+        <span class="right-icon">⚖️</span>
+        <div>
+          <h4>Right to Grievance Redressal (Sec. 13)</h4>
+          <p>Lodge a complaint with us. If unresolved, escalate to the Data Protection Board of India.</p>
+        </div>
+      </div>
+    </div>
+    <p>We will respond to all valid rights requests within <strong>30 days</strong> of receipt.</p>
+  </section>
+
+  <!-- S8 -->
+  <section id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Third-Party Services (Data Processors)</h2>
+    </div>
+    <p>Under <strong>Section 8(2) of the DPDP Act, 2023</strong>, we are responsible for the actions of our Data Processors. The following third-party services may process limited personal data on our behalf:</p>
+    <div class="card">
+      <ul>
+        <li>
+          <strong>Google Sign-In (OAuth 2.0):</strong> We use Google's authentication service to verify your identity. Only your email address and display name are shared. This is governed by Google's Privacy Policy. We do not receive or store your Google password.
+        </li>
+        <li>
+          <strong>GitHub Pages (Hosting):</strong> This Privacy Policy page is hosted via GitHub Pages. No personal data is collected by this hosting service from visitors.
+        </li>
+        <li>
+          <strong>Surge.sh (Installer Hosting):</strong> The De Vibe OMS installer binary is served via Surge.sh. Surge may log standard web server access logs (IP, timestamp). No personal data from within the application is transmitted to Surge.
+        </li>
+      </ul>
+    </div>
+    <p>We do not sell, rent, or share your personal data with any third party for marketing purposes.</p>
+  </section>
+
+  <!-- S9 -->
+  <section id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Children's Personal Data</h2>
+    </div>
+    <p>In accordance with <strong>Section 9 of the DPDP Act, 2023</strong>, De Vibe OMS is designed for and intended to be used exclusively by adults (18 years and above) for business and commercial purposes.</p>
+    <p>We do not knowingly collect personal data from individuals under the age of 18. If you believe a minor has provided us with personal data, please contact us immediately at devibe70@gmail.com and we will delete such data without undue delay.</p>
+  </section>
+
+  <!-- S10 -->
+  <section id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Data Breach Notification</h2>
+    </div>
+    <p>Under <strong>Section 8(6) of the DPDP Act, 2023</strong>, in the event of a personal data breach that is likely to result in harm to you, we will:</p>
+    <ul>
+      <li>Notify the <strong>Data Protection Board of India</strong> in the prescribed format and timeline</li>
+      <li>Inform all affected Data Principals via the contact email address on record</li>
+      <li>Provide details of the nature of breach, data likely affected, and remedial steps taken</li>
+    </ul>
+    <p>To report a suspected security vulnerability, please contact <strong>devibe70@gmail.com</strong> with subject line <em>"Security Disclosure"</em>.</p>
+  </section>
+
+  <!-- S11 -->
+  <section id="s11">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Cross-Border Data Transfers</h2>
+    </div>
+    <p>Under <strong>Section 16 of the DPDP Act, 2023</strong>, transfer of personal data outside India is subject to Government notification. At present:</p>
+    <ul>
+      <li>Account authentication data may be processed by Google's infrastructure which operates globally. Google is bound by Standard Contractual Clauses and applicable data protection law.</li>
+      <li>Your business transactional data is hosted on <em>your own server</em>. Its location is entirely under your control.</li>
+      <li>We do not proactively transfer any personal data to servers outside India for any purpose.</li>
+    </ul>
+  </section>
+
+  <!-- S12 -->
+  <section id="s12">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Grievance Redressal (DPDP Act, Sec. 13)</h2>
+    </div>
+    <p>If you have any concerns, questions, or complaints regarding this Privacy Policy or how your personal data is handled, you may reach our Grievance Officer:</p>
+
+    <div class="contact-card">
+      <h3>Grievance Officer — DavinciShah</h3>
+      <p>We are committed to responding to all privacy-related grievances within <strong>30 days</strong> of receipt.</p>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:devibe70@gmail.com">
+          📧 devibe70@gmail.com
+        </a>
+        <a class="contact-link" href="https://github.com/DavinciShah/bahamut-oms/issues" target="_blank" rel="noopener">
+          🐛 GitHub Issues
+        </a>
+      </div>
+      <p style="margin-top:18px; font-size:13px; color:var(--text-dim)">
+        If your grievance is not resolved to your satisfaction, you may escalate it to the
+        <a href="https://dpboard.gov.in" target="_blank" rel="noopener" style="color:var(--accent2)">Data Protection Board of India</a>.
+      </p>
+    </div>
+  </section>
+
+  <hr />
+
+  <section>
+    <div class="alert alert-green">
+      <span class="alert-icon">📝</span>
+      <div><strong>Policy Updates:</strong> This Privacy Policy may be updated periodically to reflect changes in the law or our data practices. Material changes will be communicated to registered users via email. The "Effective Date" at the top of this page will always reflect the latest version.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 DavinciShah. All rights reserved.</p>
+  <p style="margin-top:6px">
+    <a href="https://github.com/DavinciShah/bahamut-oms/blob/main/LICENSE">MIT License</a> ·
+    <a href="https://github.com/DavinciShah/bahamut-oms">GitHub Repository</a> ·
+    <a href="https://dpboard.gov.in" target="_blank" rel="noopener">Data Protection Board of India</a>
+  </p>
+</footer>
+
+</body>
+</html>
