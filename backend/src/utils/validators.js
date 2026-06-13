@@ -40,17 +40,32 @@ const isStrongPassword = (password) => typeof password === 'string' && password.
  * Returns true when the string is a plausible phone number.
  */
 function validatePhone(phone, opts = {}) {
+  if (typeof phone !== 'string') return false;
+  const cleaned = phone.replace(/\s/g, '');
+  const digits = cleaned.replace(/\D/g, '');
+
+  // E.164 phone numbers have between 7 and 15 digits
+  if (digits.length < 7 || digits.length > 15) return false;
+
+  // Indian phone validation:
+  // Indian mobile numbers are strictly 10 digits.
+  // With country code (+91 or 91), they are 12 digits.
+  // Reject 13 digits starting with +91 or 91 (e.g. +91XXXXXXXXXXX or 91XXXXXXXXXXX).
+  if (cleaned.startsWith('+91')) {
+    if (digits.length !== 12) return false;
+  } else if (digits.startsWith('91') && digits.length > 10) {
+    if (digits.length !== 12) return false;
+  } else if (digits.length === 13) {
+    if (digits.startsWith('91')) return false;
+  }
+
   if (opts.detailed) {
-    if (!phone) return { valid: true, errors: [] }; // optional field
-    const cleaned = String(phone).replace(/\s/g, '');
     if (!/^\+?[1-9]\d{6,14}$/.test(cleaned)) {
       return { valid: false, errors: ['Invalid phone number format'] };
     }
     return { valid: true, errors: [] };
   }
-  if (typeof phone !== 'string') return false;
-  const digits = phone.replace(/\D/g, '');
-  return digits.length >= 7 && digits.length <= 15;
+  return true;
 }
 
 /**

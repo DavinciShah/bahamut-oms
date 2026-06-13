@@ -125,7 +125,7 @@ describe('otpService.verifyTOTP', () => {
 
 // ── validators ───────────────────────────────────────────────────────────────
 
-const { validateEmail, validatePassword, validateOrderData, validateProductData } = require('../src/utils/validators');
+const { validateEmail, validatePassword, validatePhone, validateOrderData, validateProductData } = require('../src/utils/validators');
 
 describe('validators.validateEmail', () => {
   it('accepts valid emails', () => {
@@ -176,5 +176,21 @@ describe('validators.validateProductData', () => {
   it('fails when price is negative', () => {
     const { valid } = validateProductData({ name: 'Widget', price: -1 });
     expect(valid).toBe(false);
+  });
+});
+
+describe('validators.validatePhone', () => {
+  it('accepts valid phone numbers', () => {
+    expect(validatePhone('+919876543210')).toBe(true); // 12 digits total with +91
+    expect(validatePhone('919876543210')).toBe(true);  // 12 digits total with 91
+    expect(validatePhone('9876543210')).toBe(true);   // 10 digits
+    expect(validatePhone('+14155552671')).toBe(true);  // US number
+  });
+
+  it('rejects invalid/wrong digits phone numbers', () => {
+    expect(validatePhone('+9198765432101')).toBe(false); // 13 digits starting with +91
+    expect(validatePhone('9198765432101')).toBe(false);  // 13 digits starting with 91
+    expect(validatePhone('12345')).toBe(false);          // Too short
+    expect(validatePhone('1234567890123456')).toBe(false); // Too long
   });
 });

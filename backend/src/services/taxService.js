@@ -15,6 +15,7 @@ const TAX_RATES = {
   FR: { default: 0.20 },
   CA: { default: 0.05, ON: 0.13, BC: 0.12, QC: 0.15 },
   AU: { default: 0.10 },
+  IN: { default: 0.18 }, // India standard GST rate
 };
 
 const taxService = {
