@@ -1,11 +1,26 @@
 'use strict';
 
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, protocol } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
 const http = require('http');
+
+const APP_PROTOCOL = 'app';
+const APP_HOST = 'local';
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: APP_PROTOCOL,
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+    },
+  },
+]);
 
 let mainWindow;
 let backendProcess;
@@ -46,14 +61,53 @@ function getBackendCwd() {
   return path.resolve(__dirname, '..', 'backend');
 }
 
+function getFrontendDistDir() {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'frontend-dist');
+  }
+  return path.resolve(__dirname, '..', 'frontend', 'dist');
+}
+
 function getRendererEntry() {
   if (process.env.ELECTRON_RENDERER_URL) {
     return process.env.ELECTRON_RENDERER_URL;
   }
-  if (app.isPackaged) {
-    return `file://${path.join(process.resourcesPath, 'frontend-dist', 'index.html')}`;
-  }
-  return `file://${path.resolve(__dirname, '..', 'frontend', 'dist', 'index.html')}`;
+  return `${APP_PROTOCOL}://${APP_HOST}/index.html`;
+}
+
+function registerRendererProtocol() {
+  const frontendRoot = getFrontendDistDir();
+
+  protocol.registerFileProtocol(APP_PROTOCOL, (request, callback) => {
+    try {
+      const requestUrl = new URL(request.url);
+      let urlPath = decodeURIComponent(requestUrl.pathname || '/');
+
+      if (urlPath === '/' || urlPath === '') {
+        urlPath = '/index.html';
+      }
+
+      if (urlPath === '/runtime-config.js') {
+        const configJsPath = path.join(app.getPath('userData'), 'runtime-config.js');
+        if (fs.existsSync(configJsPath)) {
+          callback({ path: configJsPath });
+          return;
+        }
+      }
+
+      const normalizedPath = path.normalize(path.join(frontendRoot, urlPath));
+      const relativePath = path.relative(frontendRoot, normalizedPath);
+
+      if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+        callback({ error: -6 });
+        return;
+      }
+
+      callback({ path: normalizedPath });
+    } catch {
+      callback({ error: -2 });
+    }
+  });
 }
 
 function readJson(filePath) {
@@ -69,18 +123,43 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
 }
 
+function readBackendEnvDefaults() {
+  if (app.isPackaged) {
+    return {};
+  }
+
+  const envPath = path.resolve(__dirname, '..', 'backend', '.env');
+  if (!fs.existsSync(envPath)) {
+    return {};
+  }
+
+  const defaults = {};
+  const content = fs.readFileSync(envPath, 'utf8');
+
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const separator = trimmed.indexOf('=');
+    if (separator === -1) continue;
+    defaults[trimmed.slice(0, separator).trim()] = trimmed.slice(separator + 1).trim();
+  }
+
+  return defaults;
+}
+
 function ensureRuntimeConfig() {
   const configPath = path.join(app.getPath('userData'), 'runtime-config.json');
   const existing = readJson(configPath) || {};
+  const backendEnv = readBackendEnvDefaults();
 
   const runtimeConfig = {
-    port: existing.port || 5000,
+    port: existing.port || Number(backendEnv.PORT) || 5000,
     db: {
-      host: existing.db?.host || 'localhost',
-      port: existing.db?.port || 5432,
-      name: existing.db?.name || 'devibe_oms',
-      user: existing.db?.user || 'postgres',
-      password: existing.db?.password || 'password',
+      host: existing.db?.host || backendEnv.DB_HOST || 'localhost',
+      port: existing.db?.port || Number(backendEnv.DB_PORT) || 5432,
+      name: existing.db?.name || backendEnv.DB_NAME || 'devibe_oms',
+      user: existing.db?.user || backendEnv.DB_USER || 'postgres',
+      password: existing.db?.password || backendEnv.DB_PASSWORD || 'postgres',
     },
     corsOrigin: existing.corsOrigin || 'http://localhost:3000,http://127.0.0.1:3000,app://local,capacitor://localhost',
     frontendUrl: existing.frontendUrl || 'app://local',
@@ -90,6 +169,16 @@ function ensureRuntimeConfig() {
   };
 
   writeJson(configPath, runtimeConfig);
+
+  const configJsPath = path.join(app.getPath('userData'), 'runtime-config.js');
+  const jsContent = `window.__DEVIBE_RUNTIME_CONFIG__ = {
+  apiBaseUrl: "${runtimeConfig.apiUrl}/api",
+  socketBaseUrl: "${runtimeConfig.apiUrl}",
+  authStorageKey: "devibe_oms_auth"
+};
+`;
+  fs.writeFileSync(configJsPath, jsContent, 'utf8');
+
   return runtimeConfig;
 }
 
@@ -125,6 +214,7 @@ function waitForBackend(port, timeoutMs = 30000) {
 function startBackend() {
   const runtimeConfig = ensureRuntimeConfig();
   const backendEntry = getBackendEntry();
+  const logDir = path.join(app.getPath('userData'), 'logs');
 
   backendProcess = spawn(process.execPath, [backendEntry], {
     cwd: getBackendCwd(),
@@ -141,8 +231,12 @@ function startBackend() {
       JWT_SECRET: runtimeConfig.jwtSecret,
       JWT_REFRESH_SECRET: runtimeConfig.jwtRefreshSecret,
       CORS_ORIGIN: runtimeConfig.corsOrigin,
+      CORS_ALLOW_NULL_ORIGIN: 'true',
       FRONTEND_URL: runtimeConfig.frontendUrl,
       API_URL: runtimeConfig.apiUrl,
+      LOG_DIR: logDir,
+      RUN_MIGRATIONS_ON_START: 'true',
+      DISABLE_JOBS: 'true',
     },
     stdio: 'inherit',
   });
@@ -178,10 +272,28 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  const frontendIndex = path.join(getFrontendDistDir(), 'index.html');
+  if (!process.env.ELECTRON_RENDERER_URL && !fs.existsSync(frontendIndex)) {
+    dialog.showErrorBox(
+      'Frontend build missing',
+      `Could not find ${frontendIndex}.\n\nRun "npm run build:renderer" in the desktop folder, then try again.`
+    );
+    app.quit();
+    return;
+  }
+
+  if (!process.env.ELECTRON_RENDERER_URL) {
+    registerRendererProtocol();
+  }
+
   try {
     await startBackend();
   } catch (err) {
-    dialog.showErrorBox('Backend startup failed', `${err.message}\n\nCheck runtime-config.json in the app data folder.`);
+    const configPath = path.join(app.getPath('userData'), 'runtime-config.json');
+    dialog.showErrorBox(
+      'Backend startup failed',
+      `${err.message}\n\nCommon fixes:\n- Start PostgreSQL (for example: npm run db:up)\n- Run migrations (npm run migrate)\n- Verify database settings in:\n  ${configPath}`
+    );
     app.quit();
     return;
   }

@@ -3,6 +3,7 @@ const http = require('http');
 const app = require('./src/app');
 const socketHandler = require('./src/websocket/socketHandler');
 const { validateEnv } = require('./src/config/validateEnv');
+const { runMigrations } = require('./src/migrations/run-latest');
 
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
@@ -14,7 +15,18 @@ const { setupSocket, getIO } = socketHandler;
 const io = setupSocket(server);
 if (io) app.set('io', io);
 
-server.listen(PORT, () => console.log(`Server on port ${PORT}`));
+async function startServer() {
+  if (process.env.RUN_MIGRATIONS_ON_START === 'true') {
+    await runMigrations();
+  }
+
+  server.listen(PORT, () => console.log(`Server on port ${PORT}`));
+}
+
+startServer().catch((err) => {
+  console.error('Server startup failed:', err.message);
+  process.exit(1);
+});
 
 function shutdown(signal) {
 	console.log(`Received ${signal}. Shutting down gracefully...`);

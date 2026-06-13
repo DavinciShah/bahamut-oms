@@ -4,7 +4,7 @@ const winston = require('winston');
 const path = require('path');
 const fs = require('fs');
 
-const logsDir = path.join(__dirname, '../../logs');
+const logsDir = process.env.LOG_DIR || path.join(__dirname, '../../logs');
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
 }
@@ -18,7 +18,7 @@ const logger = winston.createLogger({
     errors({ stack: true }),
     json()
   ),
-  defaultMeta: { service: 'bahamut-oms' },
+  defaultMeta: { service: 'devibe-oms' },
   transports: [
     new winston.transports.File({
       filename: path.join(logsDir, 'error.log'),
@@ -34,7 +34,7 @@ const logger = winston.createLogger({
   ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' || process.env.ELECTRON_RUN_AS_NODE === '1') {
   logger.add(new winston.transports.Console({
     format: combine(colorize(), simple())
   }));

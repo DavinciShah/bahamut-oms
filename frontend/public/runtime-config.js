@@ -1,1 +1,1 @@
-window.__BAHAMUT_RUNTIME_CONFIG__ = window.__BAHAMUT_RUNTIME_CONFIG__ || {};
+window.__DEVIBE_RUNTIME_CONFIG__ = window.__DEVIBE_RUNTIME_CONFIG__ || {};

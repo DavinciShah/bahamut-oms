@@ -68,7 +68,7 @@ Fill these in Partner Center → **Store listing** tab:
 | Keywords | OMS, order management, inventory, ERP, warehouse |
 | Privacy policy URL | Your hosted privacy policy page |
 | Website URL | <https://github.com/DavinciShah/devibe-oms> |
-| Support contact | support@devibe-oms.example.com |
+| Support contact | devibe70@gmail.com |
 
 ### Screenshots
 

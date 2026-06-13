@@ -1,0 +1,18 @@
+{
+  "name": "devibe-oms",
+  "version": "1.0.0",
+  "private": true,
+  "description": "De Vibe Order Management System – workspace scripts",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install && npm --prefix desktop install",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "migrate": "npm --prefix backend run migrate",
+    "build:desktop": "npm --prefix desktop run build:renderer",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:desktop": "npm --prefix desktop run dev",
+    "dist:win": "npm --prefix desktop run dist:win",
+    "test:backend": "npm --prefix backend run test:smoke"
+  }
+}

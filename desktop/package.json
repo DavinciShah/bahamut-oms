@@ -5,7 +5,7 @@
   "description": "De Vibe Order Management System – Windows desktop client",
   "author": {
     "name": "DavinciShah",
-    "email": "support@devibe-oms.example.com",
+    "email": "devibe70@gmail.com",
     "url": "https://github.com/DavinciShah/devibe-oms"
   },
   "license": "MIT",
@@ -24,7 +24,10 @@
     "dist:winstore": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
     "dist:msix": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
     "dist:all": "node scripts/dist-win.js && powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
-    "create:hotlink": "powershell -ExecutionPolicy Bypass -File scripts/create-launch-hotlink.ps1"
+    "create:hotlink": "powershell -ExecutionPolicy Bypass -File scripts/create-launch-hotlink.ps1",
+    "generate:icons": "powershell -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
+    "prebuild:renderer": "npm run generate:icons",
+    "predist:win": "npm run generate:icons"
   },
   "devDependencies": {
     "electron": "^39.8.5",
@@ -99,8 +102,13 @@
       "identityName": "DeVibeOMS.OMS",
       "publisherDisplayName": "DavinciShah",
       "publisher": "CN=DeVibeOMS",
-      "languages": ["en-US"],
+      "languages": [
+        "en-US"
+      ],
       "artifactName": "De-Vibe-OMS-${version}.${ext}"
     }
+  },
+  "dependencies": {
+    "app-builder-bin": "^5.0.0-alpha.12"
   }
 }

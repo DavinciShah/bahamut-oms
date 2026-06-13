@@ -2,11 +2,19 @@ const DEFAULT_AUTH_STORAGE_KEY = 'devibe_oms_auth';
 const DEFAULT_REQUEST_TIMEOUT_MS = 30000;
 
 const getWindowRuntimeConfig = () => {
-  if (typeof window === 'undefined' || typeof window.__BAHAMUT_RUNTIME_CONFIG__ !== 'object') {
+  if (typeof window === 'undefined') {
     return {};
   }
 
-  return window.__BAHAMUT_RUNTIME_CONFIG__ || {};
+  if (typeof window.__DEVIBE_RUNTIME_CONFIG__ === 'object') {
+    return window.__DEVIBE_RUNTIME_CONFIG__ || {};
+  }
+
+  if (typeof window.__BAHAMUT_RUNTIME_CONFIG__ === 'object') {
+    return window.__BAHAMUT_RUNTIME_CONFIG__ || {};
+  }
+
+  return {};
 };
 
 const getWindowOrigin = () => {

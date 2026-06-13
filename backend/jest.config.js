@@ -1,6 +1,9 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
+  moduleNameMapper: {
+    '^uuid$': '<rootDir>/tests/mocks/uuid.js'
+  },
   collectCoverageFrom: [
     'src/controllers/authController.js',
     'src/controllers/ordersController.js',

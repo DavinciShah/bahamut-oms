@@ -21,7 +21,8 @@ apiClient.interceptors.response.use(
   error => {
     if (error.response?.status === 401) {
       clearAuthSession();
-      window.location.href = '/login';
+      const loginPath = window.desktopApp?.isDesktop ? '#/login' : '/login';
+      window.location.href = loginPath;
     }
     return Promise.reject(error);
   }

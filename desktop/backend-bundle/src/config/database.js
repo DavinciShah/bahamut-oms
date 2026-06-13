@@ -26,7 +26,7 @@ const pool = new Pool(
         port:     parseInt(process.env.DB_PORT || '5432', 10),
         user:     process.env.DB_USER     || 'postgres',
         password: process.env.DB_PASSWORD || '',
-        database: process.env.DB_NAME     || 'bahamut_oms',
+        database: process.env.DB_NAME     || 'devibe_oms',
         ssl: useSsl ? { rejectUnauthorized: false } : false,
         max: 20,
         idleTimeoutMillis: 30000,

@@ -37,7 +37,7 @@ const smsService = {
 
   async sendOrderUpdate(phone, order) {
     const message =
-      `[Bahamut OMS] Order #${order.id} update: status is now "${order.status}". ` +
+      `[De Vibe OMS] Order #${order.id} update: status is now "${order.status}". ` +
       `Total: ${order.total}. Thank you for your business.`;
     return this.sendSMS(phone, message);
   },

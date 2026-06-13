@@ -40,6 +40,24 @@ function hasFrontendDependenciesInstalled() {
   return fs.existsSync(viteBin);
 }
 
+function writeDesktopRuntimeConfig() {
+  const distDir = path.join(frontendDir, 'dist');
+  const runtimeConfigPath = path.join(distDir, 'runtime-config.js');
+  const runtimeConfig = {
+    apiBaseUrl: env.VITE_API_URL,
+    socketBaseUrl: env.VITE_SOCKET_URL,
+    authStorageKey: 'devibe_oms_auth',
+  };
+
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(
+    runtimeConfigPath,
+    `window.__DEVIBE_RUNTIME_CONFIG__ = ${JSON.stringify(runtimeConfig, null, 2)};\n`,
+    'utf8'
+  );
+  console.log(`[desktop] Wrote ${runtimeConfigPath}`);
+}
+
 async function main() {
   if (!hasFrontendDependenciesInstalled()) {
     console.log('[desktop] frontend dependencies missing; running npm ci...');
@@ -47,6 +65,7 @@ async function main() {
   }
 
   await run(npmCmd, ['run', 'build'], frontendDir, env);
+  writeDesktopRuntimeConfig();
 }
 
 main().catch((err) => {
