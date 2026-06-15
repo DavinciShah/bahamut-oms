@@ -1,15 +1,22 @@
 const { body, param, validationResult } = require('express-validator');
+const { validateEmail } = require('../utils/validators');
 
 const VALID_ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 const validateRegistration = [
   body('name').trim().notEmpty().withMessage('Name is required'),
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email')
+    .trim()
+    .custom((val) => validateEmail(val))
+    .withMessage('Valid email is required (e.g. user@example.com)'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
 ];
 
 const validateLogin = [
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email')
+    .trim()
+    .custom((val) => validateEmail(val))
+    .withMessage('Valid email is required (e.g. user@example.com)'),
   body('password').notEmpty().withMessage('Password is required')
 ];
 

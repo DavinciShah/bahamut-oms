@@ -11,6 +11,7 @@ const { authenticateJWT } = require('../middleware/auth');
 
 router.post('/register', authCtrl.register);
 router.post('/login',    authCtrl.login);
+router.post('/google',   authCtrl.googleLogin);
 router.post('/logout',   authenticateJWT, authCtrl.logout);
 router.get( '/profile',  authenticateJWT, authCtrl.profile);
 router.post('/refresh',  authenticateJWT, authCtrl.refresh);
