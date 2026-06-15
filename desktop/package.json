@@ -21,8 +21,10 @@
     "build:renderer": "node scripts/build-renderer.js",
     "start": "electron .",
     "dist:win": "node scripts/dist-win.js",
-    "dist:winstore": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "dist:win:nsis": "node scripts/dist-win.js",
     "dist:msix": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "dist:store": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
+    "dist:winstore": "powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
     "dist:all": "node scripts/dist-win.js && powershell -ExecutionPolicy Bypass -File scripts/build-msix.ps1",
     "create:hotlink": "powershell -ExecutionPolicy Bypass -File scripts/create-launch-hotlink.ps1",
     "generate:icons": "powershell -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
@@ -84,6 +86,7 @@
       "executableName": "De Vibe OMS",
       "fileAssociations": []
     },
+    "_storeNote": "ALWAYS use dist:msix for Microsoft Store. MSIX is signed by Microsoft for free. Never submit unsigned EXE (fails policy 10.2.9).",
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
@@ -101,7 +104,7 @@
       "displayName": "De Vibe OMS",
       "identityName": "DeVibeOMS.OMS",
       "publisherDisplayName": "DavinciShah",
-      "publisher": "CN=DeVibeOMS",
+      "publisher": "CN=020DEFAD-B148-45DF-98CA-18B2743203E6",
       "languages": [
         "en-US"
       ],
