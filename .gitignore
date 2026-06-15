@@ -39,3 +39,8 @@ desktop/backend-bundle/
 android/runtime-config.json
 
 frontend/public/*.exe
+
+# MSIX packages - too large for GitHub (479 MB)
+desktop/dist/*.msix
+desktop/dist/*.appx
+desktop/dist/msix-staging/
