@@ -4,7 +4,7 @@ const OrderItem = require('../models/OrderItem');
 const Product = require('../models/Product');
 const { createError } = require('../utils/errorHandler');
 
-const FREE_TIER_MONTHLY_ORDER_LIMIT = 50;
+const FREE_TIER_MONTHLY_ORDER_LIMIT = 20;
 
 async function getUserPlan(userId) {
   const { rows: userRows } = await query('SELECT tenant_id FROM users WHERE id = $1', [userId]);

@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom';
  *
  * Props:
  *   ordersUsed  {number} – orders placed this calendar month
- *   orderLimit  {number} – monthly cap (50 for free tier)
+ *   orderLimit  {number} – monthly cap (20 for free tier)
  */
-function FreeTierBanner({ ordersUsed = 0, orderLimit = 50 }) {
+function FreeTierBanner({ ordersUsed = 0, orderLimit = 20 }) {
   const [dismissed, setDismissed] = useState(
     () => sessionStorage.getItem('freeBannerDismissed') === '1'
   );

@@ -87,7 +87,6 @@
       "executableName": "De Vibe OMS",
       "fileAssociations": []
     },
-    "_storeNote": "ALWAYS use dist:msix for Microsoft Store. MSIX is signed by Microsoft for free. Never submit unsigned EXE (fails policy 10.2.9).",
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,

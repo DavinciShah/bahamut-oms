@@ -77,8 +77,8 @@ const paymentService = {
         name: 'Free',
         price: 0,
         currency: 'usd',
-        prices: { usd: 0, inr: 3, aed: 0 },
-        order_limit: 50,
+        prices: { usd: 0, inr: 0, aed: 0 },
+        order_limit: 20,
         features: ['1 user', '1 warehouse', 'Basic stock tracking'],
       },
       {
