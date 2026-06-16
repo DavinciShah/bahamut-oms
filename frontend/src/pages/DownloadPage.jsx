@@ -54,7 +54,7 @@ function DownloadPage() {
                   Or install via <strong>winget</strong>:
                 </p>
                 <code style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-700)' }}>
-                  winget install DavinciShah.VibeAgentStudio
+                  winget install DeVibe.VibeAgentStudio
                 </code>
               </div>
             </div>

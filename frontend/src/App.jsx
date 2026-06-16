@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import SubscriptionBarrier from './components/Auth/SubscriptionBarrier';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -57,6 +58,17 @@ function NavBar() {
 export default function App() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/unauthorized';
+  const [subscriptionActive, setSubscriptionActive] = useState(true);
+
+  useEffect(() => {
+    if (window.desktopApp?.isDesktop && window.desktopApp.checkSubscription) {
+      window.desktopApp.checkSubscription().then(active => {
+        setSubscriptionActive(active);
+      }).catch(err => {
+        console.error('Subscription check failed:', err);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (window.gtag) {
@@ -162,7 +174,7 @@ export default function App() {
             path="/analytics"
             element={
               <ProtectedRoute>
-                <AnalyticsDashboard />
+                {subscriptionActive ? <AnalyticsDashboard /> : <SubscriptionBarrier />}
               </ProtectedRoute>
             }
           />
@@ -170,7 +182,7 @@ export default function App() {
             path="/reports"
             element={
               <ProtectedRoute>
-                <ReportBuilder />
+                {subscriptionActive ? <ReportBuilder /> : <SubscriptionBarrier />}
               </ProtectedRoute>
             }
           />
@@ -210,7 +222,7 @@ export default function App() {
             path="/bi"
             element={
               <ProtectedRoute>
-                <BIPortal />
+                {subscriptionActive ? <BIPortal /> : <SubscriptionBarrier />}
               </ProtectedRoute>
             }
           />

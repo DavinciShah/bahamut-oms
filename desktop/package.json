@@ -4,7 +4,7 @@
   "private": true,
   "description": "De Vibe Order Management System – Windows desktop client",
   "author": {
-    "name": "DavinciShah",
+    "name": "De Vibe",
     "email": "devibe70@gmail.com",
     "url": "https://github.com/DavinciShah/devibe-oms"
   },
@@ -42,10 +42,10 @@
   "build": {
     "appId": "com.devibe.oms",
     "productName": "De Vibe OMS",
-    "copyright": "Copyright © 2024 DavinciShah. All rights reserved.",
+    "copyright": "Copyright © 2024 De Vibe. All rights reserved.",
     "icon": "assets/icon.ico",
     "extraMetadata": {
-      "CompanyName": "DavinciShah",
+      "CompanyName": "De Vibe",
       "FileDescription": "De Vibe Order Management System",
       "InternalName": "devibe-oms",
       "OriginalFilename": "De Vibe OMS.exe",
@@ -103,7 +103,7 @@
       "backgroundColor": "#1e293b",
       "displayName": "De Vibe OMS",
       "identityName": "DeVibeOMS.OMS",
-      "publisherDisplayName": "DavinciShah",
+      "publisherDisplayName": "De Vibe",
       "publisher": "CN=020DEFAD-B148-45DF-98CA-18B2743203E6",
       "languages": [
         "en-US"

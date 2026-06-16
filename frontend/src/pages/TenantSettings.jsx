@@ -32,7 +32,8 @@ export default function TenantSettings() {
   const tabs = [
     { key: 'general', label: 'General' },
     { key: 'branding', label: 'Branding' },
-    { key: 'domains', label: 'Domains' }
+    { key: 'domains', label: 'Domains' },
+    ...(window.desktopApp?.isDesktop ? [{ key: 'subscription', label: 'Windows Store Subscription' }] : [])
   ];
 
   const inputStyle = { padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', width: '100%', boxSizing: 'border-box' };
@@ -93,6 +94,22 @@ export default function TenantSettings() {
 
       {tab === 'branding' && <TenantBranding settings={settings} onUpdate={setSettings} onSave={handleSave} saving={saving} />}
       {tab === 'domains' && <DomainSetup />}
+      {tab === 'subscription' && (
+        <div style={{ background: '#fff', borderRadius: 8, padding: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.08)', maxWidth: 560 }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: 16 }}>Store Subscription</h3>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            Manage your Microsoft Store subscription and licenses for De Vibe OMS.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <button
+              onClick={() => window.desktopApp?.manageSubscription()}
+              style={{ padding: '10px 20px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, width: 'fit-content' }}
+            >
+              Manage / Cancel Subscription
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

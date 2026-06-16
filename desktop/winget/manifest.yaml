@@ -10,10 +10,10 @@
 #        shasum -a 256 De-Vibe-OMS-Setup-1.0.0.exe   (macOS/Linux)
 #        CertUtil -hashfile De-Vibe-OMS-Setup-1.0.0.exe SHA256   (Windows)
 
-PackageIdentifier: DavinciShah.DeVibeOMS
+PackageIdentifier: DeVibe.DeVibeOMS
 PackageVersion: 1.0.0
 PackageName: De Vibe OMS
-Publisher: DavinciShah
+Publisher: De Vibe
 License: MIT
 ShortDescription: De Vibe Order Management System — Windows desktop client
 PackageUrl: https://github.com/DavinciShah/bahamut-oms

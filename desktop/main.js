@@ -1,10 +1,10 @@
 'use strict';
 
-const { app, BrowserWindow, dialog, protocol } = require('electron');
+const { app, BrowserWindow, dialog, protocol, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const http = require('http');
 
 const APP_PROTOCOL = 'app';
@@ -318,4 +318,45 @@ app.on('before-quit', () => {
   if (backendProcess) {
     backendProcess.kill('SIGTERM');
   }
+});
+
+// Windows Store Subscription Check Helpers
+async function isSubscriptionActive() {
+  if (!app.isPackaged) {
+    const overridePath = path.join(app.getPath('userData'), '.dev-subscription-inactive');
+    if (fs.existsSync(overridePath)) {
+      console.log('[Subscription] Dev override active: Simulating INACTIVE subscription.');
+      return false;
+    }
+    console.log('[Subscription] Dev mode: Simulating ACTIVE subscription.');
+    return true;
+  }
+
+  const scriptPath = path.join(process.resourcesPath, 'scripts', 'check-sub.ps1');
+  return new Promise((resolve) => {
+    const cmd = `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`;
+    exec(cmd, (error, stdout) => {
+      if (error) {
+        console.error('[Subscription] Check failed:', error);
+        resolve(false);
+        return;
+      }
+      const output = stdout.trim();
+      console.log('[Subscription] Store response:', output);
+      if (output.includes('ACTIVE')) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
+}
+
+// IPC registration
+ipcMain.handle('check-subscription', async () => {
+  return await isSubscriptionActive();
+});
+
+ipcMain.on('manage-subscription', () => {
+  shell.openExternal('https://account.microsoft.com/services');
 });

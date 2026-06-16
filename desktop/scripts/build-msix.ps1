@@ -118,6 +118,7 @@ if (Test-Path $SourceAssets) {
 Write-Host '[build-msix] Writing AppxManifest.xml...'
 $AppExe    = 'De Vibe OMS.exe'
 $Publisher = if ($env:MSIX_PUBLISHER) { $env:MSIX_PUBLISHER } else { 'CN=020DEFAD-B148-45DF-98CA-18B2743203E6' }
+$PublisherDisplayName = if ($PackageJson.build.appx.publisherDisplayName) { $PackageJson.build.appx.publisherDisplayName } else { 'De Vibe' }
 
 $Manifest = @"
 <?xml version="1.0" encoding="utf-8"?>
@@ -135,7 +136,7 @@ $Manifest = @"
 
   <Properties>
     <DisplayName>De Vibe OMS</DisplayName>
-    <PublisherDisplayName>DavinciShah</PublisherDisplayName>
+    <PublisherDisplayName>$PublisherDisplayName</PublisherDisplayName>
     <Description>De Vibe Order Management System</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
