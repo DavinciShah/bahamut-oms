@@ -9,9 +9,18 @@ try {
     }
 
     $licenseTask = $context.GetAppLicenseAsync()
-    # Wait for the task to complete
-    while (-not $licenseTask.IsCompleted) {
-        Start-Sleep -Milliseconds 100
+    # Wait for the task to complete with a strict 10s timeout to prevent infinite hangs
+    $timeoutMs = 10000
+    $elapsedMs = 0
+    $intervalMs = 100
+    while (-not $licenseTask.IsCompleted -and $elapsedMs -lt $timeoutMs) {
+        Start-Sleep -Milliseconds $intervalMs
+        $elapsedMs += $intervalMs
+    }
+    
+    if (-not $licenseTask.IsCompleted) {
+        Write-Output "INACTIVE_TIMEOUT"
+        exit 0
     }
     
     $appLicense = $licenseTask.GetResults()
