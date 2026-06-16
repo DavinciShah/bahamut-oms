@@ -53,5 +53,8 @@ export function validateRegisterForm(values) {
   if (values.confirmPassword !== values.password) {
     errors.confirmPassword = 'Passwords do not match.';
   }
+  if (!values.consent) {
+    errors.consent = 'You must agree to the Privacy Policy to register.';
+  }
   return errors;
 }
