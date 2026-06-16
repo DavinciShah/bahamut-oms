@@ -35,7 +35,7 @@ async function main() {
 
   await run(
     npmCmd,
-    ['exec', 'electron-builder', '--', '--win', 'nsis', '--x64', '--ia32', '--publish', 'never'],
+    ['exec', 'electron-builder', '--', '--win', 'nsis', '--x64', '--publish', 'never'],
     desktopDir,
     env
   );
