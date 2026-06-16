@@ -40,6 +40,9 @@
     "ws": ">=8.18.0"
   },
   "build": {
+    "asarUnpack": [
+      "scripts/**/*"
+    ],
     "appId": "com.devibe.oms",
     "productName": "De Vibe OMS",
     "copyright": "Copyright © 2024 De Vibe. All rights reserved.",

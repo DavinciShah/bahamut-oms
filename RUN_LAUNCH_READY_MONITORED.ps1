@@ -130,7 +130,7 @@ try {
         Write-Step "Skipping desktop build."
     } else {
         Write-Step "Running desktop Windows packaging..."
-        Invoke-MonitoredTask -TaskName "Desktop Build" -Command "npm run dist:win" -WorkingDirectory $desktop -TimeoutSec 1200
+        Invoke-MonitoredTask -TaskName "Desktop Build" -Command "npm run dist:all" -WorkingDirectory $desktop -TimeoutSec 1200
     }
 
     # 5. Hotlinks

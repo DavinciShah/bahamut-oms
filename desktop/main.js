@@ -332,7 +332,7 @@ async function isSubscriptionActive() {
     return true;
   }
 
-  const scriptPath = path.join(process.resourcesPath, 'scripts', 'check-sub.ps1');
+  const scriptPath = path.join(__dirname, 'scripts', 'check-sub.ps1').replace('app.asar', 'app.asar.unpacked');
   return new Promise((resolve) => {
     const cmd = `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`;
     exec(cmd, (error, stdout) => {
