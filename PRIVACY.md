@@ -2,7 +2,7 @@
 
 **Last Updated: June 14, 2026**
 
-DavinciShah ("we", "us", or "our") operates the De Vibe Order Management System (OMS) desktop application and associated services (collectively, the "Application"). We are committed to protecting the privacy and security of your personal data.
+De Vibe ("we", "us", or "our") operates the De Vibe Order Management System (OMS) desktop application and associated services (collectively, the "Application"). We are committed to protecting the privacy and security of your personal data.
 
 This Privacy Policy explains how we collect, use, and disclose information when you use our Application.
 
@@ -50,4 +50,4 @@ Depending on your jurisdiction (such as GDPR or CCPA), you have the right to acc
 
 If you have any questions or concerns about this Privacy Policy, please contact us at:
 * **Email:** devibe70@gmail.com
-* **GitHub Repository:** https://github.com/DavinciShah/bahamut-oms
+* **GitHub Repository:** https://github.com/devibe/bahamut-oms

@@ -67,7 +67,7 @@ Fill these in Partner Center → **Store listing** tab:
 | Sub-category | Business Management Software |
 | Keywords | OMS, order management, inventory, ERP, warehouse |
 | Privacy policy URL | Your hosted privacy policy page |
-| Website URL | <https://github.com/DavinciShah/devibe-oms> |
+| Website URL | <https://github.com/devibe/devibe-oms> |
 | Support contact | devibe70@gmail.com |
 
 ### Screenshots
@@ -143,7 +143,7 @@ After the `.exe` installer is built:
    - Set `PackageUrl` to the same direct Win32 `.exe` package URL.
    - Update `InstallerUrl` if the release tag differs.
 3. Fork [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) and open a PR
-   adding the manifest under `manifests/d/DavinciShah/DeVibeOMS/1.0.0/`.
+   adding the manifest under `manifests/d/devibe/DeVibeOMS/1.0.0/`.
 
 ---
 

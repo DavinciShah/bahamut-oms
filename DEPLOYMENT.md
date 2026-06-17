@@ -9,7 +9,7 @@
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/DavinciShah/devibe-oms.git
+git clone https://github.com/devibe/devibe-oms.git
 cd devibe-oms
 ```
 
@@ -189,4 +189,4 @@ docker compose exec -T postgres psql -U postgres devibe_oms < backup.sql
 For issues or questions:
 1. Check logs: `docker compose logs`
 2. Review documentation: See README.md
-3. Open an issue: https://github.com/DavinciShah/devibe-oms/issues
+3. Open an issue: https://github.com/devibe/devibe-oms/issues

@@ -13,7 +13,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Core OMS**: order management, customer and supplier records, inventory tracking.
 - **Windows desktop client** (Electron + NSIS installer) with embedded Node.js backend.
 - **Android mobile client** (Capacitor) targeting Android 13+ (API 33).
-- **Web frontend** deployed to GitHub Pages at https://davincishah.github.io/devibe-oms/.
+- **Web frontend** deployed to GitHub Pages at https://devibe.github.io/devibe-oms/.
 - **Multi-tenant architecture**: tenant-scoped auth via JWT, row-level isolation.
 - **Billing & subscription**: Free / Standard ($29) / Professional ($79) / Enterprise ($149) tiers with USD, INR, and AED pricing; Stripe payment-intent integration.
 - **Payment invoices**: invoice model with PDF-ready fields; `/payments/invoices` API.
@@ -32,4 +32,4 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-[1.0.0]: https://github.com/DavinciShah/devibe-oms/releases/tag/v1.0.0
+[1.0.0]: https://github.com/devibe/devibe-oms/releases/tag/v1.0.0

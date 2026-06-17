@@ -16,11 +16,11 @@ PackageName: De Vibe OMS
 Publisher: De Vibe
 License: MIT
 ShortDescription: De Vibe Order Management System — Windows desktop client
-PackageUrl: https://github.com/DavinciShah/bahamut-oms
+PackageUrl: https://github.com/devibe/bahamut-oms
 Installers:
   - Architecture: x64
     InstallerType: msix
-    InstallerUrl: https://github.com/DavinciShah/bahamut-oms/releases/download/v1.0.0/De-Vibe-OMS-1.0.0.msix
+    InstallerUrl: https://github.com/devibe/bahamut-oms/releases/download/v1.0.0/De-Vibe-OMS-1.0.0.msix
     InstallerSha256: CDEB4686CF47949E7AD35B488F205BE2D2B5B576AAE4DDAE805ADE07B1AD9344
 ManifestType: singleton
 ManifestVersion: 1.6.0

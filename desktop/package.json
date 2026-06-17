@@ -6,13 +6,13 @@
   "author": {
     "name": "De Vibe",
     "email": "devibe70@gmail.com",
-    "url": "https://github.com/DavinciShah/devibe-oms"
+    "url": "https://github.com/devibe/devibe-oms"
   },
   "license": "MIT",
-  "homepage": "https://github.com/DavinciShah/devibe-oms",
+  "homepage": "https://github.com/devibe/devibe-oms",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DavinciShah/devibe-oms.git"
+    "url": "https://github.com/devibe/devibe-oms.git"
   },
   "main": "main.js",
   "scripts": {

@@ -1,5 +1,21 @@
 import { useState, useEffect, useMemo } from 'react';
 import paymentService from '../services/paymentService';
+import PaymentForm from './PaymentForm';
+
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 const CURRENCY_META = {
   usd: { code: 'USD', locale: 'en-US', label: 'USD' },
@@ -69,15 +85,107 @@ export default function SubscriptionManager({ subscription, onUpdate }) {
     }
   };
 
+  const [showStripeModal, setShowStripeModal] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState(null);
+
   const handleUpgrade = async (planId) => {
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+
+    if (plan.id === 'free') {
+      setLoading(true);
+      try {
+        const res = await paymentService.updateSubscription(planId);
+        if (onUpdate) onUpdate(res.data);
+      } catch (err) {
+        alert('Failed to update: ' + (err.response?.data?.error || err.message));
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    const price = plan.prices?.[selectedCurrency] ?? (selectedCurrency === 'usd' ? plan.price : 0);
+
+    if (selectedCurrency === 'inr') {
+      setLoading(true);
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert('Failed to load Razorpay SDK. Please check your internet connection.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const orderRes = await paymentService.createRazorpayOrder({
+          amount: price,
+          currency: 'INR',
+          planId: plan.id
+        });
+
+        if (!orderRes.data?.success || !orderRes.data?.order) {
+          throw new Error('Failed to create Razorpay order');
+        }
+
+        const order = orderRes.data.order;
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_your_razorpay_key',
+          amount: order.amount,
+          currency: order.currency,
+          name: 'De Vibe OMS',
+          description: `Upgrade to ${plan.name} Plan`,
+          order_id: order.id,
+          handler: async function (response) {
+            setLoading(true);
+            try {
+              const verifyRes = await paymentService.verifyRazorpayPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                planId: plan.id
+              });
+              if (onUpdate) onUpdate(verifyRes.data.subscription);
+              alert('Plan upgraded successfully!');
+            } catch (err) {
+              alert('Verification failed: ' + (err.response?.data?.error || err.message));
+            } finally {
+              setLoading(false);
+            }
+          },
+          prefill: {
+            name: '',
+            email: '',
+          },
+          theme: {
+            color: '#3b82f6'
+          }
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        alert('Payment initialization failed: ' + (err.response?.data?.error || err.message));
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setPendingPlan(plan);
+      setShowStripeModal(true);
+    }
+  };
+
+  const handleStripePaymentSuccess = async () => {
+    if (!pendingPlan) return;
     setLoading(true);
+    setShowStripeModal(false);
     try {
-      const res = await paymentService.updateSubscription(planId);
+      const res = await paymentService.updateSubscription(pendingPlan.id);
       if (onUpdate) onUpdate(res.data);
+      alert('Plan upgraded successfully!');
     } catch (err) {
-      alert('Failed to update: ' + (err.response?.data?.error || err.message));
+      alert('Subscription activation failed: ' + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
+      setPendingPlan(null);
     }
   };
 
@@ -134,6 +242,35 @@ export default function SubscriptionManager({ subscription, onUpdate }) {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {showStripeModal && pendingPlan && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div style={{
+            background: '#fff', borderRadius: 12, padding: 24,
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+            maxWidth: 400, width: '100%', position: 'relative', border: '1px solid #e2e8f0', color: '#1e293b'
+          }}>
+            <button 
+              onClick={() => { setShowStripeModal(false); setPendingPlan(null); }}
+              style={{
+                position: 'absolute', top: 12, right: 12, border: 'none', background: 'none',
+                fontSize: 20, cursor: 'pointer', color: '#94a3b8'
+              }}
+            >
+              &times;
+            </button>
+            <PaymentForm 
+              amount={pendingPlan.prices?.[selectedCurrency] ?? pendingPlan.price}
+              onSuccess={handleStripePaymentSuccess}
+              onError={(msg) => alert('Stripe payment failed: ' + msg)}
+            />
           </div>
         </div>
       )}

@@ -15,7 +15,7 @@ Older pre-release builds are not supported. Please upgrade to the latest `1.0.x`
 Please report security issues privately via one of the following channels:
 
 1. **GitHub Private Security Advisory** (preferred):  
-   <https://github.com/DavinciShah/devibe-oms/security/advisories/new>
+   <https://github.com/devibe/devibe-oms/security/advisories/new>
 
 2. **Email**: security@devibe-oms.example.com  
    *(Replace with your real security contact before going public.)*

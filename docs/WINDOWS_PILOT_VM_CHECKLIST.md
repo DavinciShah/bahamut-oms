@@ -9,7 +9,7 @@ Fill in every field, then submit results via the **Windows Pilot Go/No-Go Gate**
 
 | Field | Value |
 |---|---|
-| Tester | <!-- e.g. @DavinciShah --> |
+| Tester | <!-- e.g. @devibe --> |
 | Test date | <!-- YYYY-MM-DD --> |
 | VM type | <!-- Hyper-V / VirtualBox / Azure / GCP / other --> |
 | Guest OS | <!-- e.g. Windows 11 22H2 --> |

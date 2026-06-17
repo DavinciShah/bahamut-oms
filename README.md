@@ -24,7 +24,7 @@ See `docs/APP_IMPLEMENTATION_BACKLOG.md` for the app-first rollout checklist.
 
 1. Clone the repository:
 	```bash
-	git clone https://github.com/DavinciShah/devibe-oms.git
+	git clone https://github.com/devibe/devibe-oms.git
 	cd devibe-oms
 	```
 2. Navigate to the backend folder and install dependencies:
@@ -156,5 +156,5 @@ CI workflows:
 ### GitHub Free Domain (No Custom Domain)
 
 - This repository is configured to use the default GitHub Pages domain.
-- Public URL: `https://davincishah.github.io/devibe-oms/`
+- Public URL: `https://devibe.github.io/devibe-oms/`
 - In **GitHub → Settings → Pages**, leave **Custom domain** empty.

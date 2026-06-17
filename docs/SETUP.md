@@ -16,7 +16,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/DavinciShah/devibe-oms.git
+git clone https://github.com/devibe/devibe-oms.git
 cd devibe-oms
 ```
 

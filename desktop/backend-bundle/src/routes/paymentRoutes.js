@@ -6,13 +6,20 @@ const paymentController = require('../controllers/paymentController');
 const { authenticate } = require('../middleware/authMiddleware');
 const rateLimit = require('../middleware/rateLimitMiddleware');
 const stripeWebhook = require('../webhooks/stripeWebhook');
+const razorpayWebhook = require('../webhooks/razorpayWebhook');
 
 // Stripe webhook – raw body needed, no JWT auth
 router.post('/webhook', raw({ type: 'application/json' }), stripeWebhook.handleWebhook);
 
+// Razorpay webhook – raw body needed, no JWT auth
+router.post('/razorpay/webhook', raw({ type: 'application/json' }), razorpayWebhook.handleWebhook);
+
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 router.use(authenticate);
 router.use(limiter);
+
+router.post('/razorpay/order',  paymentController.createRazorpayOrder);
+router.post('/razorpay/verify', paymentController.verifyRazorpayPayment);
 
 router.post('/create',       paymentController.createPayment);
 router.post('/intent',       paymentController.createPaymentIntent);

@@ -10,6 +10,10 @@ const PAGE_MAP = {
   support: { file: 'support.html', label: 'Issue Tracker', icon: '🛟', intro: 'Triage project issues, track bugs, and coordinate agent task breakdowns.' },
   bi: { file: 'bi.html', label: 'AI Intelligence', icon: '🐉', intro: 'Explore predictive timelines, codebase anomalies, and intelligence signals.' },
   settings: { file: 'settings.html', label: 'Workspace Config', icon: '⚙️', intro: 'Configure agent settings, team access rights, alert rules, and security.' },
+  eco_tycoon: { file: 'eco-tycoon.html', label: 'Idle Eco-Tycoon', icon: '🌱', intro: 'Showcase of Idle Eco-Tycoon: build sustainable power grids and recycle resources.' },
+  miner: { file: 'miner.html', label: 'Idle Miner', icon: '⛏️', intro: 'Showcase of Idle Miner: mine deep shafts and upgrade automated transporters.' },
+  cleanup_crew: { file: 'cleanup-crew.html', label: 'Cleanup Crew', icon: '🧹', intro: 'Showcase of Cleanup Crew: automate recycling, waste disposal, and route optimization.' },
+  idle_army: { file: 'idle-army.html', label: 'De Vibe Idle Army', icon: '🎖️', intro: 'Showcase of De Vibe Idle Army: unlock sci-fi sectors and deploy combat squads.' },
 };
 
 const STORAGE_KEY = 'vibe-agent-studio-v1';
@@ -126,6 +130,12 @@ const defaultState = {
     { name: 'Aarya Shah', role: 'Human in the Loop', email: 'aarya@vibeagentstudio.com', status: 'Active' },
     { name: 'Kabir Nanda', role: 'Product Lead', email: 'kabir@vibeagentstudio.com', status: 'Invited' },
   ],
+  simulators: {
+    eco_tycoon: { credits: 0, solarPanels: 0, windTurbines: 0, clickPower: 1, solarCost: 10, windCost: 50, multiplier: 1 },
+    miner: { credits: 0, miners: 0, drills: 0, clickPower: 1, minerCost: 15, drillCost: 80, multiplier: 1 },
+    cleanup_crew: { credits: 0, cleaners: 0, trucks: 0, clickPower: 1, cleanerCost: 20, truckCost: 100, multiplier: 1 },
+    idle_army: { credits: 0, soldiers: 0, tanks: 0, clickPower: 1, soldierCost: 25, tankCost: 120, multiplier: 1 }
+  },
 };
 
 function deepClone(value) {
@@ -143,6 +153,10 @@ function loadState() {
       activeState = parsed;
     } else {
       activeState = deepClone(defaultState);
+    }
+
+    if (!activeState.simulators) {
+      activeState.simulators = deepClone(defaultState.simulators);
     }
 
     if (isRegistered && profile) {
@@ -327,9 +341,21 @@ function renderSidebar() {
         <span>Autonomous Builder Deck</span>
       </div>
     </div>
-    <div class="sidebar-section-title">Navigation Panel</div>
+    <div class="sidebar-section-title">Workspace Deck</div>
     <nav class="nav-links">
-      ${Object.entries(PAGE_MAP).map(([key, page]) => `
+      ${Object.entries(PAGE_MAP)
+        .filter(([key]) => !['eco_tycoon', 'miner', 'cleanup_crew', 'idle_army'].includes(key))
+        .map(([key, page]) => `
+        <a class="nav-link ${key === pageKey ? 'active' : ''}" href="${page.file}">
+          <span class="nav-icon">${page.icon}</span>
+          <span>${page.label}</span>
+        </a>`).join('')}
+    </nav>
+    <div class="sidebar-section-title">Project Showcases</div>
+    <nav class="nav-links">
+      ${Object.entries(PAGE_MAP)
+        .filter(([key]) => ['eco_tycoon', 'miner', 'cleanup_crew', 'idle_army'].includes(key))
+        .map(([key, page]) => `
         <a class="nav-link ${key === pageKey ? 'active' : ''}" href="${page.file}">
           <span class="nav-icon">${page.icon}</span>
           <span>${page.label}</span>
@@ -497,7 +523,13 @@ function renderOrders() {
               <td><span class="status-pill ${statusTone(order.status)}">${escapeHtml(displayProjectStatus(order.status))}</span></td>
               <td>${escapeHtml(order.warehouse)}<div class="tiny">Priority ${escapeHtml(order.priority)}</div></td>
               <td>${formatCurrency(order.value)}</td>
-              <td><div class="table-actions"><button class="ghost-button" data-action="advance-order" data-id="${order.id}">Advance Build</button><button class="secondary-button" data-action="view-order" data-id="${order.id}">Logs</button></div></td>
+              <td>
+                <div class="table-actions">
+                  <button class="ghost-button" data-action="advance-order" data-id="${order.id}">Advance Build</button>
+                  <button class="secondary-button" data-action="view-order" data-id="${order.id}">Logs</button>
+                  ${getProjectShowcaseLink(order.customer)}
+                </div>
+              </td>
             </tr>`).join('') || '<tr><td colspan="6" class="center subtle">No projects match this filter.</td></tr>'}
         </tbody>
       </table>
@@ -687,6 +719,234 @@ function renderSettings() {
     </section>`;
 }
 
+function getProjectShowcaseLink(projectName) {
+  const mapping = {
+    'Idle Eco-Tycoon': 'eco-tycoon.html',
+    'Idle Miner': 'miner.html',
+    'Cleanup Crew': 'cleanup-crew.html',
+    'De Vibe Idle Army': 'idle-army.html'
+  };
+  const file = mapping[projectName];
+  if (file) {
+    return `<a class="primary-button" href="${file}" style="padding: 11px 14px; font-size: 0.75rem; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; height: 38px;">Showcase</a>`;
+  }
+  return '';
+}
+
+function renderAdSenseSlot(slotId, layoutType = 'auto') {
+  return `
+    <div class="adsense-block" style="margin: 20px 0; padding: 15px; background: var(--bg-panel); border: 1px dashed var(--line); border-radius: 16px; text-align: center; position: relative; overflow: hidden;">
+      <div class="adsense-label" style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Advertisement</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7107715238624071"
+           data-ad-slot="${slotId}"
+           data-ad-format="${layoutType}"
+           data-full-width-responsive="true"></ins>
+    </div>
+  `;
+}
+
+function renderEcoTycoon() {
+  const sim = state.simulators.eco_tycoon;
+  const multiplier = sim.multiplier || 1;
+  const gen = (sim.solarPanels * 1 + sim.windTurbines * 5) * multiplier;
+  return `
+    <section class="page-intro">
+      <div><h2>Idle Eco-Tycoon Showcase</h2><p>Simulate sustainable energy systems, optimize upgrades, and generate carbon offset credits.</p></div>
+    </section>
+    ${renderAdSenseSlot('9876543210', 'rectangle')}
+    <section class="content-grid" style="margin-top:16px;">
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">🌱 Energy Grid Simulator</h3></div>
+        <div style="padding: 12px 0;">
+          <div class="simulator-display" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div class="stat-large" style="font-size: 2.2rem; margin-bottom: 8px;">Eco Credits: <span id="eco-credits" style="color:var(--success); font-weight:800;">${Math.floor(sim.credits)}</span></div>
+            <div class="subtle">Generating <span id="eco-gen">${gen}</span> credits/second (Multiplier: x${multiplier})</div>
+          </div>
+          <div class="form-actions" style="margin-top: 16px; justify-content: flex-start; gap: 12px;">
+            <button class="primary-button" id="eco-click" style="font-size:1.1rem; padding: 14px 24px; background: linear-gradient(135deg, #10b981, #059669); border: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">🌱 Harvest Solar Energy</button>
+            <button class="danger-button" id="eco-prestige" style="font-size: 1.1rem; padding: 14px 24px;">♻️ Prestige Reset</button>
+          </div>
+        </div>
+        <div class="dual-grid" style="margin-top: 16px;">
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Solar Panels</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--success); margin: 8px 0;">${sim.solarPanels}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+1 Credit/sec</div>
+            <button class="ghost-button" id="eco-buy-solar" style="width:100%; border: 1px solid var(--success); color: var(--success);">Buy for ${sim.solarCost} credits</button>
+          </div>
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Wind Turbines</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--success); margin: 8px 0;">${sim.windTurbines}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+5 Credits/sec</div>
+            <button class="ghost-button" id="eco-buy-wind" style="width:100%; border: 1px solid var(--success); color: var(--success);">Buy for ${sim.windCost} credits</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">Technical Specifications</h3></div>
+        <div class="activity-list">
+          <div class="activity-item"><strong>Platform Connection</strong><div class="subtle">Web App · Vercel Hosting</div></div>
+          <div class="activity-item"><strong>Build Status</strong><span class="status-pill success" style="background: rgba(34, 197, 94, 0.15); color: var(--success);">Stable</span></div>
+          <div class="activity-item"><strong>QA Tests Status</strong><div class="subtle">10/10 automated tests passing successfully</div></div>
+        </div>
+      </div>
+    </section>
+    ${renderAdSenseSlot('1234567890', 'horizontal')}
+  `;
+}
+
+function renderMiner() {
+  const sim = state.simulators.miner;
+  const multiplier = sim.multiplier || 1;
+  const gen = (sim.miners * 1 + sim.drills * 5) * multiplier;
+  return `
+    <section class="page-intro">
+      <div><h2>Idle Miner Showcase</h2><p>Mine deep shafts, automate drilling operations, and optimize elevator loops.</p></div>
+    </section>
+    ${renderAdSenseSlot('9876543211', 'rectangle')}
+    <section class="content-grid" style="margin-top:16px;">
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">⛏️ Deep Mine Shaft Simulator</h3></div>
+        <div style="padding: 12px 0;">
+          <div class="simulator-display" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div class="stat-large" style="font-size: 2.2rem; margin-bottom: 8px;">Mined Ore: <span id="miner-credits" style="color:var(--warning); font-weight:800;">${Math.floor(sim.credits)}</span></div>
+            <div class="subtle">Drilling <span id="miner-gen">${gen}</span> ore/second (Multiplier: x${multiplier})</div>
+          </div>
+          <div class="form-actions" style="margin-top: 16px; justify-content: flex-start; gap: 12px;">
+            <button class="primary-button" id="miner-click" style="font-size:1.1rem; padding: 14px 24px; background: linear-gradient(135deg, #f59e0b, #d97706); border: 0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">⛏️ Drill Mine Shaft</button>
+            <button class="danger-button" id="miner-prestige" style="font-size: 1.1rem; padding: 14px 24px;">♻️ Prestige Reset</button>
+          </div>
+        </div>
+        <div class="dual-grid" style="margin-top: 16px;">
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Hired Miners</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--warning); margin: 8px 0;">${sim.miners}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+1 Ore/sec</div>
+            <button class="ghost-button" id="miner-buy-miner" style="width:100%; border: 1px solid var(--warning); color: var(--warning);">Hire for ${sim.minerCost} ore</button>
+          </div>
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Excavators</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--warning); margin: 8px 0;">${sim.drills}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+5 Ore/sec</div>
+            <button class="ghost-button" id="miner-buy-drill" style="width:100%; border: 1px solid var(--warning); color: var(--warning);">Buy for ${sim.drillCost} ore</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">Technical Specifications</h3></div>
+        <div class="activity-list">
+          <div class="activity-item"><strong>Platform Connection</strong><div class="subtle">Android App · Google Services & Firebase SDK</div></div>
+          <div class="activity-item"><strong>Build Status</strong><span class="status-pill success" style="background: rgba(34, 197, 94, 0.15); color: var(--success);">Stable</span></div>
+          <div class="activity-item"><strong>QA Tests Status</strong><div class="subtle">Firebase Analytics and AdMob configured successfully</div></div>
+        </div>
+      </div>
+    </section>
+    ${renderAdSenseSlot('1234567891', 'horizontal')}
+  `;
+}
+
+function renderCleanupCrew() {
+  const sim = state.simulators.cleanup_crew;
+  const multiplier = sim.multiplier || 1;
+  const gen = (sim.cleaners * 1 + sim.trucks * 6) * multiplier;
+  return `
+    <section class="page-intro">
+      <div><h2>Cleanup Crew Showcase</h2><p>Dispatch cleaning operations, recycle waste materials, and manage route optimization.</p></div>
+    </section>
+    ${renderAdSenseSlot('9876543212', 'rectangle')}
+    <section class="content-grid" style="margin-top:16px;">
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">🧹 Waste Recycling Simulator</h3></div>
+        <div style="padding: 12px 0;">
+          <div class="simulator-display" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div class="stat-large" style="font-size: 2.2rem; margin-bottom: 8px;">Recycled Materials: <span id="cleanup-credits" style="color:var(--success); font-weight:800;">${Math.floor(sim.credits)}</span></div>
+            <div class="subtle">Recycling <span id="cleanup-gen">${gen}</span> units/second (Multiplier: x${multiplier})</div>
+          </div>
+          <div class="form-actions" style="margin-top: 16px; justify-content: flex-start; gap: 12px;">
+            <button class="primary-button" id="cleanup-click" style="font-size:1.1rem; padding: 14px 24px; background: linear-gradient(135deg, #10b981, #059669); border: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">🧹 Clean Area & Recycle</button>
+            <button class="danger-button" id="cleanup-prestige" style="font-size: 1.1rem; padding: 14px 24px;">♻️ Prestige Reset</button>
+          </div>
+        </div>
+        <div class="dual-grid" style="margin-top: 16px;">
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Dispatch Cleaners</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--success); margin: 8px 0;">${sim.cleaners}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+1 unit/sec</div>
+            <button class="ghost-button" id="cleanup-buy-cleaner" style="width:100%; border: 1px solid var(--success); color: var(--success);">Hire for ${sim.cleanerCost} units</button>
+          </div>
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Recycling Trucks</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--success); margin: 8px 0;">${sim.trucks}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+6 units/sec</div>
+            <button class="ghost-button" id="cleanup-buy-truck" style="width:100%; border: 1px solid var(--success); color: var(--success);">Buy for ${sim.truckCost} units</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">Technical Specifications</h3></div>
+        <div class="activity-list">
+          <div class="activity-item"><strong>Platform Connection</strong><div class="subtle">Mobile App · Unity Engine</div></div>
+          <div class="activity-item"><strong>Build Status</strong><span class="status-pill success" style="background: rgba(34, 197, 94, 0.15); color: var(--success);">Stable</span></div>
+          <div class="activity-item"><strong>QA Tests Status</strong><div class="subtle">Merge conflicts resolved, repository clean</div></div>
+        </div>
+      </div>
+    </section>
+    ${renderAdSenseSlot('1234567892', 'horizontal')}
+  `;
+}
+
+function renderIdleArmy() {
+  const sim = state.simulators.idle_army;
+  const multiplier = sim.multiplier || 1;
+  const gen = (sim.soldiers * 1 + sim.tanks * 7) * multiplier;
+  return `
+    <section class="page-intro">
+      <div><h2>De Vibe Idle Army Showcase</h2><p>Unlock sci-fi tycoon sectors, deploy combat squads, and conduct advanced lab research.</p></div>
+    </section>
+    ${renderAdSenseSlot('9876543213', 'rectangle')}
+    <section class="content-grid" style="margin-top:16px;">
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">🎖️ Combat Base Simulator</h3></div>
+        <div style="padding: 12px 0;">
+          <div class="simulator-display" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div class="stat-large" style="font-size: 2.2rem; margin-bottom: 8px;">Military Intel: <span id="army-credits" style="color:var(--danger); font-weight:800;">${Math.floor(sim.credits)}</span></div>
+            <div class="subtle">Analyzing <span id="army-gen">${gen}</span> intel/second (Multiplier: x${multiplier})</div>
+          </div>
+          <div class="form-actions" style="margin-top: 16px; justify-content: flex-start; gap: 12px;">
+            <button class="primary-button" id="army-click" style="font-size:1.1rem; padding: 14px 24px; background: linear-gradient(135deg, #ef4444, #dc2626); border: 0; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">🎖️ Deploy Combat Squad</button>
+            <button class="danger-button" id="army-prestige" style="font-size: 1.1rem; padding: 14px 24px;">♻️ Prestige Reset</button>
+          </div>
+        </div>
+        <div class="dual-grid" style="margin-top: 16px;">
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Combat Soldiers</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--danger); margin: 8px 0;">${sim.soldiers}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+1 Intel/sec</div>
+            <button class="ghost-button" id="army-buy-soldier" style="width:100%; border: 1px solid var(--danger); color: var(--danger);">Hire for ${sim.soldierCost} intel</button>
+          </div>
+          <div class="mini-card" style="padding: 20px; border-radius: 16px; background: var(--bg-panel-soft); text-align: center;">
+            <strong>Tactical Tanks</strong>
+            <div class="value" style="font-size: 2rem; font-weight: 800; color: var(--danger); margin: 8px 0;">${sim.tanks}</div>
+            <div class="subtle" style="font-size: 0.85rem; margin-bottom: 12px;">+7 Intel/sec</div>
+            <button class="ghost-button" id="army-buy-tank" style="width:100%; border: 1px solid var(--danger); color: var(--danger);">Buy for ${sim.tankCost} intel</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3 class="panel-title">Technical Specifications</h3></div>
+        <div class="activity-list">
+          <div class="activity-item"><strong>Platform Connection</strong><div class="subtle">Desktop App · Electron Framework</div></div>
+          <div class="activity-item"><strong>Build Status</strong><span class="status-pill success" style="background: rgba(34, 197, 94, 0.15); color: var(--success);">Stable</span></div>
+          <div class="activity-item"><strong>QA Tests Status</strong><div class="subtle">14/14 unit tests passing successfully (including sector & research)</div></div>
+        </div>
+      </div>
+    </section>
+    ${renderAdSenseSlot('1234567893', 'horizontal')}
+  `;
+}
+
 function renderPageBody() {
   const renderers = {
     dashboard: renderDashboard,
@@ -700,6 +960,10 @@ function renderPageBody() {
     support: renderSupport,
     bi: renderBI,
     settings: renderSettings,
+    eco_tycoon: renderEcoTycoon,
+    miner: renderMiner,
+    cleanup_crew: renderCleanupCrew,
+    idle_army: renderIdleArmy,
   };
   return (renderers[pageKey] || renderDashboard)();
 }
@@ -716,6 +980,57 @@ function openModal(title, body) {
   document.getElementById('modal-panel').innerHTML = `<div class="modal-panel"><div class="panel-header"><h3 class="panel-title">${escapeHtml(title)}</h3><button class="icon-button" id="close-modal">✕</button></div>${body}</div>`;
 }
 
+let simulatorInterval = null;
+function startSimulatorLoop() {
+  if (simulatorInterval) clearInterval(simulatorInterval);
+  
+  simulatorInterval = setInterval(() => {
+    let changed = false;
+    
+    if (pageKey === 'eco_tycoon') {
+      const sim = state.simulators.eco_tycoon;
+      const gen = (sim.solarPanels * 1 + sim.windTurbines * 5) * (sim.multiplier || 1);
+      if (gen > 0) {
+        sim.credits += gen;
+        changed = true;
+        const el = document.getElementById('eco-credits');
+        if (el) el.textContent = Math.floor(sim.credits);
+      }
+    } else if (pageKey === 'miner') {
+      const sim = state.simulators.miner;
+      const gen = (sim.miners * 1 + sim.drills * 5) * (sim.multiplier || 1);
+      if (gen > 0) {
+        sim.credits += gen;
+        changed = true;
+        const el = document.getElementById('miner-credits');
+        if (el) el.textContent = Math.floor(sim.credits);
+      }
+    } else if (pageKey === 'cleanup_crew') {
+      const sim = state.simulators.cleanup_crew;
+      const gen = (sim.cleaners * 1 + sim.trucks * 6) * (sim.multiplier || 1);
+      if (gen > 0) {
+        sim.credits += gen;
+        changed = true;
+        const el = document.getElementById('cleanup-credits');
+        if (el) el.textContent = Math.floor(sim.credits);
+      }
+    } else if (pageKey === 'idle_army') {
+      const sim = state.simulators.idle_army;
+      const gen = (sim.soldiers * 1 + sim.tanks * 7) * (sim.multiplier || 1);
+      if (gen > 0) {
+        sim.credits += gen;
+        changed = true;
+        const el = document.getElementById('army-credits');
+        if (el) el.textContent = Math.floor(sim.credits);
+      }
+    }
+    
+    if (changed) {
+      persist();
+    }
+  }, 1000);
+}
+
 function renderCurrentPage() {
   renderSidebar();
   renderHeader();
@@ -723,6 +1038,30 @@ function renderCurrentPage() {
   document.getElementById('overlay').classList.toggle('open', viewState.mobileNavOpen);
   document.getElementById('sidebar').classList.toggle('open', viewState.mobileNavOpen);
   bindEvents();
+  
+  // Start the passive generator loop
+  startSimulatorLoop();
+  
+  // Track page views in GA4
+  if (typeof gtag === 'function') {
+    gtag('event', 'page_view', {
+      page_title: pageMeta.label,
+      page_location: window.location.href,
+      page_path: window.location.pathname + window.location.search
+    });
+  }
+
+  // Auto initialize AdSense slots
+  try {
+    const ads = document.querySelectorAll('.adsbygoogle');
+    if (ads.length > 0 && window.adsbygoogle) {
+      ads.forEach(() => {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      });
+    }
+  } catch (e) {
+    console.error('AdSense initialization error:', e);
+  }
 }
 
 function showToast(message) {
@@ -1003,6 +1342,210 @@ function bindEvents() {
     if (event.key === 'Enter') {
       event.preventDefault();
       showToast('Global search is a demo interaction in this build.');
+    }
+  });
+
+  // Eco-Tycoon simulator event listeners
+  document.getElementById('eco-click')?.addEventListener('click', () => {
+    const sim = state.simulators.eco_tycoon;
+    sim.credits += sim.clickPower * (sim.multiplier || 1);
+    persist();
+    const el = document.getElementById('eco-credits');
+    if (el) el.textContent = Math.floor(sim.credits);
+  });
+  document.getElementById('eco-buy-solar')?.addEventListener('click', () => {
+    const sim = state.simulators.eco_tycoon;
+    if (sim.credits >= sim.solarCost) {
+      sim.credits -= sim.solarCost;
+      sim.solarPanels++;
+      sim.solarCost = Math.round(sim.solarCost * 1.15);
+      persist();
+      renderCurrentPage();
+      showToast('Solar Panel purchased.');
+    } else {
+      showToast('Insufficient Eco Credits.');
+    }
+  });
+  document.getElementById('eco-buy-wind')?.addEventListener('click', () => {
+    const sim = state.simulators.eco_tycoon;
+    if (sim.credits >= sim.windCost) {
+      sim.credits -= sim.windCost;
+      sim.windTurbines++;
+      sim.windCost = Math.round(sim.windCost * 1.20);
+      persist();
+      renderCurrentPage();
+      showToast('Wind Turbine purchased.');
+    } else {
+      showToast('Insufficient Eco Credits.');
+    }
+  });
+  document.getElementById('eco-prestige')?.addEventListener('click', () => {
+    const sim = state.simulators.eco_tycoon;
+    if (sim.solarPanels >= 5 || sim.windTurbines >= 2) {
+      sim.credits = 0;
+      sim.solarPanels = 0;
+      sim.windTurbines = 0;
+      sim.solarCost = 10;
+      sim.windCost = 50;
+      sim.multiplier = (sim.multiplier || 1) + 1;
+      persist();
+      renderCurrentPage();
+      showToast('Eco-Tycoon prestige complete!');
+    } else {
+      showToast('Requires at least 5 Solar Panels or 2 Wind Turbines to prestige.');
+    }
+  });
+
+  // Miner simulator event listeners
+  document.getElementById('miner-click')?.addEventListener('click', () => {
+    const sim = state.simulators.miner;
+    sim.credits += sim.clickPower * (sim.multiplier || 1);
+    persist();
+    const el = document.getElementById('miner-credits');
+    if (el) el.textContent = Math.floor(sim.credits);
+  });
+  document.getElementById('miner-buy-miner')?.addEventListener('click', () => {
+    const sim = state.simulators.miner;
+    if (sim.credits >= sim.minerCost) {
+      sim.credits -= sim.minerCost;
+      sim.miners++;
+      sim.minerCost = Math.round(sim.minerCost * 1.15);
+      persist();
+      renderCurrentPage();
+      showToast('Miner hired.');
+    } else {
+      showToast('Insufficient Ore.');
+    }
+  });
+  document.getElementById('miner-buy-drill')?.addEventListener('click', () => {
+    const sim = state.simulators.miner;
+    if (sim.credits >= sim.drillCost) {
+      sim.credits -= sim.drillCost;
+      sim.drills++;
+      sim.drillCost = Math.round(sim.drillCost * 1.20);
+      persist();
+      renderCurrentPage();
+      showToast('Excavator purchased.');
+    } else {
+      showToast('Insufficient Ore.');
+    }
+  });
+  document.getElementById('miner-prestige')?.addEventListener('click', () => {
+    const sim = state.simulators.miner;
+    if (sim.miners >= 5 || sim.drills >= 2) {
+      sim.credits = 0;
+      sim.miners = 0;
+      sim.drills = 0;
+      sim.minerCost = 15;
+      sim.drillCost = 80;
+      sim.multiplier = (sim.multiplier || 1) + 1;
+      persist();
+      renderCurrentPage();
+      showToast('Miner prestige complete!');
+    } else {
+      showToast('Requires at least 5 Miners or 2 Excavators to prestige.');
+    }
+  });
+
+  // Cleanup Crew simulator event listeners
+  document.getElementById('cleanup-click')?.addEventListener('click', () => {
+    const sim = state.simulators.cleanup_crew;
+    sim.credits += sim.clickPower * (sim.multiplier || 1);
+    persist();
+    const el = document.getElementById('cleanup-credits');
+    if (el) el.textContent = Math.floor(sim.credits);
+  });
+  document.getElementById('cleanup-buy-cleaner')?.addEventListener('click', () => {
+    const sim = state.simulators.cleanup_crew;
+    if (sim.credits >= sim.cleanerCost) {
+      sim.credits -= sim.cleanerCost;
+      sim.cleaners++;
+      sim.cleanerCost = Math.round(sim.cleanerCost * 1.15);
+      persist();
+      renderCurrentPage();
+      showToast('Cleaner dispatched.');
+    } else {
+      showToast('Insufficient Materials.');
+    }
+  });
+  document.getElementById('cleanup-buy-truck')?.addEventListener('click', () => {
+    const sim = state.simulators.cleanup_crew;
+    if (sim.credits >= sim.truckCost) {
+      sim.credits -= sim.truckCost;
+      sim.trucks++;
+      sim.truckCost = Math.round(sim.truckCost * 1.20);
+      persist();
+      renderCurrentPage();
+      showToast('Recycling Truck purchased.');
+    } else {
+      showToast('Insufficient Materials.');
+    }
+  });
+  document.getElementById('cleanup-prestige')?.addEventListener('click', () => {
+    const sim = state.simulators.cleanup_crew;
+    if (sim.cleaners >= 5 || sim.trucks >= 2) {
+      sim.credits = 0;
+      sim.cleaners = 0;
+      sim.trucks = 0;
+      sim.cleanerCost = 20;
+      sim.truckCost = 100;
+      sim.multiplier = (sim.multiplier || 1) + 1;
+      persist();
+      renderCurrentPage();
+      showToast('Cleanup Crew prestige complete!');
+    } else {
+      showToast('Requires at least 5 Cleaners or 2 Trucks to prestige.');
+    }
+  });
+
+  // Idle Army simulator event listeners
+  document.getElementById('army-click')?.addEventListener('click', () => {
+    const sim = state.simulators.idle_army;
+    sim.credits += sim.clickPower * (sim.multiplier || 1);
+    persist();
+    const el = document.getElementById('army-credits');
+    if (el) el.textContent = Math.floor(sim.credits);
+  });
+  document.getElementById('army-buy-soldier')?.addEventListener('click', () => {
+    const sim = state.simulators.idle_army;
+    if (sim.credits >= sim.soldierCost) {
+      sim.credits -= sim.soldierCost;
+      sim.soldiers++;
+      sim.soldierCost = Math.round(sim.soldierCost * 1.15);
+      persist();
+      renderCurrentPage();
+      showToast('Soldier deployed.');
+    } else {
+      showToast('Insufficient Intel.');
+    }
+  });
+  document.getElementById('army-buy-tank')?.addEventListener('click', () => {
+    const sim = state.simulators.idle_army;
+    if (sim.credits >= sim.tankCost) {
+      sim.credits -= sim.tankCost;
+      sim.tanks++;
+      sim.tankCost = Math.round(sim.tankCost * 1.20);
+      persist();
+      renderCurrentPage();
+      showToast('Tank deployed.');
+    } else {
+      showToast('Insufficient Intel.');
+    }
+  });
+  document.getElementById('army-prestige')?.addEventListener('click', () => {
+    const sim = state.simulators.idle_army;
+    if (sim.soldiers >= 5 || sim.tanks >= 2) {
+      sim.credits = 0;
+      sim.soldiers = 0;
+      sim.tanks = 0;
+      sim.soldierCost = 25;
+      sim.tankCost = 120;
+      sim.multiplier = (sim.multiplier || 1) + 1;
+      persist();
+      renderCurrentPage();
+      showToast('Idle Army prestige complete!');
+    } else {
+      showToast('Requires at least 5 Soldiers or 2 Tanks to prestige.');
     }
   });
 }

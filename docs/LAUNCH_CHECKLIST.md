@@ -25,7 +25,7 @@ Work through every item below before going live. Check off each item as it is co
 - [ ] `VITE_API_URL` set to production backend URL
 - [ ] `npm run build` succeeds with no errors
 - [ ] GitHub Pages deployment workflow (`deploy-frontend-pages.yml`) completed successfully
-- [ ] App loads at <https://davincishah.github.io/devibe-oms/> and login works
+- [ ] App loads at <https://devibe.github.io/devibe-oms/> and login works
 - [ ] Stripe publishable key configured in frontend env
 
 ## 3. Windows Desktop Client

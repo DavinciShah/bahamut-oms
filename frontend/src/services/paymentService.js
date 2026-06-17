@@ -8,7 +8,9 @@ const paymentService = {
   getPaymentHistory: () => apiClient.get('/payments/history'),
   cancelSubscription: () => apiClient.post('/payments/subscription/cancel'),
   updateSubscription: (planId) => apiClient.put('/payments/subscription', { planId }),
-  getPlans: () => apiClient.get('/payments/plans')
+  getPlans: () => apiClient.get('/payments/plans'),
+  createRazorpayOrder: (data) => apiClient.post('/payments/razorpay/order', data),
+  verifyRazorpayPayment: (data) => apiClient.post('/payments/razorpay/verify', data),
 };
 
 export default paymentService;
